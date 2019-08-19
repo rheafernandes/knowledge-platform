@@ -10,8 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 import org.sunbird.actor.router.ActorConfig;
 import org.sunbird.common.dto.Request;
-import org.sunbird.common.exception.ClientException;
-import org.sunbird.common.exception.ResponseCode;
 
 /**
  * @author Mahesh Kumar Gangula
@@ -75,16 +73,5 @@ public abstract class BaseRouter extends BaseActor {
 
     protected static String getKey(String name, String operation) {
         return name + ":" + operation;
-    }
-
-    @Override
-    public void unSupportedMessage() {
-        sender().tell(new ClientException(ResponseCode.CLIENT_ERROR.name(), "Invalid operation provided in request to process."), ActorRef.noSender());
-    }
-
-    @Override
-    public void onReceiveException(String callerName, Exception e) {
-        System.out.println(callerName + ": exception in message processing = " + e.getMessage() + e);
-        sender().tell(e, ActorRef.noSender());
     }
 }
