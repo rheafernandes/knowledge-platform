@@ -1,12 +1,20 @@
 package org.sunbird.schema;
 
-import java.util.List;
 
 public class TestSchema {
 
     public static void main(String args[]) throws Exception {
-        Schema schema = SchemaFactory.getInstance("Object", "1.0");
-        List<String> messages = schema.validate("{\"name\": \"Mahesh\", \"mimeType\": \"application/pdf\"}");
-        System.out.println("Validation messages: " + " : " + messages);
+        System.out.println("------------------------------------");
+        Schema schema = SchemaFactory.getInstance("Content", "1.0");
+        schema.validate("{\"name\": \"Mahesh\", \"mimeType\": \"wor\"}");
+        System.out.println("------------------------------------");
+        schema.validate("{\"name\": \"Mahesh\"}");
+        System.out.println("------------------------------------");
+        schema.validate("{\"name\": \"Mahesh\", \"mimeType\": \"application/vnd.ekstep.h5p-archive\"}");
+        System.out.println("------------------------------------");
+        schema.validate("{\"name\": \"Mahesh\", \"mimeType\": \"application/vnd.ekstep.html-archive\"}");
+        System.out.println("------------------------------------");
+        schema.validate("{\"name\": \"\", \"mimeType\": \"application/pdf\"}");
+        System.out.println("------------------------------------");
     }
 }
