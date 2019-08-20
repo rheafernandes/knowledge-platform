@@ -1,33 +1,31 @@
-package org.sunbird.schema;
+package org.sunbird.schema.impl;
 
 
 import org.leadpony.justify.api.*;
+import org.sunbird.schema.ISchema;
+import org.sunbird.schema.dto.Result;
 
 import javax.json.JsonReader;
 import javax.json.JsonReaderFactory;
 import java.io.StringReader;
-import java.net.URI;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Schema {
+public abstract class Schema implements ISchema {
 
     public static String name;
-    private static final JsonValidationService service = JsonValidationService.newInstance();
-    private static JsonSchema schema;
-    private static JsonSchemaReaderFactory schemaReaderFactory;
-    private static String basePath = "schema/";
+    public static String version;
+    protected static final JsonValidationService service = JsonValidationService.newInstance();
+    protected static JsonSchema schema;
+    protected static JsonSchemaReaderFactory schemaReaderFactory;
 
-    public Schema(String name, String version) throws Exception {
+    public Schema(String name, String version) {
         this.name = name;
+        this.version = version;
         this.schemaReaderFactory = service.createSchemaReaderFactoryBuilder()
                 .withSchemaResolver(this::resolveSchema)
                 .build();
-        String fileName = name + "-" + version + ".json";
-        Path schemaPath = Paths.get(ClassLoader.getSystemResource(basePath + fileName).toURI());
-        this.schema = readSchema(schemaPath);
     }
 
     /**
@@ -36,34 +34,16 @@ public class Schema {
      * @param path the path to the schema.
      * @return the read schema.
      */
-    private JsonSchema readSchema(Path path) {
+    protected JsonSchema readSchema(Path path) {
         try (JsonSchemaReader reader = schemaReaderFactory.createSchemaReader(path)) {
             return reader.read();
         }
     }
 
-    /**
-     * Resolves the referenced JSON schema.
-     *
-     * @param id the identifier of the referenced JSON schema.
-     * @return referenced JSON schema.
-     */
-    private JsonSchema resolveSchema(URI id) {
-        // The schema is available in the local filesystem.
-        try {
-            Path path = Paths.get(ClassLoader.getSystemResource(basePath + id.getPath()).toURI());
-            return readSchema(path);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public void validate(String data) {
+    public Result validate(String data) {
         String dataWithDefaults = withDefaultValues(data);
         List<String> messages = validate(new StringReader(dataWithDefaults));
-        System.out.println("Validation messages: " + messages);
-        System.out.println("With Defaults: " + dataWithDefaults);
+        return new Result(dataWithDefaults, messages);
     }
 
     public List<String> validate(StringReader input) {
@@ -75,7 +55,7 @@ public class Schema {
         return messages;
     }
 
-    protected String withDefaultValues(String data) {
+    public String withDefaultValues(String data) {
         ValidationConfig config = service.createValidationConfig();
         config.withSchema(schema).withDefaultValues(true);
         JsonReaderFactory readerFactory = service.createReaderFactory(config.getAsMap());
