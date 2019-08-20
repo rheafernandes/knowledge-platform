@@ -1,41 +1,49 @@
 package org.sunbird.schema;
 
-import org.everit.json.schema.ValidationException;
-import org.everit.json.schema.loader.SchemaClient;
-import org.everit.json.schema.loader.SchemaLoader;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
-import java.io.InputStream;
+import org.leadpony.justify.api.JsonSchema;
+import org.leadpony.justify.api.JsonValidationService;
+import org.leadpony.justify.api.ProblemHandler;
+import org.leadpony.justify.api.ValidationConfig;
+
+import javax.json.JsonReader;
+import javax.json.JsonReaderFactory;
+import javax.json.JsonValue;
+import java.io.StringReader;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Schema {
 
     public static String name;
-    private org.everit.json.schema.Schema schema;
+    private static final JsonValidationService service = JsonValidationService.newInstance();
+    private static JsonSchema schema;
+    private static ProblemHandler handler;
+    private static JsonReaderFactory readerFactory;
 
-    public Schema(String name, String version) {
+    public Schema(String name, String version) throws Exception {
         this.name = name;
-        try (InputStream inputStream = Schema.class.getClassLoader().getResourceAsStream("schema/content-schema.json")) {
-            JSONObject rawSchema = new JSONObject(new JSONTokener(inputStream));
-            SchemaLoader schemaLoader = SchemaLoader.builder().schemaClient(SchemaClient.classPathAwareClient())
-                    .schemaJson(rawSchema).resolutionScope("classpath://schema/").draftV7Support().build();
-            schema = schemaLoader.load().build();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        JsonSchema objectSchema = service.readSchema(Paths.get(ClassLoader.getSystemResource("schema/content-schema.json").toURI()));
+
+
+//                service.readSchema(Paths.get(ClassLoader.getSystemResource("schema/content-schema.json").toURI()));
+        this.handler = service.createProblemPrinter(System.out::println);
+        ValidationConfig config = service.createValidationConfig();
+        config.withSchema(objectSchema).withProblemHandler(handler).withDefaultValues(true);
+        this.readerFactory = service.createReaderFactory(config.getAsMap());
+
+
+
     }
 
     public List<String> validate(String data) {
         List<String> messages = null;
         if (null != schema) {
-            try {
-                schema.validate(new JSONObject(data));
-            } catch (ValidationException e) {
-                messages = e.getAllMessages();
-            }
+            JsonReader reader = readerFactory.createReader(new StringReader(data));
+            JsonValue value = reader.readValue();
+            System.out.println("Value: " + value);
         } else {
             messages = new ArrayList<String>();
             messages.add("schema initialization failed for [" + name + "]");

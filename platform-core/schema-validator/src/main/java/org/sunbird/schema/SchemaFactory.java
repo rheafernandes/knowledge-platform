@@ -7,7 +7,7 @@ public class SchemaFactory {
 
     private static Map<String, Schema> schemaMap = new HashMap<String, Schema>();
 
-    public static Schema getInstance(String name, String version) {
+    public static Schema getInstance(String name, String version) throws Exception {
         String key = getKey(name, version);
         if (schemaMap.containsKey(key)) {
             return schemaMap.get(key);

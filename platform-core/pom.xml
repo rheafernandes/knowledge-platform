@@ -16,7 +16,44 @@
         <module>schema-validator</module>
     </modules>
 
-    <dependencies></dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>jakarta.json.bind</groupId>
+                <artifactId>jakarta.json.bind-api</artifactId>
+                <version>1.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>jakarta.json</artifactId>
+                <classifier>module</classifier>
+                <version>1.1.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse</groupId>
+                <artifactId>yasson</artifactId>
+                <version>1.0.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.leadpony.justify</groupId>
+                <artifactId>justify</artifactId>
+                <version>1.1.0</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.leadpony.justify</groupId>
+            <artifactId>justify</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>jakarta.json</artifactId>
+            <classifier>module</classifier>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
     <build>
         <pluginManagement>
             <plugins>
