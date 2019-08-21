@@ -17,10 +17,6 @@ public class BaseMWService {
   protected static String name = "SunbirdMWSystem";
   protected static ActorRef requestRouter;
 
-  public static Object getRequestRouter() {
-    return requestRouter;
-  }
-
   protected static ActorSystem getActorSystem() {
     if (null == system) {
       Config conf = config.getConfig(name);

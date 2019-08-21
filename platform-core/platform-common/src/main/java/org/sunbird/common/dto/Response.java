@@ -15,6 +15,15 @@ public class Response implements Serializable {
 
     private static final long serialVersionUID = -3773253896160786443L;
 
+    public Response() {
+
+    }
+
+    public Response(String id) {
+        this.id = id;
+    }
+
+
     private String id;
     private String ver = "3.0";
     private String ts;

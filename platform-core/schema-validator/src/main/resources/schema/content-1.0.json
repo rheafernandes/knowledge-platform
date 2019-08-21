@@ -1,0 +1,59 @@
+{
+    "$id": "content-schema.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Content",
+    "type": "object",
+    "required": ["name", "mimeType"],
+    "allOf": [
+        {
+            "$ref": "object-schema.json"
+        },
+        {
+            "properties": {
+                "mimeType": {
+                    "default": "application/vnd.ekstep.ecml-archive",
+                    "enum": [
+                        "application/vnd.ekstep.ecml-archive",
+                        "application/vnd.ekstep.html-archive",
+                        "application/vnd.android.package-archive",
+                        "application/vnd.ekstep.content-archive",
+                        "application/vnd.ekstep.content-collection",
+                        "application/vnd.ekstep.plugin-archive",
+                        "application/vnd.ekstep.h5p-archive",
+                        "application/pdf"
+
+                    ]
+                },
+                "contentEncoding": {
+                    "type": "string",
+                    "enum": ["gzip", "identity"],
+                    "default": "identity"
+                },
+                "contentDisposition": {
+                    "type": "string",
+                    "enum": ["inline", "online", "attachment"]
+                },
+                "mediaType": {
+                    "type": "string",
+                    "enum": ["content", "collection", "image", "video", "audio", "voice", "ecml", "document", "pdf", "text", "other"],
+                    "default": "content"
+                }
+            }
+        }
+    ],
+    "if": {
+        "properties": {
+            "mimeType": {"const": "application/pdf"}
+        }
+    },
+    "then": {
+        "properties": {
+            "contentEncoding": { "default": "gzip"}
+        }
+    },
+    "else" : {
+        "properties": {
+            "contentEncoding": {"default": "identity"}
+        }
+    }
+}

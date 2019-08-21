@@ -18,11 +18,11 @@ public abstract class BaseActor extends UntypedAbstractActor {
     if (message instanceof Request) {
       Request request = (Request) message;
       String operation = request.getOperation();
-      System.out.println("BaseActor: onReceive called for operation: " + operation);
+      System.out.println( this.getClass().getCanonicalName() + ": onReceive called for operation: " + operation);
       try {
         onReceive(request);
       } catch (Exception e) {
-        onReceiveException(operation, e);
+        ERROR(operation, e);
       }
     } else {
       // Do nothing !
@@ -30,12 +30,18 @@ public abstract class BaseActor extends UntypedAbstractActor {
   }
 
 
-  protected void onReceiveException(String callerName, Exception exception) throws Exception {
-    System.out.println("Exception in message processing for: " + callerName + " :: message: " + exception.getMessage() + exception);
-    sender().tell(exception, self());
+  protected void ERROR(String operation, Exception exception) throws Exception {
+    System.out.println("Exception in message processing for: " + operation + " :: message: " + exception.getMessage() + exception);
+    sender().tell(getErrorResponse(exception), ActorRef.noSender());
   }
 
-  protected Response getErrorResponse(Throwable e) {
+    public void ERROR(String operation) throws Exception {
+        Response response = getErrorResponse(new ClientException(ResponseCode.CLIENT_ERROR.name(), "Invalid operation provided in request to process: " + operation));
+        sender().tell(response, ActorRef.noSender());
+    }
+
+  private Response getErrorResponse(Throwable e) {
+    e.printStackTrace();
     Response response = new Response();
     ResponseParams params = new ResponseParams();
     params.setStatus(ResponseParams.StatusType.failed.name());
@@ -45,14 +51,14 @@ public abstract class BaseActor extends UntypedAbstractActor {
     } else {
       params.setErr("ERR_SYSTEM_EXCEPTION");
     }
-    System.out.println("Exception occured in class :" + e.getClass().getName() + "with message :" + e.getMessage());
+    System.out.println("Exception occurred in class :" + e.getClass().getName() + " with message :" + e.getMessage());
     params.setErrmsg(setErrMessage(e));
     response.setParams(params);
     setResponseCode(response, e);
     return response;
   }
 
-  protected String setErrMessage(Throwable e) {
+  private String setErrMessage(Throwable e) {
     if (e instanceof MiddlewareException) {
       return e.getMessage();
     } else {
@@ -76,11 +82,8 @@ public abstract class BaseActor extends UntypedAbstractActor {
     return RequestRouter.getActor(operation);
   }
 
-  public void ERROR(String operation) throws Exception {
-    sender().tell(new ClientException(ResponseCode.CLIENT_ERROR.name(), "Invalid operation provided in request to process: " + operation), ActorRef.noSender());
+  public void OK(Response response, ActorRef actor) {
+    sender().tell(response, actor);
   }
 
-  public void unSupportedMessage() {
-    sender().tell(new ClientException(ResponseCode.CLIENT_ERROR.name(), "Invalid operation provided in request to process."), ActorRef.noSender());
-  }
 }
