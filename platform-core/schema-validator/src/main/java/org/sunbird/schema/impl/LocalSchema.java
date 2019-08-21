@@ -15,7 +15,10 @@ public class LocalSchema extends Schema {
     public LocalSchema(String name, String version) throws Exception {
         super(name, version);
         String fileName = name + "-" + version + ".json";
-        Path schemaPath = Paths.get(ClassLoader.getSystemResource(basePath + fileName).toURI());
+
+        URI uri = getClass().getClassLoader().getResource( basePath + fileName).toURI();
+        System.out.println("URI: " + uri);
+        Path schemaPath = Paths.get(uri);
         this.schema = readSchema(schemaPath);
     }
 
@@ -29,7 +32,7 @@ public class LocalSchema extends Schema {
     public JsonSchema resolveSchema(URI id) {
         // The schema is available in the local filesystem.
         try {
-            Path path = Paths.get(ClassLoader.getSystemResource(basePath + id.getPath()).toURI());
+            Path path = Paths.get( getClass().getClassLoader().getResource(basePath + id.getPath()).toURI());
             return readSchema(path);
         } catch (Exception e) {
             e.printStackTrace();

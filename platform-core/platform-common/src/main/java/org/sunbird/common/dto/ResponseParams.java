@@ -17,6 +17,10 @@ public class ResponseParams implements Serializable {
     private String status;
     private String errmsg;
 
+    public ResponseParams() {
+
+    }
+
     public enum StatusType {
 
         successful, warning, failed;

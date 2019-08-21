@@ -72,7 +72,7 @@ public class RequestRouter extends BaseRouter {
                 ServerException exception = new ServerException(ResponseCode.SERVER_ERROR.name(), "Processing request taking more time: " + timeout);
                 parent.tell(exception, self());
               } else {
-                ServerException exception = new ServerException(ResponseCode.SERVER_ERROR.name(), "Something went wrong while processing the request.");
+                ServerException exception = new ServerException(ResponseCode.SERVER_ERROR.name(), "Something went wrong while processing the request.", failure);
                 parent.tell(exception, self());
               }
             } else {

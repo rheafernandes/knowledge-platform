@@ -1,12 +1,12 @@
 package controllers
 
-
-
 import org.sunbird.actor.service.SunbirdMWService
-import play.api.mvc.{AbstractController, AnyContent, ControllerComponents, Request}
+import org.sunbird.common.dto.Response
+import org.sunbird.common.exception.ResponseCode
+import play.api.mvc.{AbstractController, AnyContent, ControllerComponents, Request, Result}
 import utils.JavaJsonUtils
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import collection.JavaConverters._
 import collection.JavaConversions._
 
@@ -27,5 +27,26 @@ abstract class BaseController(protected val cc: ControllerComponents)(implicit e
                 collection.mutable.HashMap[String, Object]().asJava
             }
         }).flatten.toMap.asJava
+    }
+
+    def getRequest(operation: String, input: java.util.Map[String, AnyRef]): org.sunbird.common.dto.Request = {
+        val request = new org.sunbird.common.dto.Request();
+        request.setOperation("createDataNode")
+        request.setRequest(input)
+        request
+    }
+
+    def getResult(request: org.sunbird.common.dto.Request) : Future[Result] = {
+        val future = SunbirdMWService.execute(request)
+        future.map(f => {
+            val result = f.asInstanceOf[Response]
+            val response = JavaJsonUtils.serialize(f);
+            result.getResponseCode match {
+                case ResponseCode.OK => Ok(response).as("application/json")
+                case ResponseCode.CLIENT_ERROR => BadRequest(response).as("application/json")
+                case ResponseCode.RESOURCE_NOT_FOUND => NotFound(response).as("application/json")
+                case _ => play.api.mvc.Results.InternalServerError(JavaJsonUtils.serialize((response))).as("application/json")
+            }
+        })
     }
 }

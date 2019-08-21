@@ -41,6 +41,7 @@ public abstract class BaseActor extends UntypedAbstractActor {
     }
 
   private Response getErrorResponse(Throwable e) {
+    e.printStackTrace();
     Response response = new Response();
     ResponseParams params = new ResponseParams();
     params.setStatus(ResponseParams.StatusType.failed.name());
@@ -50,7 +51,7 @@ public abstract class BaseActor extends UntypedAbstractActor {
     } else {
       params.setErr("ERR_SYSTEM_EXCEPTION");
     }
-    System.out.println("Exception occurred in class :" + e.getClass().getName() + "with message :" + e.getMessage());
+    System.out.println("Exception occurred in class :" + e.getClass().getName() + " with message :" + e.getMessage());
     params.setErrmsg(setErrMessage(e));
     response.setParams(params);
     setResponseCode(response, e);
