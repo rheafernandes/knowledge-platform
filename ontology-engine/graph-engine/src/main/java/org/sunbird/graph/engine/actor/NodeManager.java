@@ -21,22 +21,26 @@ public class NodeManager extends BaseActor {
         String action = request.getOperation();
         switch (action) {
             case "createDataNode":
-                String input = JsonUtils.serialize(request.getRequest());
-                ISchema schema = SchemaFactory.getInstance("content", "1.0");
-                Result schemaResult = schema.validate(input);
+                Result result = validate("content", "1.0", request.getRequest());
                 Response response = new Response("org.sunbird.content.create");
-                if (schemaResult.isValid()) {
-                    Map<String, Object> inputWithDefault = JsonUtils.deserialize(schemaResult.getData(), Map.class);
+                if (result.isValid()) {
+                    Map<String, Object> inputWithDefault = JsonUtils.deserialize(result.getData(), Map.class);
+
                     response.getResult().put("content", inputWithDefault);
                 } else {
                     response.setParams(new ResponseParams());
                     response.setResponseCode(ResponseCode.CLIENT_ERROR);
-                    response.getResult().put("messages", schemaResult.getMessages());
+                    response.getResult().put("messages", result.getMessages());
                 }
                 OK(response, self());
                 break;
             default:
                 ERROR(action);
         }
+    }
+
+    public Result validate(String objectType, String version, Map<String, Object> request) throws Exception {
+        ISchema schema = SchemaFactory.getInstance(objectType, version);
+        return schema.validate(JsonUtils.serialize(request));
     }
 }

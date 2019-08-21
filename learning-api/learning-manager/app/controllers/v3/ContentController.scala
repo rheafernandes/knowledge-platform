@@ -13,6 +13,7 @@ import scala.concurrent.{ExecutionContext}
 @Singleton
 class ContentController @Inject()(cc: ControllerComponents, actorSystem: ActorSystem)(implicit exec: ExecutionContext) extends BaseController(cc) {
 
+    val objectType = "content"
 
     def create() = Action.async { implicit request =>
         val headers = commonHeaders()
@@ -21,7 +22,7 @@ class ContentController @Inject()(cc: ControllerComponents, actorSystem: ActorSy
             Futures.successful(BadRequest("""{"message": "Header X-Channel-ID required."}""").as("application/json"))
         } else {
             val body = requestBody()
-            val content = body.getOrElse("content", new java.util.HashMap()).asInstanceOf[java.util.Map[String, Object]];
+            val content = body.getOrElse(objectType, new java.util.HashMap()).asInstanceOf[java.util.Map[String, Object]];
             content.putAll(commonHeaders())
             getResult(getRequest("createDataNode", content))
         }
