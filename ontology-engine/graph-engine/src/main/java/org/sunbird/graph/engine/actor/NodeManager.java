@@ -1,46 +1,39 @@
 package org.sunbird.graph.engine.actor;
 
-import org.sunbird.actor.core.BaseActor;
 import org.sunbird.actor.router.ActorConfig;
 import org.sunbird.common.JsonUtils;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
-import org.sunbird.common.dto.ResponseParams;
 import org.sunbird.common.exception.ResponseCode;
-import org.sunbird.schema.ISchema;
-import org.sunbird.schema.SchemaFactory;
-import org.sunbird.schema.dto.Result;
+import org.sunbird.graph.engine.BaseManager;
+import org.sunbird.schema.dto.ValidationResult;
 
 import java.util.Map;
 
 @ActorConfig(tasks = {"createDataNode"})
-public class NodeManager extends BaseActor {
+public class NodeManager extends BaseManager {
 
     @Override
     public void onReceive(Request request) throws Throwable {
-        String action = request.getOperation();
-        switch (action) {
+        String operation = request.getOperation();
+        switch (operation) {
             case "createDataNode":
-                Result result = validate("content", "1.0", request.getRequest());
-                Response response = new Response("org.sunbird.content.create");
-                if (result.isValid()) {
-                    Map<String, Object> inputWithDefault = JsonUtils.deserialize(result.getData(), Map.class);
-
-                    response.getResult().put("content", inputWithDefault);
-                } else {
-                    response.setParams(new ResponseParams());
-                    response.setResponseCode(ResponseCode.CLIENT_ERROR);
-                    response.getResult().put("messages", result.getMessages());
-                }
-                OK(response, self());
+                createDataNode(request);
                 break;
             default:
-                ERROR(action);
+                ERROR(operation);
         }
     }
 
-    public Result validate(String objectType, String version, Map<String, Object> request) throws Exception {
-        ISchema schema = SchemaFactory.getInstance(objectType, version);
-        return schema.validate(JsonUtils.serialize(request));
+    private void createDataNode(Request request) throws Exception {
+        ValidationResult result = validate("content", "1.0", request.getRequest());
+        Response response = new Response("org.sunbird.content.create");
+        if (result.isValid()) {
+            Map<String, Object> inputWithDefault = JsonUtils.deserialize(result.getData(), Map.class);
+            response.getResult().put("content", inputWithDefault);
+            OK(response, self());
+        } else {
+            ERROR("NODE_VALIDATION_FAILED", "Validation errors.", ResponseCode.CLIENT_ERROR, "messages", result.getMessages());
+        }
     }
 }

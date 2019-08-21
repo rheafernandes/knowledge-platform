@@ -4,7 +4,7 @@ public class TestSchema {
 
     public static void main(String args[]) throws Exception {
         System.out.println("------------------------------------");
-        ISchema schema = SchemaFactory.getInstance("Content", "1.0");
+        ISchemaValidator schema = SchemaValidatorFactory.getInstance("Content", "1.0");
         System.out.println(schema.validate("{\"name\": \"Mahesh\", \"mimeType\": \"wor\"}"));
         System.out.println("------------------------------------");
         System.out.println(schema.validate("{\"name\": \"Mahesh\"}"));

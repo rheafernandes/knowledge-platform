@@ -39,21 +39,24 @@
                     "default": "content"
                 }
             }
+        },
+        {
+            "if": {
+                "properties": {
+                    "mimeType": {"const": "application/pdf"}
+                }
+            },
+            "then": {
+                "properties": {
+                    "contentEncoding": { "default": "gzip"}
+                }
+            },
+            "else" : {
+                "properties": {
+                    "contentEncoding": {"default": "identity"}
+                }
+            }
         }
-    ],
-    "if": {
-        "properties": {
-            "mimeType": {"const": "application/pdf"}
-        }
-    },
-    "then": {
-        "properties": {
-            "contentEncoding": { "default": "gzip"}
-        }
-    },
-    "else" : {
-        "properties": {
-            "contentEncoding": {"default": "identity"}
-        }
-    }
+
+    ]
 }

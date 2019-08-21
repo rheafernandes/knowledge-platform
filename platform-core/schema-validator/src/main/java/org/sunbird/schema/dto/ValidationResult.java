@@ -4,13 +4,13 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
 
-public class Result {
+public class ValidationResult {
 
     private boolean valid = false;
     private List<String> messages;
     private String data;
 
-    public Result(String data, List<String> messages) {
+    public ValidationResult(String data, List<String> messages) {
         this.data = data;
         if (CollectionUtils.isEmpty(messages)) {
             this.valid = true;

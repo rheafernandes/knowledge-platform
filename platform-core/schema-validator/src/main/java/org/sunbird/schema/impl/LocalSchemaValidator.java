@@ -8,16 +8,14 @@ import java.nio.file.Paths;
 
 
 
-public class LocalSchema extends Schema {
+public class LocalSchemaValidator extends SchemaValidator {
 
     private static String basePath = "schema/";
 
-    public LocalSchema(String name, String version) throws Exception {
+    public LocalSchemaValidator(String name, String version) throws Exception {
         super(name, version);
         String fileName = name + "-" + version + ".json";
-
         URI uri = getClass().getClassLoader().getResource( basePath + fileName).toURI();
-        System.out.println("URI: " + uri);
         Path schemaPath = Paths.get(uri);
         this.schema = readSchema(schemaPath);
     }

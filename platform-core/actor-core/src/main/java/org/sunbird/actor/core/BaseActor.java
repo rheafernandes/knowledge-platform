@@ -35,7 +35,7 @@ public abstract class BaseActor extends UntypedAbstractActor {
     sender().tell(getErrorResponse(exception), ActorRef.noSender());
   }
 
-    public void ERROR(String operation) throws Exception {
+    public void ERROR(String operation) {
         Response response = getErrorResponse(new ClientException(ResponseCode.CLIENT_ERROR.name(), "Invalid operation provided in request to process: " + operation));
         sender().tell(response, ActorRef.noSender());
     }

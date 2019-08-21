@@ -1,15 +1,15 @@
 package org.sunbird.schema;
 
-import org.sunbird.schema.impl.LocalSchema;
+import org.sunbird.schema.impl.LocalSchemaValidator;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class SchemaFactory {
+public class SchemaValidatorFactory {
 
-    private static Map<String, ISchema> schemaMap = new HashMap<String, ISchema>();
+    private static Map<String, ISchemaValidator> schemaMap = new HashMap<String, ISchemaValidator>();
 
-    public static ISchema getInstance(String name, String version) throws Exception {
+    public static ISchemaValidator getInstance(String name, String version) throws Exception {
         String key = getKey(name, version);
         if (schemaMap.containsKey(key)) {
             return schemaMap.get(key);
@@ -18,8 +18,8 @@ public class SchemaFactory {
         }
     }
 
-    private static ISchema initSchema(String name, String version) throws Exception {
-        ISchema schema = new LocalSchema(name, version);
+    private static ISchemaValidator initSchema(String name, String version) throws Exception {
+        ISchemaValidator schema = new LocalSchemaValidator(name, version);
         schemaMap.put(getKey(name, version), schema);
         return schema;
     }

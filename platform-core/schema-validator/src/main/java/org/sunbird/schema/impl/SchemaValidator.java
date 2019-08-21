@@ -2,17 +2,18 @@ package org.sunbird.schema.impl;
 
 
 import org.leadpony.justify.api.*;
-import org.sunbird.schema.ISchema;
-import org.sunbird.schema.dto.Result;
+import org.sunbird.schema.ISchemaValidator;
+import org.sunbird.schema.dto.ValidationResult;
 
 import javax.json.JsonReader;
 import javax.json.JsonReaderFactory;
 import java.io.StringReader;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Schema implements ISchema {
+public abstract class SchemaValidator implements ISchemaValidator {
 
     public static String name;
     public static String version;
@@ -20,13 +21,16 @@ public abstract class Schema implements ISchema {
     protected static JsonSchema schema;
     protected static JsonSchemaReaderFactory schemaReaderFactory;
 
-    public Schema(String name, String version) {
+    public SchemaValidator(String name, String version) {
         this.name = name;
         this.version = version;
         this.schemaReaderFactory = service.createSchemaReaderFactoryBuilder()
                 .withSchemaResolver(this::resolveSchema)
                 .build();
     }
+
+    public abstract JsonSchema resolveSchema(URI id);
+
 
     /**
      * Reads the JSON schema from the specified path.
@@ -40,10 +44,10 @@ public abstract class Schema implements ISchema {
         }
     }
 
-    public Result validate(String data) {
+    public ValidationResult validate(String data) {
         String dataWithDefaults = withDefaultValues(data);
         List<String> messages = validate(new StringReader(dataWithDefaults));
-        return new Result(dataWithDefaults, messages);
+        return new ValidationResult(dataWithDefaults, messages);
     }
 
     public List<String> validate(StringReader input) {
