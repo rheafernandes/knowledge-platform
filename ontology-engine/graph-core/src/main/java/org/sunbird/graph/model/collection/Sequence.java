@@ -10,11 +10,11 @@ import org.sunbird.common.exception.ClientException;
 import org.sunbird.common.exception.ResponseCode;
 import org.sunbird.common.exception.ServerException;
 import org.sunbird.graph.cache.mgr.impl.SequenceCacheManager;
+import org.sunbird.graph.common.enums.GraphDACParams;
+import org.sunbird.graph.common.enums.SystemProperties;
 import org.sunbird.graph.mgr.BaseGraphManager;
-import org.sunbird.graph.dac.enums.GraphDACParams;
 import org.sunbird.graph.dac.enums.RelationTypes;
 import org.sunbird.graph.dac.enums.SystemNodeTypes;
-import org.sunbird.graph.dac.enums.SystemProperties;
 import org.sunbird.graph.exception.GraphEngineErrorCodes;
 
 import akka.dispatch.Futures;

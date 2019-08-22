@@ -7,15 +7,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.sunbird.common.JsonUtils;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
 import org.sunbird.common.exception.ClientException;
 import org.sunbird.common.exception.ServerException;
+import org.sunbird.graph.common.enums.GraphDACParams;
+import org.sunbird.graph.common.enums.SystemProperties;
 import org.sunbird.graph.mgr.BaseGraphManager;
-import org.sunbird.graph.dac.enums.GraphDACParams;
 import org.sunbird.graph.dac.enums.SystemNodeTypes;
-import org.sunbird.graph.dac.enums.SystemProperties;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.exception.GraphEngineErrorCodes;
 import org.sunbird.graph.model.AbstractDomainObject;
@@ -197,10 +197,10 @@ public abstract class AbstractCollection extends AbstractDomainObject implements
             throw new ClientException(GraphEngineErrorCodes.ERR_GRAPH_INVALID_PROPERTY.name(), key + " is a reserved system property");
         }
         if (null != value) {
-            ObjectMapper mapper = new ObjectMapper();
+
             if (value instanceof Map) {
                 try {
-                    value = new String(mapper.writeValueAsString(value));
+                    value = new String(JsonUtils.serialize(value));
                     if(null != metadata) 
                         metadata.put(key, value);
                 } catch (Exception e) {
@@ -211,7 +211,7 @@ public abstract class AbstractCollection extends AbstractDomainObject implements
                 Object[] array = getArray(key, list);
                 if (null == array) {
                     try {
-                        value = new String(mapper.writeValueAsString(list));
+                        value = new String(JsonUtils.serialize(list));
                         if(null != metadata) 
                             metadata.put(key, value);
                     } catch (Exception e) {

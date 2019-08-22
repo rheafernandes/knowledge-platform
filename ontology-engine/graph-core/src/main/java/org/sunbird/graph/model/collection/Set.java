@@ -7,15 +7,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.sunbird.common.JsonUtils;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
 import org.sunbird.common.exception.ClientException;
 import org.sunbird.common.exception.ResponseCode;
 import org.sunbird.graph.cache.mgr.impl.SetCacheManager;
+import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.common.enums.GraphHeaderParams;
 import org.sunbird.graph.mgr.BaseGraphManager;
-import org.sunbird.graph.dac.enums.GraphDACParams;
 import org.sunbird.graph.dac.enums.RelationTypes;
 import org.sunbird.graph.dac.enums.SystemNodeTypes;
 import org.sunbird.graph.dac.model.Node;
@@ -41,7 +41,6 @@ public class Set extends AbstractCollection {
 	private List<String> memberIds;
 	private List<Relation> inRelations;
 	private List<Relation> outRelations;
-	private ObjectMapper mapper = new ObjectMapper();
 
 	public static enum SET_TYPES {
 		MATERIALISED_SET;
@@ -688,7 +687,7 @@ public class Set extends AbstractCollection {
 			this.memberObjectType = (String) metadata.get(SET_OBJECT_TYPE_KEY);
 			if (StringUtils.isNotBlank(setCriteria)) {
 				try {
-					SearchCriteria sc = mapper.readValue(setCriteria, SearchCriteria.class);
+					SearchCriteria sc = JsonUtils.deserialize(setCriteria, SearchCriteria.class);
 					this.criteria = sc;
 				} catch (Exception e) {
 				}

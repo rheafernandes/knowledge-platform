@@ -29,6 +29,7 @@ import org.sunbird.graph.cache.mgr.impl.SetCacheManager;
 import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.common.enums.GraphEngineParams;
 import org.sunbird.graph.common.enums.GraphHeaderParams;
+import org.sunbird.graph.common.enums.SystemProperties;
 import org.sunbird.graph.dac.enums.RelationTypes;
 import org.sunbird.graph.dac.enums.SystemNodeTypes;
 import org.sunbird.graph.dac.model.Node;
@@ -482,38 +483,6 @@ public class Graph extends AbstractDomainObject {
 				throw new ServerException(GraphEngineErrorCodes.ERR_GRAPH_SEARCH_NODES_UNKNOWN_ERROR.name(),
 						e.getMessage(), e);
 			}
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public void getNodesByProperty(Request req) {
-		try {
-			Request request = new Request(req);
-			request.copyRequestValueObjects(req.getRequest());
-			Response res = searchMgr.getNodesByProperty(request);
-
-			if (manager.checkError(res)) {
-				manager.ERROR(GraphEngineErrorCodes.ERR_GRAPH_SEARCH_UNKNOWN_ERROR.name(), manager.getErrorMessage(res),
-						res.getResponseCode(), getParent());
-			} else {
-				List<Node> nodes = (List<Node>) res.get(GraphDACParams.node_list.name());
-				if (null != nodes && !nodes.isEmpty()) {
-					List<Node> nodeList = new ArrayList<Node>();
-					for (Node node : nodes) {
-						if (null != node && StringUtils.isNotBlank(node.getNodeType())) {
-							nodeList.add(node);
-						}
-					}
-					manager.OK(GraphDACParams.node_list.name(), nodeList, getParent());
-				} else {
-					manager.ERROR(GraphEngineErrorCodes.ERR_GRAPH_SEARCH_NODE_NOT_FOUND.name(),
-							"Failed to get data nodes", ResponseCode.RESOURCE_NOT_FOUND, getParent());
-				}
-
-			}
-		} catch (Exception e) {
-			throw new ServerException(GraphEngineErrorCodes.ERR_GRAPH_SEARCH_NODES_UNKNOWN_ERROR.name(), e.getMessage(),
-					e);
 		}
 	}
 
