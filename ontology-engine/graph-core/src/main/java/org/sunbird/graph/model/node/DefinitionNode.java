@@ -7,18 +7,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
+import org.sunbird.common.JsonUtils;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
 import org.sunbird.common.exception.ClientException;
 import org.sunbird.common.exception.ResponseCode;
 import org.sunbird.graph.cache.mgr.impl.NodeCacheManager;
 import org.sunbird.graph.cache.util.RedisStoreUtil;
+import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.common.enums.GraphHeaderParams;
+import org.sunbird.graph.common.enums.SystemProperties;
 import org.sunbird.graph.mgr.BaseGraphManager;
-import org.sunbird.graph.dac.enums.GraphDACParams;
 import org.sunbird.graph.dac.enums.RelationTypes;
 import org.sunbird.graph.dac.enums.SystemNodeTypes;
-import org.sunbird.graph.dac.enums.SystemProperties;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.dac.model.SearchCriteria;
 import org.sunbird.graph.exception.GraphEngineErrorCodes;
@@ -67,9 +68,9 @@ public class DefinitionNode extends AbstractNode {
             if (StringUtils.isNotBlank(indexableMetadata)) {
                 try {
                     this.indexedMetadata = new ArrayList<MetadataDefinition>();
-                    List<Map<String, Object>> listMap = (List<Map<String, Object>>) mapper.readValue(indexableMetadata, List.class);
+                    List<Map<String, Object>> listMap = (List<Map<String, Object>>) JsonUtils.deserialize(indexableMetadata, List.class);
                     for (Map<String, Object> metaMap : listMap) {
-                        this.indexedMetadata.add((MetadataDefinition) mapper.convertValue(metaMap, MetadataDefinition.class));
+                        this.indexedMetadata.add((MetadataDefinition) JsonUtils.convert(metaMap, MetadataDefinition.class));
                     }
                     otherMetadata.remove(INDEXABLE_METADATA_KEY);
                 } catch (Exception e) {
@@ -79,9 +80,9 @@ public class DefinitionNode extends AbstractNode {
             if (StringUtils.isNotBlank(nonIndexableMetadata)) {
                 try {
                     this.nonIndexedMetadata = new ArrayList<MetadataDefinition>();
-                    List<Map<String, Object>> listMap = (List<Map<String, Object>>) mapper.readValue(nonIndexableMetadata, List.class);
+                    List<Map<String, Object>> listMap = (List<Map<String, Object>>) JsonUtils.deserialize(nonIndexableMetadata, List.class);
                     for (Map<String, Object> metaMap : listMap) {
-                        this.nonIndexedMetadata.add((MetadataDefinition) mapper.convertValue(metaMap, MetadataDefinition.class));
+                        this.nonIndexedMetadata.add((MetadataDefinition) JsonUtils.convert(metaMap, MetadataDefinition.class));
                     }
                     otherMetadata.remove(NON_INDEXABLE_METADATA_KEY);
                 } catch (Exception e) {
@@ -91,9 +92,9 @@ public class DefinitionNode extends AbstractNode {
             if (StringUtils.isNotBlank(inRelationsMetadata)) {
                 try {
                     this.inRelations = new ArrayList<RelationDefinition>();
-                    List<Map<String, Object>> listMap = (List<Map<String, Object>>) mapper.readValue(inRelationsMetadata, List.class);
+                    List<Map<String, Object>> listMap = (List<Map<String, Object>>) JsonUtils.deserialize(inRelationsMetadata, List.class);
                     for (Map<String, Object> metaMap : listMap) {
-                        this.inRelations.add((RelationDefinition) mapper.convertValue(metaMap, RelationDefinition.class));
+                        this.inRelations.add((RelationDefinition) JsonUtils.convert(metaMap, RelationDefinition.class));
                     }
                     otherMetadata.remove(IN_RELATIONS_KEY);
                 } catch (Exception e) {
@@ -103,9 +104,9 @@ public class DefinitionNode extends AbstractNode {
             if (StringUtils.isNotBlank(outRelationsMetadata)) {
                 try {
                     this.outRelations = new ArrayList<RelationDefinition>();
-                    List<Map<String, Object>> listMap = (List<Map<String, Object>>) mapper.readValue(outRelationsMetadata, List.class);
+                    List<Map<String, Object>> listMap = (List<Map<String, Object>>) JsonUtils.deserialize(outRelationsMetadata, List.class);
                     for (Map<String, Object> metaMap : listMap) {
-                        this.outRelations.add((RelationDefinition) mapper.convertValue(metaMap, RelationDefinition.class));
+                        this.outRelations.add((RelationDefinition) JsonUtils.convert(metaMap, RelationDefinition.class));
                     }
                     otherMetadata.remove(OUT_RELATIONS_KEY);
                 } catch (Exception e) {
@@ -115,9 +116,9 @@ public class DefinitionNode extends AbstractNode {
             if (StringUtils.isNotBlank(sysTags)) {
                 try {
                     this.systemTags = new ArrayList<TagDefinition>();
-                    List<Map<String, Object>> listMap = (List<Map<String, Object>>) mapper.readValue(sysTags, List.class);
+                    List<Map<String, Object>> listMap = (List<Map<String, Object>>) JsonUtils.deserialize(sysTags, List.class);
                     for (Map<String, Object> metaMap : listMap) {
-                        this.systemTags.add((TagDefinition) mapper.convertValue(metaMap, TagDefinition.class));
+                        this.systemTags.add((TagDefinition) JsonUtils.convert(metaMap, TagDefinition.class));
                     }
                     otherMetadata.remove(SYSTEM_TAGS_KEY);
                 } catch (Exception e) {
@@ -158,27 +159,27 @@ public class DefinitionNode extends AbstractNode {
         try {
             List<String> requiredKeys = new ArrayList<String>();
             if (null != indexedMetadata && !indexedMetadata.isEmpty()) {
-                metadata.put(INDEXABLE_METADATA_KEY, mapper.writeValueAsString(indexedMetadata));
+                metadata.put(INDEXABLE_METADATA_KEY, JsonUtils.serialize(indexedMetadata));
                 for (MetadataDefinition def : indexedMetadata) {
                     if (def.isRequired())
                         requiredKeys.add(def.getPropertyName());
                 }
             }
             if (null != nonIndexedMetadata && !nonIndexedMetadata.isEmpty()) {
-                metadata.put(NON_INDEXABLE_METADATA_KEY, mapper.writeValueAsString(nonIndexedMetadata));
+                metadata.put(NON_INDEXABLE_METADATA_KEY, JsonUtils.serialize(nonIndexedMetadata));
                 for (MetadataDefinition def : nonIndexedMetadata) {
                     if (def.isRequired())
                         requiredKeys.add(def.getPropertyName());
                 }
             }
             if (null != inRelations && !inRelations.isEmpty()) {
-                metadata.put(IN_RELATIONS_KEY, mapper.writeValueAsString(inRelations));
+                metadata.put(IN_RELATIONS_KEY, JsonUtils.serialize(inRelations));
             }
             if (null != outRelations && !outRelations.isEmpty()) {
-                metadata.put(OUT_RELATIONS_KEY, mapper.writeValueAsString(outRelations));
+                metadata.put(OUT_RELATIONS_KEY, JsonUtils.serialize(outRelations));
             }
             if (null != systemTags && !systemTags.isEmpty()) {
-                metadata.put(SYSTEM_TAGS_KEY, mapper.writeValueAsString(systemTags));
+                metadata.put(SYSTEM_TAGS_KEY, JsonUtils.serialize(systemTags));
             }
             if (null != requiredKeys && !requiredKeys.isEmpty())
                 metadata.put(REQUIRED_PROPERTIES, convertListToArray(requiredKeys));

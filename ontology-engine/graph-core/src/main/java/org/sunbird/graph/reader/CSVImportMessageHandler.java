@@ -15,10 +15,10 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.sunbird.common.JsonUtils;
 
 public class CSVImportMessageHandler {
-	private ObjectMapper mapper;
+
 	private static final String PROPERTY_ID = "identifier";
 	CSVFormat csvFileFormat = CSVFormat.DEFAULT;
 	List<String> allHeaders;
@@ -50,7 +50,6 @@ public class CSVImportMessageHandler {
 				}
 				dataRows.put(uniqueId, row);
 			}
-			mapper = new ObjectMapper();
 		}
 	}
 
@@ -62,7 +61,7 @@ public class CSVImportMessageHandler {
 				allHeaders.add("Validation Messages");
 				for (String rowIdentifier : dataRows.keySet()) {
 					if (messages.containsKey(rowIdentifier)) {
-						dataRows.get(rowIdentifier).add(mapper.writeValueAsString(messages.get(rowIdentifier)));
+						dataRows.get(rowIdentifier).add(JsonUtils.serialize(messages.get(rowIdentifier)));
 					}
 				}
 				OutputStreamWriter osWriter = new OutputStreamWriter(outputStream);

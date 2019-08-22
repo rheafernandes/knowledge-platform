@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
+import org.sunbird.common.dto.Property;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.exception.ResourceNotFoundException;
 import org.sunbird.graph.cache.mgr.impl.NodeCacheManager;
@@ -163,63 +164,63 @@ public class Neo4JBoltSearchOperations {
 		}
 	}
 
-//	/**
-//	 * Gets the nodes by property.
-//	 *
-//	 * @param graphId
-//	 *            the graph id
-//	 * @param property
-//	 *            the property
-//	 * @param getTags
-//	 *            the get tags
-//	 * @param request
-//	 *            the request
-//	 * @return the nodes by property
-//	 */
-//	public static List<Node> getNodesByProperty(String graphId, Property property, Boolean getTags, Request request) {
-//		TelemetryManager.log("Graph Id: " + graphId + "\nProperty: " + property + "\nGet Tags:" + getTags);
-//
-//		if (StringUtils.isBlank(graphId))
-//			throw new ClientException(DACErrorCodeConstants.INVALID_GRAPH.name(),
-//					DACErrorMessageConstants.INVALID_GRAPH_ID + " | ['Get Nodes By Property' Operation Failed.]");
-//
-//		if (null == property)
-//			throw new ClientException(DACErrorCodeConstants.INVALID_PROPERTY.name(),
-//					DACErrorMessageConstants.INVALID_PROPERTY + " | ['Get Nodes By Property' Operation Failed.]");
-//
-//		List<Node> nodes = new ArrayList<Node>();
-//		Driver driver = DriverUtil.getDriver(graphId, GraphOperation.READ);
-//		TelemetryManager.log("Driver Initialised. | [Graph Id: " + graphId + "]");
-//		try (Session session = driver.session()) {
-//			Map<String, Object> parameterMap = new HashMap<String, Object>();
-//			parameterMap.put(GraphDACParams.graphId.name(), graphId);
-//			parameterMap.put(GraphDACParams.property.name(), property);
-//			parameterMap.put(GraphDACParams.getTags.name(), getTags);
-//			parameterMap.put(GraphDACParams.request.name(), request);
-//
-//			StatementResult result = session
-//					.run(SearchQueryGenerationUtil.generateGetNodesByPropertyCypherQuery(parameterMap));
-//			Map<Long, Object> nodeMap = new HashMap<Long, Object>();
-//			Map<Long, Object> relationMap = new HashMap<Long, Object>();
-//			Map<Long, Object> startNodeMap = new HashMap<Long, Object>();
-//			Map<Long, Object> endNodeMap = new HashMap<Long, Object>();
-//			if (null != result) {
-//				for (Record record : result.list()) {
-//					TelemetryManager.log("'Get Nodes By Property Id' Operation Finished.", record.asMap());
-//					if (null != record)
-//						getRecordValues(record, nodeMap, relationMap, startNodeMap, endNodeMap);
-//				}
-//			}
-//
-//			if (!nodeMap.isEmpty()) {
-//				for (Entry<Long, Object> entry : nodeMap.entrySet())
-//					nodes.add(new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
-//							startNodeMap, endNodeMap));
-//			}
-//		}
-//		TelemetryManager.log("Returning Node By Property: " + nodes.size());
-//		return nodes;
-//	}
+	/**
+	 * Gets the nodes by property.
+	 *
+	 * @param graphId
+	 *            the graph id
+	 * @param property
+	 *            the property
+	 * @param getTags
+	 *            the get tags
+	 * @param request
+	 *            the request
+	 * @return the nodes by property
+	 */
+	public static List<Node> getNodesByProperty(String graphId, Property property, Boolean getTags, Request request) {
+		TelemetryManager.log("Graph Id: " + graphId + "\nProperty: " + property + "\nGet Tags:" + getTags);
+
+		if (StringUtils.isBlank(graphId))
+			throw new ClientException(DACErrorCodeConstants.INVALID_GRAPH.name(),
+					DACErrorMessageConstants.INVALID_GRAPH_ID + " | ['Get Nodes By Property' Operation Failed.]");
+
+		if (null == property)
+			throw new ClientException(DACErrorCodeConstants.INVALID_PROPERTY.name(),
+					DACErrorMessageConstants.INVALID_PROPERTY + " | ['Get Nodes By Property' Operation Failed.]");
+
+		List<Node> nodes = new ArrayList<Node>();
+		Driver driver = DriverUtil.getDriver(graphId, GraphOperation.READ);
+		TelemetryManager.log("Driver Initialised. | [Graph Id: " + graphId + "]");
+		try (Session session = driver.session()) {
+			Map<String, Object> parameterMap = new HashMap<String, Object>();
+			parameterMap.put(GraphDACParams.graphId.name(), graphId);
+			parameterMap.put(GraphDACParams.property.name(), property);
+			parameterMap.put(GraphDACParams.getTags.name(), getTags);
+			parameterMap.put(GraphDACParams.request.name(), request);
+
+			StatementResult result = session
+					.run(SearchQueryGenerationUtil.generateGetNodesByPropertyCypherQuery(parameterMap));
+			Map<Long, Object> nodeMap = new HashMap<Long, Object>();
+			Map<Long, Object> relationMap = new HashMap<Long, Object>();
+			Map<Long, Object> startNodeMap = new HashMap<Long, Object>();
+			Map<Long, Object> endNodeMap = new HashMap<Long, Object>();
+			if (null != result) {
+				for (Record record : result.list()) {
+					TelemetryManager.log("'Get Nodes By Property Id' Operation Finished.", record.asMap());
+					if (null != record)
+						getRecordValues(record, nodeMap, relationMap, startNodeMap, endNodeMap);
+				}
+			}
+
+			if (!nodeMap.isEmpty()) {
+				for (Entry<Long, Object> entry : nodeMap.entrySet())
+					nodes.add(new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+							startNodeMap, endNodeMap));
+			}
+		}
+		TelemetryManager.log("Returning Node By Property: " + nodes.size());
+		return nodes;
+	}
 
 	/**
 	 * Gets the node by unique ids.
@@ -319,46 +320,46 @@ public class Neo4JBoltSearchOperations {
 	 *            the request
 	 * @return the node property
 	 */
-//	public static Property getNodeProperty(String graphId, String nodeId, String key, Request request) {
-//		TelemetryManager.log("Graph Id: " + graphId + "\nNode Id: " + nodeId + "\nProperty (Key): " + key);
-//
-//
-//		if (StringUtils.isBlank(graphId))
-//			throw new ClientException(DACErrorCodeConstants.INVALID_GRAPH.name(),
-//					DACErrorMessageConstants.INVALID_GRAPH_ID + " | ['Get Node Property' Operation Failed.]");
-//
-//		if (StringUtils.isBlank(nodeId))
-//			throw new ClientException(DACErrorCodeConstants.INVALID_IDENTIFIER.name(),
-//					DACErrorMessageConstants.INVALID_IDENTIFIER + " | ['Get Node Property' Operation Failed.]");
-//
-//		if (StringUtils.isBlank(key))
-//			throw new ClientException(DACErrorCodeConstants.INVALID_PROPERTY.name(),
-//					DACErrorMessageConstants.INVALID_PROPERTY_KEY + " | ['Get Node Property' Operation Failed.]");
-//
-//		Property property = new Property();
-//		Driver driver = DriverUtil.getDriver(graphId, GraphOperation.READ);
-//		TelemetryManager.log("Driver Initialised. | [Graph Id: " + graphId + "]");
-//		try (Session session = driver.session()) {
-//			Map<String, Object> parameterMap = new HashMap<String, Object>();
-//			parameterMap.put(GraphDACParams.graphId.name(), graphId);
-//			parameterMap.put(GraphDACParams.nodeId.name(), nodeId);
-//			parameterMap.put(GraphDACParams.key.name(), key);
-//			parameterMap.put(GraphDACParams.request.name(), request);
-//
-//			StatementResult result = session
-//					.run(SearchQueryGenerationUtil.generateGetNodePropertyCypherQuery(parameterMap));
-//			if (null != result) {
-//				for (Record record : result.list()) {
-//					TelemetryManager.log("'Get Node Property' Operation Finished.", record.asMap());
-//					if (null != record && null != record.get(key)) {
-//						property.setPropertyName(key);
-//						property.setPropertyValue(record.get(key));
-//					}
-//				}
-//			}
-//		}
-//		return property;
-//	}
+	public static Property getNodeProperty(String graphId, String nodeId, String key, Request request) {
+		TelemetryManager.log("Graph Id: " + graphId + "\nNode Id: " + nodeId + "\nProperty (Key): " + key);
+
+
+		if (StringUtils.isBlank(graphId))
+			throw new ClientException(DACErrorCodeConstants.INVALID_GRAPH.name(),
+					DACErrorMessageConstants.INVALID_GRAPH_ID + " | ['Get Node Property' Operation Failed.]");
+
+		if (StringUtils.isBlank(nodeId))
+			throw new ClientException(DACErrorCodeConstants.INVALID_IDENTIFIER.name(),
+					DACErrorMessageConstants.INVALID_IDENTIFIER + " | ['Get Node Property' Operation Failed.]");
+
+		if (StringUtils.isBlank(key))
+			throw new ClientException(DACErrorCodeConstants.INVALID_PROPERTY.name(),
+					DACErrorMessageConstants.INVALID_PROPERTY_KEY + " | ['Get Node Property' Operation Failed.]");
+
+		Property property = new Property();
+		Driver driver = DriverUtil.getDriver(graphId, GraphOperation.READ);
+		TelemetryManager.log("Driver Initialised. | [Graph Id: " + graphId + "]");
+		try (Session session = driver.session()) {
+			Map<String, Object> parameterMap = new HashMap<String, Object>();
+			parameterMap.put(GraphDACParams.graphId.name(), graphId);
+			parameterMap.put(GraphDACParams.nodeId.name(), nodeId);
+			parameterMap.put(GraphDACParams.key.name(), key);
+			parameterMap.put(GraphDACParams.request.name(), request);
+
+			StatementResult result = session
+					.run(SearchQueryGenerationUtil.generateGetNodePropertyCypherQuery(parameterMap));
+			if (null != result) {
+				for (Record record : result.list()) {
+					TelemetryManager.log("'Get Node Property' Operation Finished.", record.asMap());
+					if (null != record && null != record.get(key)) {
+						property.setPropertyName(key);
+						property.setPropertyValue(record.get(key));
+					}
+				}
+			}
+		}
+		return property;
+	}
 
 	/**
 	 * Gets the all nodes.
@@ -465,59 +466,59 @@ public class Neo4JBoltSearchOperations {
 	 *            the request
 	 * @return the relation property
 	 */
-//	public static Property getRelationProperty(String graphId, String startNodeId, String relationType,
-//			String endNodeId,
-//			String key, Request request) {
-//		TelemetryManager.log("Graph Id: " + graphId + "\nStart Node Id: " + startNodeId + "\nRelation Type: "
-//				+ relationType + "\nEnd Node Id: " + endNodeId + "\nProperty (Key): " + key);
-//
-//
-//		if (StringUtils.isBlank(graphId))
-//			throw new ClientException(DACErrorCodeConstants.INVALID_GRAPH.name(),
-//					DACErrorMessageConstants.INVALID_GRAPH_ID + " | ['Get Relation Property' Operation Failed.]");
-//
-//		if (StringUtils.isBlank(startNodeId))
-//			throw new ClientException(DACErrorCodeConstants.INVALID_IDENTIFIER.name(),
-//					DACErrorMessageConstants.INVALID_START_NODE_ID + " | ['Get Relation Property' Operation Failed.]");
-//
-//		if (StringUtils.isBlank(relationType))
-//			throw new ClientException(DACErrorCodeConstants.INVALID_RELATION.name(),
-//					DACErrorMessageConstants.INVALID_RELATION_TYPE + " | ['Get Relation Property' Operation Failed.]");
-//
-//		if (StringUtils.isBlank(endNodeId))
-//			throw new ClientException(DACErrorCodeConstants.INVALID_IDENTIFIER.name(),
-//					DACErrorMessageConstants.INVALID_END_NODE_ID + " | ['Get Relation Property' Operation Failed.]");
-//
-//		if (StringUtils.isBlank(key))
-//			throw new ClientException(DACErrorCodeConstants.INVALID_PROPERTY.name(),
-//					DACErrorMessageConstants.INVALID_PROPERTY_KEY + " | ['Get Relation Property' Operation Failed.]");
-//
-//		Property property = new Property();
-//		Driver driver = DriverUtil.getDriver(graphId, GraphOperation.READ);
-//		TelemetryManager.log("Driver Initialised. | [Graph Id: " + graphId + "]");
-//		try (Session session = driver.session()) {
-//			Map<String, Object> parameterMap = new HashMap<String, Object>();
-//			parameterMap.put(GraphDACParams.graphId.name(), graphId);
-//			parameterMap.put(GraphDACParams.startNodeId.name(), startNodeId);
-//			parameterMap.put(GraphDACParams.relationType.name(), relationType);
-//			parameterMap.put(GraphDACParams.endNodeId.name(), endNodeId);
-//			parameterMap.put(GraphDACParams.key.name(), key);
-//			parameterMap.put(GraphDACParams.request.name(), request);
-//
-//			StatementResult result = session
-//					.run(SearchQueryGenerationUtil.generateGetRelationPropertyCypherQuery(parameterMap));
-//			if (null != result) {
-//				for (Record record : result.list()) {
-//					TelemetryManager.log("'Get Relation Property' Operation Finished.", record.asMap());
-//					if (null != record && null != record.get(key)) {
-//						property.setPropertyName(key);
-//						property.setPropertyValue(record.get(key));
-//					}
-//				}
-//			}
-//		}
-//		return property;
-//	}
+	public static Property getRelationProperty(String graphId, String startNodeId, String relationType,
+			String endNodeId,
+			String key, Request request) {
+		TelemetryManager.log("Graph Id: " + graphId + "\nStart Node Id: " + startNodeId + "\nRelation Type: "
+				+ relationType + "\nEnd Node Id: " + endNodeId + "\nProperty (Key): " + key);
+
+
+		if (StringUtils.isBlank(graphId))
+			throw new ClientException(DACErrorCodeConstants.INVALID_GRAPH.name(),
+					DACErrorMessageConstants.INVALID_GRAPH_ID + " | ['Get Relation Property' Operation Failed.]");
+
+		if (StringUtils.isBlank(startNodeId))
+			throw new ClientException(DACErrorCodeConstants.INVALID_IDENTIFIER.name(),
+					DACErrorMessageConstants.INVALID_START_NODE_ID + " | ['Get Relation Property' Operation Failed.]");
+
+		if (StringUtils.isBlank(relationType))
+			throw new ClientException(DACErrorCodeConstants.INVALID_RELATION.name(),
+					DACErrorMessageConstants.INVALID_RELATION_TYPE + " | ['Get Relation Property' Operation Failed.]");
+
+		if (StringUtils.isBlank(endNodeId))
+			throw new ClientException(DACErrorCodeConstants.INVALID_IDENTIFIER.name(),
+					DACErrorMessageConstants.INVALID_END_NODE_ID + " | ['Get Relation Property' Operation Failed.]");
+
+		if (StringUtils.isBlank(key))
+			throw new ClientException(DACErrorCodeConstants.INVALID_PROPERTY.name(),
+					DACErrorMessageConstants.INVALID_PROPERTY_KEY + " | ['Get Relation Property' Operation Failed.]");
+
+		Property property = new Property();
+		Driver driver = DriverUtil.getDriver(graphId, GraphOperation.READ);
+		TelemetryManager.log("Driver Initialised. | [Graph Id: " + graphId + "]");
+		try (Session session = driver.session()) {
+			Map<String, Object> parameterMap = new HashMap<String, Object>();
+			parameterMap.put(GraphDACParams.graphId.name(), graphId);
+			parameterMap.put(GraphDACParams.startNodeId.name(), startNodeId);
+			parameterMap.put(GraphDACParams.relationType.name(), relationType);
+			parameterMap.put(GraphDACParams.endNodeId.name(), endNodeId);
+			parameterMap.put(GraphDACParams.key.name(), key);
+			parameterMap.put(GraphDACParams.request.name(), request);
+
+			StatementResult result = session
+					.run(SearchQueryGenerationUtil.generateGetRelationPropertyCypherQuery(parameterMap));
+			if (null != result) {
+				for (Record record : result.list()) {
+					TelemetryManager.log("'Get Relation Property' Operation Finished.", record.asMap());
+					if (null != record && null != record.get(key)) {
+						property.setPropertyName(key);
+						property.setPropertyValue(record.get(key));
+					}
+				}
+			}
+		}
+		return property;
+	}
 	
 	public static Relation getRelationById(String graphId, Long relationId, Request request) {
 		TelemetryManager.log("Graph Id: " + graphId + "\nRelation Id: " + relationId);

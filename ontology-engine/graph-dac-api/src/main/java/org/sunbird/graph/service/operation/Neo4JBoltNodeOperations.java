@@ -3,6 +3,7 @@ package org.sunbird.graph.service.operation;
 import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.DateUtils;
 import org.sunbird.common.Platform;
+import org.sunbird.common.dto.Property;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.exception.ClientException;
 import org.sunbird.common.exception.MiddlewareException;
@@ -295,34 +296,34 @@ public class Neo4JBoltNodeOperations {
 		}
 	}
 
-//	public static void updatePropertyValue(String graphId, String nodeId, Property property, Request request) {
-//
-//		if (StringUtils.isBlank(graphId))
-//			throw new ClientException(DACErrorCodeConstants.INVALID_GRAPH.name(),
-//					DACErrorMessageConstants.INVALID_GRAPH_ID + " | [Update Property Value Operation Failed.]");
-//
-//		if (StringUtils.isBlank(nodeId))
-//			throw new ClientException(DACErrorCodeConstants.INVALID_IDENTIFIER.name(),
-//					DACErrorMessageConstants.INVALID_IDENTIFIER + " | [Update Property Value Operation Failed.]");
-//
-//		if (null == property)
-//			throw new ClientException(DACErrorCodeConstants.INVALID_PROPERTY.name(),
-//					DACErrorMessageConstants.INVALID_PROPERTY + " | [Update Property Value Operation Failed.]");
-//
-//		// CHECK - write driver and session created for this - END
-//		TelemetryManager.log("Session Initialised. | [Graph Id: " + graphId + "]");
-//		String date = DateUtils.formatCurrentDate();
-//		Node node = new Node();
-//		node.setGraphId(graphId);
-//		node.setIdentifier(nodeId);
-//		node.setMetadata(new HashMap<String, Object>());
-//		node.getMetadata().put(property.getPropertyName(), property.getPropertyValue());
-//		node.getMetadata().put(AuditProperties.lastUpdatedOn.name(), date);
-//		if (!StringUtils.isBlank(date))
-//			node.getMetadata().put(GraphDACParams.versionKey.name(), Long.toString(DateUtils.parse(date).getTime()));
-//		updateNode(graphId, node, request);
-//		// CHECK - write driver and session created for this - END
-//	}
+	public static void updatePropertyValue(String graphId, String nodeId, Property property, Request request) {
+
+		if (StringUtils.isBlank(graphId))
+			throw new ClientException(DACErrorCodeConstants.INVALID_GRAPH.name(),
+					DACErrorMessageConstants.INVALID_GRAPH_ID + " | [Update Property Value Operation Failed.]");
+
+		if (StringUtils.isBlank(nodeId))
+			throw new ClientException(DACErrorCodeConstants.INVALID_IDENTIFIER.name(),
+					DACErrorMessageConstants.INVALID_IDENTIFIER + " | [Update Property Value Operation Failed.]");
+
+		if (null == property)
+			throw new ClientException(DACErrorCodeConstants.INVALID_PROPERTY.name(),
+					DACErrorMessageConstants.INVALID_PROPERTY + " | [Update Property Value Operation Failed.]");
+
+		// CHECK - write driver and session created for this - END
+		TelemetryManager.log("Session Initialised. | [Graph Id: " + graphId + "]");
+		String date = DateUtils.formatCurrentDate();
+		Node node = new Node();
+		node.setGraphId(graphId);
+		node.setIdentifier(nodeId);
+		node.setMetadata(new HashMap<String, Object>());
+		node.getMetadata().put(property.getPropertyName(), property.getPropertyValue());
+		node.getMetadata().put(AuditProperties.lastUpdatedOn.name(), date);
+		if (!StringUtils.isBlank(date))
+			node.getMetadata().put(GraphDACParams.versionKey.name(), Long.toString(DateUtils.parse(date).getTime()));
+		updateNode(graphId, node, request);
+		// CHECK - write driver and session created for this - END
+	}
 
 	public static void updatePropertyValues(String graphId, String nodeId, Map<String, Object> metadata,
 			Request request) {

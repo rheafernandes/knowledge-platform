@@ -8,8 +8,8 @@ import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
 import org.sunbird.common.exception.ClientException;
 import org.sunbird.common.exception.ResponseCode;
+import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.mgr.BaseGraphManager;
-import org.sunbird.graph.dac.enums.GraphDACParams;
 import org.sunbird.graph.dac.enums.SystemNodeTypes;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.exception.GraphEngineErrorCodes;
@@ -43,7 +43,7 @@ public class RelationNode extends AbstractIndexNode {
 	}
 
 	public Future<Map<String, Object>> create(final Request req) {
-		final Promise<Map<String, Object>> promise = Futures.promise();
+		final Promise promise = Futures.promise();
 		Future<Map<String, Object>> future = promise.future();
 
 		final String defNodeId = SystemNodeTypes.DEFINITION_NODE.name() + "_" + objectType;

@@ -55,9 +55,8 @@ public class RDFGraphReader implements GraphReader {
     protected String defaultNamespaceUri = "http://www.ilimi.in";
     protected String defaultNamespacePrefix = "ili";
 
-    public RDFGraphReader(BaseGraphManager manager, ObjectMapper mapper, String graphId, InputStream inputStream) throws Exception {
+    public RDFGraphReader(BaseGraphManager manager, String graphId, InputStream inputStream) throws Exception {
         this.manager = manager;
-        this.mapper = mapper;
         validations = new ArrayList<String>();
         tagMembersMap = new HashMap<String, List<String>>();
         RDFFormat format = Rio.getParserFormatForMIMEType(MIME_RDFXML, RDFFormat.RDFXML);

@@ -1,5 +1,20 @@
 package org.sunbird.graph.model.relation;
 
+import org.apache.commons.lang3.StringUtils;
+import org.sunbird.common.dto.Request;
+import org.sunbird.common.dto.Response;
+import org.sunbird.common.exception.ClientException;
+import org.sunbird.common.exception.ServerException;
+import org.sunbird.graph.common.enums.GraphDACParams;
+import org.sunbird.graph.dac.model.Node;
+import org.sunbird.graph.dac.model.Relation;
+import org.sunbird.graph.exception.GraphRelationErrorCodes;
+import org.sunbird.graph.mgr.BaseGraphManager;
+import org.sunbird.graph.model.AbstractDomainObject;
+import org.sunbird.graph.model.IRelation;
+import org.sunbird.graph.model.cache.DefinitionCache;
+import scala.concurrent.Future;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,7 +29,7 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 	protected Map<String, Object> metadata;
 
 	protected AbstractRelation(BaseGraphManager manager, String graphId, String startNodeId, String endNodeId,
-			Map<String, Object> metadata) {
+							   Map<String, Object> metadata) {
 		this(manager, graphId, startNodeId, endNodeId);
 		this.metadata = metadata;
 	}
@@ -42,7 +57,7 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 				request.put(GraphDACParams.relation_type.name(), getRelationType());
 				request.put(GraphDACParams.end_node_id.name(), getEndNodeId());
 				request.put(GraphDACParams.metadata.name(), getMetadata());
-				Future<Object> response = Futures.successful(graphMgr.addRelation(request));
+				Future<Object> response = Future.successful(graphMgr.addRelation(request));
 				manager.returnResponse(response, getParent());
 			} else {
 				manager.OK(GraphDACParams.messages.name(), errMessages, getParent());
@@ -72,7 +87,7 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 		try {
 			Request request = new Request(req);
 			request.copyRequestValueObjects(req.getRequest());
-			Future<Object> response = Futures.successful(graphMgr.deleteRelation(request));
+			Future<Object> response = Future.successful(graphMgr.deleteRelation(request));
 			manager.returnResponse(response, getParent());
 		} catch (Exception e) {
 			throw new ServerException(GraphRelationErrorCodes.ERR_RELATION_DELETE.name(),
@@ -140,13 +155,15 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 			request.put(GraphDACParams.relation_type.name(), getRelationType());
 			request.put(GraphDACParams.end_node_id.name(), this.endNodeId);
 			request.put(GraphDACParams.property_key.name(), key);
-			Future<Object> response = Futures.successful(searchMgr.getRelationProperty(request));
+			Future<Object> response = Future.successful(searchMgr.getRelationProperty(request));
 			manager.returnResponse(response, getParent());
 		} catch (Exception e) {
 			throw new ServerException(GraphRelationErrorCodes.ERR_RELATION_GET_PROPERTY.name(),
 					"Error in fetching the relation properties", e);
 		}
 	}
+
+
 
 	public void removeProperty(Request req) {
 		throw new ServerException(GraphRelationErrorCodes.ERR_RELATION_UNSUPPORTED_OPERATION.name(),

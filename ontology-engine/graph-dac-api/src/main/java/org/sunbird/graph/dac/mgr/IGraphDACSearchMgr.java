@@ -11,9 +11,9 @@ public interface IGraphDACSearchMgr {
 
 	Response getNodesByUniqueIds(Request request);
 
-//	Response getNodesByProperty(Request request);
+	Response getNodesByProperty(Request request);
 
-//	Response getNodeProperty(Request request);
+	Response getNodeProperty(Request request);
 
 	Response getAllRelations(Request request);
 
@@ -21,7 +21,7 @@ public interface IGraphDACSearchMgr {
 
 	Response getRelation(Request request);
 
-//	Response getRelationProperty(Request request);
+	Response getRelationProperty(Request request);
 
 	Response checkCyclicLoop(Request request);
     

@@ -3,6 +3,8 @@ package org.sunbird.common;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.InputStream;
+
 public class JsonUtils {
 
     private static ObjectMapper mapper = new ObjectMapper();
@@ -16,6 +18,14 @@ public class JsonUtils {
 
     public static <T> T deserialize(String value, Class<T> clazz) throws Exception {
         return mapper.readValue(value, clazz);
+    }
+
+    public static <T> T deserialize(InputStream value, Class<T> clazz) throws Exception {
+        return mapper.readValue(value, clazz);
+    }
+
+    public static <T> T convert(Object value, Class<T> clazz) throws Exception {
+        return mapper.convertValue(value, clazz);
     }
 
 }

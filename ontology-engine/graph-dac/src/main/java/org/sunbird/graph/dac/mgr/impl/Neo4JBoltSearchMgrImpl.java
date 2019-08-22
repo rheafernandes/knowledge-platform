@@ -1,5 +1,6 @@
 package org.sunbird.graph.dac.mgr.impl;
 
+import org.sunbird.common.dto.Property;
 import org.sunbird.graph.common.enums.GraphDACParams;
 
 import java.util.Arrays;
@@ -76,23 +77,23 @@ public class Neo4JBoltSearchMgrImpl extends BaseDACMgr implements IGraphDACSearc
     		}
     }
 
-//    @Override
-//	public Response getNodesByProperty(Request request) {
-//        String graphId = (String) request.getContext().get(GraphHeaderParams.graph_id.name());
-//        Property property = (Property) request.get(GraphDACParams.metadata.name());
-//        Boolean getTags = (Boolean) request.get(GraphDACParams.get_tags.name());
-//        if (!validateRequired(property)) {
-//            throw new ClientException(GraphDACErrorCodes.ERR_GET_NODE_LIST_MISSING_REQ_PARAMS.name(), "Required parameters are missing");
-//        } else {
-//            try {
-//				List<Node> nodeList = Neo4JBoltSearchOperations.getNodesByProperty(graphId, property, getTags, request);
-//				return OK(GraphDACParams.node_list.name(), nodeList);
-//            } catch (Exception e) {
-//				return ERROR(e);
-//            }
-//        }
-//    }
-    
+    //@Override
+    public Response getNodesByProperty(Request request) {
+        String graphId = (String) request.getContext().get(GraphHeaderParams.graph_id.name());
+        Property property = (Property) request.get(GraphDACParams.metadata.name());
+        Boolean getTags = (Boolean) request.get(GraphDACParams.get_tags.name());
+        if (!validateRequired(property)) {
+            throw new ClientException(GraphDACErrorCodes.ERR_GET_NODE_LIST_MISSING_REQ_PARAMS.name(), "Required parameters are missing");
+        } else {
+            try {
+                List<Node> nodeList = Neo4JBoltSearchOperations.getNodesByProperty(graphId, property, getTags, request);
+                return OK(GraphDACParams.node_list.name(), nodeList);
+            } catch (Exception e) {
+                return ERROR(e);
+            }
+        }
+    }
+
     @SuppressWarnings("unchecked")
 	@Override
 	public Response getNodesByUniqueIds(Request request) {
@@ -121,22 +122,22 @@ public class Neo4JBoltSearchMgrImpl extends BaseDACMgr implements IGraphDACSearc
 		}
 	}
 
-//    @Override
-//	public Response getNodeProperty(Request request) {
-//        String graphId = (String) request.getContext().get(GraphHeaderParams.graph_id.name());
-//        String nodeId = (String) request.get(GraphDACParams.node_id.name());
-//        String key = (String) request.get(GraphDACParams.property_key.name());
-//        if (!validateRequired(nodeId, key)) {
-//            throw new ClientException(GraphDACErrorCodes.ERR_GET_NODE_PROPERTY_MISSING_REQ_PARAMS.name(), "Required parameters are missing");
-//        } else {
-//            try {
-//				Property property = Neo4JBoltSearchOperations.getNodeProperty(graphId, nodeId, key, request);
-//				return OK(GraphDACParams.property.name(), property);
-//            } catch (Exception e) {
-//				return ERROR(e);
-//            }
-//        }
-//    }
+    @Override
+    public Response getNodeProperty(Request request) {
+        String graphId = (String) request.getContext().get(GraphHeaderParams.graph_id.name());
+        String nodeId = (String) request.get(GraphDACParams.node_id.name());
+        String key = (String) request.get(GraphDACParams.property_key.name());
+        if (!validateRequired(nodeId, key)) {
+            throw new ClientException(GraphDACErrorCodes.ERR_GET_NODE_PROPERTY_MISSING_REQ_PARAMS.name(), "Required parameters are missing");
+        } else {
+            try {
+                Property property = Neo4JBoltSearchOperations.getNodeProperty(graphId, nodeId, key, request);
+                return OK(GraphDACParams.property.name(), property);
+            } catch (Exception e) {
+                return ERROR(e);
+            }
+        }
+    }
 
     @Override
 	public Response getAllNodes(Request request) {
@@ -160,25 +161,25 @@ public class Neo4JBoltSearchMgrImpl extends BaseDACMgr implements IGraphDACSearc
         }
     }
 
-//    @Override
-//	public Response getRelationProperty(Request request) {
-//        String graphId = (String) request.getContext().get(GraphHeaderParams.graph_id.name());
-//        String startNodeId = (String) request.get(GraphDACParams.start_node_id.name());
-//        String relationType = (String) request.get(GraphDACParams.relation_type.name());
-//        String endNodeId = (String) request.get(GraphDACParams.end_node_id.name());
-//        String key = (String) request.get(GraphDACParams.property_key.name());
-//        if (!validateRequired(startNodeId, relationType, endNodeId, key)) {
-//            throw new ClientException(GraphDACErrorCodes.ERR_GET_RELATIONS_MISSING_REQ_PARAMS.name(), "Required parameters are missing");
-//        } else {
-//            try {
-//				Property property = Neo4JBoltSearchOperations.getRelationProperty(graphId, startNodeId, relationType,
-//						endNodeId, key, request);
-//				return OK(GraphDACParams.property.name(), property);
-//            } catch (Exception e) {
-//				return ERROR(e);
-//            }
-//        }
-//    }
+    @Override
+	public Response getRelationProperty(Request request) {
+        String graphId = (String) request.getContext().get(GraphHeaderParams.graph_id.name());
+        String startNodeId = (String) request.get(GraphDACParams.start_node_id.name());
+        String relationType = (String) request.get(GraphDACParams.relation_type.name());
+        String endNodeId = (String) request.get(GraphDACParams.end_node_id.name());
+        String key = (String) request.get(GraphDACParams.property_key.name());
+        if (!validateRequired(startNodeId, relationType, endNodeId, key)) {
+            throw new ClientException(GraphDACErrorCodes.ERR_GET_RELATIONS_MISSING_REQ_PARAMS.name(), "Required parameters are missing");
+        } else {
+            try {
+				Property property = Neo4JBoltSearchOperations.getRelationProperty(graphId, startNodeId, relationType,
+						endNodeId, key, request);
+				return OK(GraphDACParams.property.name(), property);
+            } catch (Exception e) {
+				return ERROR(e);
+            }
+        }
+    }
 
     @Override
 	public Response getRelation(Request request) {
