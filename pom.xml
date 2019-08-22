@@ -21,8 +21,8 @@
 	</properties>
 	<modules>
 		<module>platform-core</module>
+		<module>ontology-engine</module>
 		<module>learning-api</module>
-        <module>ontology-engine</module>
     </modules>
 	<dependencies>
 	</dependencies>

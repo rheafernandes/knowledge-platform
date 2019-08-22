@@ -12,6 +12,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>platform-common</module>
+        <module>platform-telemetry</module>
         <module>actor-core</module>
         <module>schema-validator</module>
     </modules>

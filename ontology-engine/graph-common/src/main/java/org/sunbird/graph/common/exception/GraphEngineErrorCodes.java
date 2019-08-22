@@ -1,0 +1,11 @@
+package org.sunbird.graph.common.exception;
+
+public enum GraphEngineErrorCodes {
+
+    ERR_SYSTEM_EXCEPTION,
+    ERR_INVALID_GRAPH_ID,
+    ERR_META_CRITERION_INVALID_DATA,
+    ERR_GRAPH_INVALID_GRAPH_ID,
+    ERR_GRAPH_GET_NODE_PROPERTY_INVALID_KEY,
+    ERR_GRAPH_ADD_NODE_VALIDATION_FAILED
+}
