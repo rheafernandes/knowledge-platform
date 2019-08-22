@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.sunbird.common.JsonUtils;
 import org.sunbird.graph.dac.model.Node;
 
 public class DefinitionDTO implements Serializable {
@@ -88,9 +89,9 @@ public class DefinitionDTO implements Serializable {
             String indexableMetadata = (String) nodeMetadata.get(DefinitionNode.INDEXABLE_METADATA_KEY);
             if (StringUtils.isNotBlank(indexableMetadata)) {
                 try {
-                    List<Map<String, Object>> listMap = (List<Map<String, Object>>) mapper.readValue(indexableMetadata, List.class);
+                    List<Map<String, Object>> listMap = (List<Map<String, Object>>) JsonUtils.deserialize(indexableMetadata, List.class);
                     for (Map<String, Object> metaMap : listMap) {
-                        this.properties.add((MetadataDefinition) mapper.convertValue(metaMap, MetadataDefinition.class));
+                        this.properties.add((MetadataDefinition) JsonUtils.convert(metaMap, MetadataDefinition.class));
                     }
                     otherMetadata.remove(DefinitionNode.INDEXABLE_METADATA_KEY);
                 } catch (Exception e) {
@@ -99,9 +100,9 @@ public class DefinitionDTO implements Serializable {
             String nonIndexableMetadata = (String) nodeMetadata.get(DefinitionNode.NON_INDEXABLE_METADATA_KEY);
             if (StringUtils.isNotBlank(nonIndexableMetadata)) {
                 try {
-                    List<Map<String, Object>> listMap = (List<Map<String, Object>>) mapper.readValue(nonIndexableMetadata, List.class);
+                    List<Map<String, Object>> listMap = (List<Map<String, Object>>) JsonUtils.deserialize(nonIndexableMetadata, List.class);
                     for (Map<String, Object> metaMap : listMap) {
-                        this.properties.add((MetadataDefinition) mapper.convertValue(metaMap, MetadataDefinition.class));
+                        this.properties.add((MetadataDefinition) JsonUtils.convert(metaMap, MetadataDefinition.class));
                     }
                     otherMetadata.remove(DefinitionNode.NON_INDEXABLE_METADATA_KEY);
                 } catch (Exception e) {
@@ -111,9 +112,9 @@ public class DefinitionDTO implements Serializable {
             if (StringUtils.isNotBlank(inRelationsMetadata)) {
                 try {
                     this.inRelations = new ArrayList<RelationDefinition>();
-                    List<Map<String, Object>> listMap = (List<Map<String, Object>>) mapper.readValue(inRelationsMetadata, List.class);
+                    List<Map<String, Object>> listMap = (List<Map<String, Object>>) JsonUtils.deserialize(inRelationsMetadata, List.class);
                     for (Map<String, Object> metaMap : listMap) {
-                        this.inRelations.add((RelationDefinition) mapper.convertValue(metaMap, RelationDefinition.class));
+                        this.inRelations.add((RelationDefinition) JsonUtils.convert(metaMap, RelationDefinition.class));
                     }
                     otherMetadata.remove(DefinitionNode.IN_RELATIONS_KEY);
                 } catch (Exception e) {
@@ -123,9 +124,9 @@ public class DefinitionDTO implements Serializable {
             if (StringUtils.isNotBlank(outRelationsMetadata)) {
                 try {
                     this.outRelations = new ArrayList<RelationDefinition>();
-                    List<Map<String, Object>> listMap = (List<Map<String, Object>>) mapper.readValue(outRelationsMetadata, List.class);
+                    List<Map<String, Object>> listMap = (List<Map<String, Object>>) JsonUtils.deserialize(outRelationsMetadata, List.class);
                     for (Map<String, Object> metaMap : listMap) {
-                        this.outRelations.add((RelationDefinition) mapper.convertValue(metaMap, RelationDefinition.class));
+                        this.outRelations.add((RelationDefinition) JsonUtils.convert(metaMap, RelationDefinition.class));
                     }
                     otherMetadata.remove(DefinitionNode.OUT_RELATIONS_KEY);
                 } catch (Exception e) {
@@ -135,9 +136,9 @@ public class DefinitionDTO implements Serializable {
             if (StringUtils.isNotBlank(sysTags)) {
                 try {
                     this.systemTags = new ArrayList<TagDefinition>();
-                    List<Map<String, Object>> listMap = (List<Map<String, Object>>) mapper.readValue(sysTags, List.class);
+                    List<Map<String, Object>> listMap = (List<Map<String, Object>>) JsonUtils.deserialize(sysTags, List.class);
                     for (Map<String, Object> metaMap : listMap) {
-                        this.systemTags.add((TagDefinition) mapper.convertValue(metaMap, TagDefinition.class));
+                        this.systemTags.add((TagDefinition) JsonUtils.convert(metaMap, TagDefinition.class));
                     }
                     otherMetadata.remove(DefinitionNode.SYSTEM_TAGS_KEY);
                 } catch (Exception e) {

@@ -9,8 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
 import org.sunbird.common.exception.ResponseCode;
+import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.mgr.BaseGraphManager;
-import org.sunbird.graph.dac.enums.GraphDACParams;
 import org.sunbird.graph.model.AbstractDomainObject;
 import org.sunbird.graph.model.IRelation;
 

@@ -1,6 +1,5 @@
 package org.sunbird.graph.reader;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,9 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.sunbird.common.JsonUtils;
 import org.sunbird.common.exception.ClientException;
 import org.sunbird.graph.mgr.BaseGraphManager;
 import org.sunbird.graph.dac.enums.RelationTypes;
@@ -27,7 +24,6 @@ import org.sunbird.graph.model.node.TagDefinition;
 
 public class JsonGraphReader implements GraphReader {
 
-    private ObjectMapper mapper = new ObjectMapper();
     private List<Node> definitionNodes;
     private List<Node> dataNodes;
     private Map<String, List<String>> tagMembersMap;
@@ -36,24 +32,23 @@ public class JsonGraphReader implements GraphReader {
     private BaseGraphManager manager;
 
     @SuppressWarnings("unchecked")
-    public JsonGraphReader(BaseGraphManager manager, ObjectMapper mapper, String graphId, InputStream inputStream)
-            throws JsonParseException, JsonMappingException, IOException {
+    public JsonGraphReader(BaseGraphManager manager, String graphId, InputStream inputStream)
+            throws Exception {
         this.manager = manager;
         validations = new ArrayList<String>();
         tagMembersMap = new HashMap<String, List<String>>();
-        Map<String, Object> inputMap = mapper.readValue(inputStream, Map.class);
+        Map<String, Object> inputMap = JsonUtils.deserialize(inputStream, Map.class);
         createDefinitionNodes(graphId, (List<Map<String, Object>>) inputMap.get("definitionNodes"));
         createDataNodes(graphId, (List<Map<String, Object>>) inputMap.get("nodes"));
         createRelations((List<Map<String, Object>>) inputMap.get("relations"));
     }
 
     @SuppressWarnings("unchecked")
-    public JsonGraphReader(BaseGraphManager manager, ObjectMapper mapper, String graphId, String json) throws JsonParseException,
-            JsonMappingException, IOException {
+    public JsonGraphReader(BaseGraphManager manager, String graphId, String json) throws Exception {
         this.manager = manager;
         validations = new ArrayList<String>();
         tagMembersMap = new HashMap<String, List<String>>();
-        Map<String, Object> inputMap = mapper.readValue(json, Map.class);
+        Map<String, Object> inputMap = JsonUtils.deserialize(json, Map.class);
         createDefinitionNodes(graphId, (List<Map<String, Object>>) inputMap.get("definitionNodes"));
         createDataNodes(graphId, (List<Map<String, Object>>) inputMap.get("nodes"));
         createRelations((List<Map<String, Object>>) inputMap.get("relations"));
@@ -61,7 +56,6 @@ public class JsonGraphReader implements GraphReader {
 
     public JsonGraphReader(BaseGraphManager manager) {
         this.manager = manager;
-        mapper = new ObjectMapper();
     }
 
     @Override
@@ -107,7 +101,7 @@ public class JsonGraphReader implements GraphReader {
     }
 
     @SuppressWarnings("unchecked")
-    private void createDefinitionNodes(String graphId, List<Map<String, Object>> inputNodeList) {
+    private void createDefinitionNodes(String graphId, List<Map<String, Object>> inputNodeList) throws Exception {
         definitionNodes = new ArrayList<Node>();
         if (null != inputNodeList) {
             for (Map<String, Object> inputNode : inputNodeList) {
@@ -131,7 +125,7 @@ public class JsonGraphReader implements GraphReader {
                 List<Map<String, Object>> inRelationMapList = (List<Map<String, Object>>) inputNode.get("inRelations");
                 List<RelationDefinition> inRelations = new ArrayList<RelationDefinition>();
                 for (Map<String, Object> relationItem : inRelationMapList) {
-                    RelationDefinition relationDefinition = mapper.convertValue(relationItem, RelationDefinition.class);
+                    RelationDefinition relationDefinition = JsonUtils.convert(relationItem, RelationDefinition.class);
                     if (relationDefinition != null)
                         inRelations.add(relationDefinition);
                 }
@@ -139,7 +133,7 @@ public class JsonGraphReader implements GraphReader {
                 List<Map<String, Object>> outRelationMapList = (List<Map<String, Object>>) inputNode.get("outRelations");
                 List<RelationDefinition> outRelations = new ArrayList<RelationDefinition>();
                 for (Map<String, Object> relationItem : outRelationMapList) {
-                    RelationDefinition relationDefinition = mapper.convertValue(relationItem, RelationDefinition.class);
+                    RelationDefinition relationDefinition = JsonUtils.convert(relationItem, RelationDefinition.class);
                     if (relationDefinition != null)
                         outRelations.add(relationDefinition);
                 }
@@ -147,7 +141,7 @@ public class JsonGraphReader implements GraphReader {
                 List<Map<String, Object>> systemTagMapList = (List<Map<String, Object>>) inputNode.get("systemTags");
                 List<TagDefinition> systemTags = new ArrayList<TagDefinition>();
                 for (Map<String, Object> sysTagItem : systemTagMapList) {
-                    TagDefinition tagDefinition = mapper.convertValue(sysTagItem, TagDefinition.class);
+                    TagDefinition tagDefinition = JsonUtils.convert(sysTagItem, TagDefinition.class);
                     if (tagDefinition != null)
                         systemTags.add(tagDefinition);
                 }
@@ -161,10 +155,10 @@ public class JsonGraphReader implements GraphReader {
         }
     }
 
-    private List<MetadataDefinition> getMetadataDefinitions(List<Map<String, Object>> metaMapList) {
+    private List<MetadataDefinition> getMetadataDefinitions(List<Map<String, Object>> metaMapList) throws Exception {
         List<MetadataDefinition> metaDefinitions = new ArrayList<MetadataDefinition>();
         for (Map<String, Object> metaItem : metaMapList) {
-            MetadataDefinition metaDefinition = mapper.convertValue(metaItem, MetadataDefinition.class);
+            MetadataDefinition metaDefinition = JsonUtils.convert(metaItem, MetadataDefinition.class);
             if (metaDefinition != null)
                 metaDefinitions.add(metaDefinition);
         }

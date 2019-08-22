@@ -6,14 +6,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import akka.dispatch.Futures;
 import org.apache.commons.lang3.StringUtils;
+import org.sunbird.common.JsonUtils;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.exception.ClientException;
 import org.sunbird.common.exception.ResponseCode;
 import org.sunbird.common.exception.ServerException;
 import org.sunbird.graph.common.enums.GraphDACParams;
-import org.sunbird.graph.common.exception.GraphEngineErrorCodes;
+import org.sunbird.graph.common.enums.SystemProperties;
 import org.sunbird.graph.dac.model.Node;
+import org.sunbird.graph.exception.GraphEngineErrorCodes;
+import org.sunbird.graph.mgr.BaseGraphManager;
 import org.sunbird.graph.model.AbstractDomainObject;
 import org.sunbird.graph.model.INode;
 
@@ -47,7 +51,7 @@ public abstract class AbstractNode extends AbstractDomainObject implements INode
 	protected AbstractNode(BaseGraphManager manager, String graphId, String nodeId, Map<String, Object> metadata) {
         super(manager, graphId);
         if (null == manager || StringUtils.isBlank(graphId)) {
-            throw new ClientException(GraphEngineErrorCodes.ERR_INVALID_NODE.name(), "Invalid Node");
+            throw new ClientException(org.sunbird.graph.exception.GraphEngineErrorCodes.ERR_INVALID_NODE.name(), "Invalid Node");
         }
         this.nodeId = nodeId;
         this.metadata = metadata;
@@ -68,7 +72,7 @@ public abstract class AbstractNode extends AbstractDomainObject implements INode
 			if (null == errMessages || errMessages.isEmpty()) {
 				Request request = new Request(req);
 				request.put(GraphDACParams.node.name(), toNode());
-				Future<Object> response = Futures.successful(nodeMgr.addNode(request));
+				Future<Object> response = Future.successful(nodeMgr.addNode(request));
 				manager.returnResponse(response, getParent());
 			} else {
 				manager.ERROR(GraphEngineErrorCodes.ERR_GRAPH_ADD_NODE_VALIDATION_FAILED.name(),
@@ -94,7 +98,7 @@ public abstract class AbstractNode extends AbstractDomainObject implements INode
                 Request request = new Request(req);
                 request.put(GraphDACParams.node_id.name(), this.nodeId);
                 request.put(GraphDACParams.property_key.name(), key);
-				Future<Object> response = Futures.successful(searchMgr.getNodeProperty(request));
+				Future<Object> response = Future.successful(searchMgr.getNodeProperty(request));
                 manager.returnResponse(response, getParent());
             } catch (Exception e) {
                 manager.ERROR(e, getParent());
@@ -137,7 +141,7 @@ public abstract class AbstractNode extends AbstractDomainObject implements INode
         try {
             Request request = new Request(req);
             request.put(GraphDACParams.node_id.name(), getNodeId());
-			Future<Object> response = Futures.successful(nodeMgr.deleteNode(request));
+			Future<Object> response = Future.successful(nodeMgr.deleteNode(request));
             manager.returnResponse(response, getParent());
         } catch (Exception e) {
             manager.ERROR(e, getParent());
@@ -275,10 +279,9 @@ public abstract class AbstractNode extends AbstractDomainObject implements INode
             throw new ClientException(GraphEngineErrorCodes.ERR_GRAPH_INVALID_PROPERTY.name(), key + " is a reserved system property");
         }
         if (null != value) {
-            ObjectMapper mapper = new ObjectMapper();
             if (value instanceof Map) {
                 try {
-                    value = new String(mapper.writeValueAsString(value));
+                    value = JsonUtils.serialize(value);
                     if(null != metadata) 
                         metadata.put(key, value);
                 } catch (Exception e) {
@@ -294,7 +297,7 @@ public abstract class AbstractNode extends AbstractDomainObject implements INode
                             metadata.put(key, value);
                     } else {
                         try {
-                            value = new String(mapper.writeValueAsString(list));
+                            value = JsonUtils.serialize(list);
                             if(null != metadata) 
                                 metadata.put(key, value);
                         } catch (Exception e) {

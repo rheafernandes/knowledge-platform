@@ -3,6 +3,7 @@ package org.sunbird.graph.service.util;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.sunbird.common.dto.Property;
 import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.common.enums.SystemProperties;
 import org.sunbird.graph.dac.model.SearchCriteria;
@@ -60,29 +61,29 @@ public class SearchQueryGenerationUtil {
 		return query.toString();
 	}
 
-//	public static String generateGetNodesByPropertyCypherQuery(Map<String, Object> parameterMap) {
-//		StringBuilder query = new StringBuilder();
-//		if (null != parameterMap) {
-//			String graphId = (String) parameterMap.get(GraphDACParams.graphId.name());
-//			if (StringUtils.isBlank(graphId))
-//				throw new ClientException(DACErrorCodeConstants.INVALID_GRAPH.name(),
-//						DACErrorMessageConstants.INVALID_GRAPH_ID
-//								+ " | ['Get Nodes By Property' Query Generation Failed.]");
-//
-//			Property property = (Property) parameterMap.get(GraphDACParams.property.name());
-//			if (null == property)
-//				throw new ClientException(DACErrorCodeConstants.INVALID_PROPERTY.name(),
-//						DACErrorMessageConstants.INVALID_PROPERTY
-//								+ " | ['Get Nodes By Property' Query Generation Failed.]");
-//
-//			query.append("MATCH (ee:" + graphId + " {" + property.getPropertyName() + ": '"
-//					+ property.getPropertyValue()
-//					+ "'}) OPTIONAL MATCH (ee)-[r]-() RETURN ee, r, startNode(r) as __startNode, endNode(r) as __endNode");
-//		}
-//
-//		TelemetryManager.log("Returning Get Nodes By Property Cypher Query: " + query);
-//		return query.toString();
-//	}
+	public static String generateGetNodesByPropertyCypherQuery(Map<String, Object> parameterMap) {
+		StringBuilder query = new StringBuilder();
+		if (null != parameterMap) {
+			String graphId = (String) parameterMap.get(GraphDACParams.graphId.name());
+			if (StringUtils.isBlank(graphId))
+				throw new ClientException(DACErrorCodeConstants.INVALID_GRAPH.name(),
+						DACErrorMessageConstants.INVALID_GRAPH_ID
+								+ " | ['Get Nodes By Property' Query Generation Failed.]");
+
+			Property property = (Property) parameterMap.get(GraphDACParams.property.name());
+			if (null == property)
+				throw new ClientException(DACErrorCodeConstants.INVALID_PROPERTY.name(),
+						DACErrorMessageConstants.INVALID_PROPERTY
+								+ " | ['Get Nodes By Property' Query Generation Failed.]");
+
+			query.append("MATCH (ee:" + graphId + " {" + property.getPropertyName() + ": '"
+					+ property.getPropertyValue()
+					+ "'}) OPTIONAL MATCH (ee)-[r]-() RETURN ee, r, startNode(r) as __startNode, endNode(r) as __endNode");
+		}
+
+		TelemetryManager.log("Returning Get Nodes By Property Cypher Query: " + query);
+		return query.toString();
+	}
 
 	public static String generateGetNodeByUniqueIdsCypherQuery(Map<String, Object> parameterMap) {
 		StringBuilder query = new StringBuilder();

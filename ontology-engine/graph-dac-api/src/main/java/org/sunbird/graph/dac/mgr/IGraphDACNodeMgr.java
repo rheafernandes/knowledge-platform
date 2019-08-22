@@ -13,7 +13,7 @@ public interface IGraphDACNodeMgr {
 
 	Response importNodes(Request request);
 
-//	Response updatePropertyValue(Request request);
+	Response updatePropertyValue(Request request);
 
 	Response updatePropertyValues(Request request);
 

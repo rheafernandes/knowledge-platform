@@ -12,20 +12,18 @@ import java.util.Set;
 import java.util.Arrays;
 
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.sunbird.common.DateUtils;
+import org.sunbird.common.JsonUtils;
 import org.sunbird.common.Platform;
-import org.sunbird.common.dto.Property;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
-import org.sunbird.common.exception.ClientException;
 import org.sunbird.common.exception.ResponseCode;
 import org.sunbird.common.exception.ServerException;
-import org.sunbird.graph.common.DateUtils;
+import org.sunbird.graph.common.enums.GraphDACParams;
+import org.sunbird.graph.common.enums.SystemProperties;
 import org.sunbird.graph.mgr.BaseGraphManager;
-import org.sunbird.graph.dac.enums.GraphDACParams;
 import org.sunbird.graph.dac.enums.RelationTypes;
 import org.sunbird.graph.dac.enums.SystemNodeTypes;
-import org.sunbird.graph.dac.enums.SystemProperties;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.dac.model.Relation;
 import org.sunbird.graph.exception.GraphEngineErrorCodes;
@@ -177,7 +175,7 @@ public class DataNode extends AbstractNode {
 
 	public Future<List<String>> deleteRelations(final Request request, final ExecutionContext ec,
 			List<Relation> delRels) {
-		final Promise<List<String>> promise = Futures.promise();
+		final Promise promise = Futures.promise();
 		Future<List<String>> relFuture = promise.future();
 		List<IRelation> relations = new ArrayList<IRelation>();
 		if (null != delRels && !delRels.isEmpty()) {
@@ -211,7 +209,7 @@ public class DataNode extends AbstractNode {
 
 	public Future<List<String>> createRelations(final Request request, final ExecutionContext ec,
 			List<Relation> addRels) {
-		final Promise<List<String>> promise = Futures.promise();
+		final Promise promise = Futures.promise();
 		Future<List<String>> relFuture = promise.future();
 		final List<IRelation> relations = new ArrayList<IRelation>();
 		if (null != addRels && !addRels.isEmpty()) {
@@ -276,30 +274,30 @@ public class DataNode extends AbstractNode {
 			Request request = new Request(req);
 			request.copyRequestValueObjects(req.getRequest());
 			Response response = nodeMgr.removePropertyValue(request);
-			manager.returnResponse(Futures.successful(response), getParent());
+			manager.returnResponse(Future.successful(response), getParent());
 		} catch (Exception e) {
 			manager.ERROR(e, getParent());
 		}
 	}
 
-	@Override
-	public void setProperty(Request req) {
-		Property property = (Property) req.get(GraphDACParams.metadata.name());
-		if (!manager.validateRequired(property)) {
-			throw new ClientException(GraphEngineErrorCodes.ERR_GRAPH_UPDATE_NODE_MISSING_REQ_PARAMS.name(),
-					"Required parameters are missing...");
-		} else {
-			checkMetadata(property.getPropertyName(), property.getPropertyValue());
-			try {
-				Request request = new Request(req);
-				request.copyRequestValueObjects(req.getRequest());
-				Response response = nodeMgr.updatePropertyValue(request);
-				manager.returnResponse(Futures.successful(response), getParent());
-			} catch (Exception e) {
-				manager.ERROR(e, getParent());
-			}
-		}
-	}
+//	@Override
+//	public void setProperty(Request req) {
+//		Property property = (Property) req.get(GraphDACParams.metadata.name());
+//		if (!manager.validateRequired(property)) {
+//			throw new ClientException(GraphEngineErrorCodes.ERR_GRAPH_UPDATE_NODE_MISSING_REQ_PARAMS.name(),
+//					"Required parameters are missing...");
+//		} else {
+//			checkMetadata(property.getPropertyName(), property.getPropertyValue());
+//			try {
+//				Request request = new Request(req);
+//				request.copyRequestValueObjects(req.getRequest());
+//				Response response = nodeMgr.updatePropertyValue(request);
+//				manager.returnResponse(Futures.successful(response), getParent());
+//			} catch (Exception e) {
+//				manager.ERROR(e, getParent());
+//			}
+//		}
+//	}
 
 	public Response createNode(final Request req) {
 		Request request = new Request(req);
@@ -622,18 +620,17 @@ public class DataNode extends AbstractNode {
 				if (!(value instanceof Object[]) && !(value instanceof List))
 					messages.add("Metadata " + propName + " should be a list");
 			} else if (StringUtils.equalsIgnoreCase("json", dataType)) {
-				ObjectMapper mapper = new ObjectMapper();
 				try {
-					mapper.readValue((String) value, Map.class);
+					JsonUtils.deserialize((String) value, Map.class);
 				} catch (Exception e) {
 					try {
-						mapper.readValue((String) value, List.class);
+						JsonUtils.deserialize((String) value, List.class);
 					} catch (Exception ex) {
 						try {
-							mapper.readValue(mapper.writeValueAsString(value), Map.class);
+							JsonUtils.deserialize((String) value, Map.class);
 						} catch (Exception e2) {
 							try {
-								mapper.readValue(mapper.writeValueAsString(value), List.class);
+								JsonUtils.deserialize((String) value, List.class);
 							} catch (Exception ex2) {
 								messages.add("Metadata " + propName + " should be a valid JSON");
 							}

@@ -14,7 +14,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.sunbird.common.JsonUtils;
 import org.sunbird.common.exception.ClientException;
 import org.sunbird.graph.mgr.BaseGraphManager;
 import org.sunbird.graph.dac.enums.SystemNodeTypes;
@@ -31,7 +31,6 @@ public class CSVGraphReader implements GraphReader {
 	private List<Relation> relations;
 	private List<String> validations;
 	private BaseGraphManager manager;
-	private ObjectMapper mapper;
 	Map<String, Map<String, MetadataDefinition>> propertyDataMap;
 
 	public static final String PROPERTY_ID = "identifier";
@@ -44,10 +43,9 @@ public class CSVGraphReader implements GraphReader {
 	CSVFormat csvFileFormat = CSVFormat.DEFAULT;
 
 	@SuppressWarnings("resource")
-	public CSVGraphReader(BaseGraphManager manager, ObjectMapper mapper, String graphId, InputStream inputStream,
-			Map<String, Map<String, MetadataDefinition>> propertyDataMap) throws Exception {
+	public CSVGraphReader(BaseGraphManager manager, String graphId, InputStream inputStream,
+						  Map<String, Map<String, MetadataDefinition>> propertyDataMap) throws Exception {
 		this.manager = manager;
-		this.mapper = mapper;
 		this.propertyDataMap = propertyDataMap;
 		definitionNodes = new ArrayList<Node>();
 		dataNodes = new ArrayList<Node>();
@@ -246,9 +244,9 @@ public class CSVGraphReader implements GraphReader {
 	private List<RelationDefinition> getRelationDefinitions(String metadataStr) throws Exception {
 		List<RelationDefinition> metadata = new ArrayList<RelationDefinition>();
 		if (StringUtils.isNotBlank(metadataStr)) {
-			List<Map<String, Object>> metaStrList = mapper.readValue(metadataStr, List.class);
+			List<Map<String, Object>> metaStrList = JsonUtils.deserialize(metadataStr, List.class);
 			for (Map<String, Object> defMeta : metaStrList) {
-				RelationDefinition relDef = mapper.convertValue(defMeta, RelationDefinition.class);
+				RelationDefinition relDef = JsonUtils.convert(defMeta, RelationDefinition.class);
 				metadata.add(relDef);
 			}
 		}
@@ -259,9 +257,9 @@ public class CSVGraphReader implements GraphReader {
 	private List<MetadataDefinition> getDefinitionNodeMetadata(String metadataStr) throws Exception {
 		List<MetadataDefinition> metadata = new ArrayList<MetadataDefinition>();
 		if (StringUtils.isNotBlank(metadataStr)) {
-			List<Map<String, Object>> metaStrList = mapper.readValue(metadataStr, List.class);
+			List<Map<String, Object>> metaStrList = JsonUtils.deserialize(metadataStr, List.class);
 			for (Map<String, Object> defMeta : metaStrList) {
-				MetadataDefinition metaDef = mapper.convertValue(defMeta, MetadataDefinition.class);
+				MetadataDefinition metaDef = JsonUtils.convert(defMeta, MetadataDefinition.class);
 				metadata.add(metaDef);
 			}
 		}

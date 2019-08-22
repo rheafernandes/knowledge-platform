@@ -11,8 +11,8 @@ import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
 import org.sunbird.common.exception.ClientException;
 import org.sunbird.common.exception.ServerException;
+import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.mgr.BaseGraphManager;
-import org.sunbird.graph.dac.enums.GraphDACParams;
 import org.sunbird.graph.dac.enums.SystemNodeTypes;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.exception.GraphEngineErrorCodes;
@@ -76,7 +76,7 @@ public class ProxyNode extends AbstractNode {
         try {
             Request request = new Request(req);
             request.copyRequestValueObjects(req.getRequest());
-			Future<Object> response = Futures.successful(nodeMgr.removePropertyValue(request));
+			Future<Object> response = Future.successful(nodeMgr.removePropertyValue(request));
             manager.returnResponse(response, getParent());
         } catch (Exception e) {
             manager.ERROR(e, getParent());
@@ -94,7 +94,7 @@ public class ProxyNode extends AbstractNode {
             try {
                 Request request = new Request(req);
                 request.copyRequestValueObjects(req.getRequest());
-				Future<Object> response = Futures.successful(nodeMgr.updatePropertyValue(request));
+				Future<Object> response = Future.successful(nodeMgr.updatePropertyValue(request));
                 manager.returnResponse(response, getParent());
             } catch (Exception e) {
                 manager.ERROR(e, getParent());

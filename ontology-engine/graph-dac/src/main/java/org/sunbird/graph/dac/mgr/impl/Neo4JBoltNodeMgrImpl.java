@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.sunbird.common.dto.Property;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
 import org.sunbird.common.exception.ClientException;
@@ -16,6 +17,7 @@ import org.sunbird.graph.dac.mgr.IGraphDACNodeMgr;
 import org.sunbird.graph.service.common.DACErrorCodeConstants;
 import org.sunbird.graph.service.common.DACErrorMessageConstants;
 import org.sunbird.graph.service.operation.Neo4JBoltNodeOperations;
+import org.sunbird.graph.service.operation.Neo4JBoltSearchOperations;
 
 /**
  * The Class GraphDACNodeMgrImpl.
@@ -173,30 +175,30 @@ public class Neo4JBoltNodeMgrImpl extends BaseDACMgr implements IGraphDACNodeMgr
 		}
 	}
 
-//	/*
-//	 * (non-Javadoc)
-//	 *
-//	 * @see
-//	 * org.sunbird.graph.dac.mgr.IGraphDACNodeMgr#updatePropertyValue(org.sunbird.
-//	 * common.dto.Request)
-//	 */
-//	@Override
-//	public Response updatePropertyValue(Request request) {
-//		String graphId = (String) request.getContext().get(GraphHeaderParams.graph_id.name());
-//		String nodeId = (String) request.get(GraphDACParams.node_id.name());
-//		Property property = (Property) request.get(GraphDACParams.metadata.name());
-//		if (!validateRequired(nodeId, property)) {
-//			throw new ClientException(GraphDACErrorCodes.ERR_UPDATE_NODE_MISSING_REQ_PARAMS.name(),
-//					"Required parameters are missing");
-//		} else {
-//			try {
-//				Neo4JBoltNodeOperations.updatePropertyValue(graphId, nodeId, property, request);
-//				return OK();
-//			} catch (Exception e) {
-//				return ERROR(e);
-//			}
-//		}
-//	}
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * org.sunbird.graph.dac.mgr.IGraphDACNodeMgr#updatePropertyValue(org.sunbird.
+	 * common.dto.Request)
+	 */
+	@Override
+	public Response updatePropertyValue(Request request) {
+		String graphId = (String) request.getContext().get(GraphHeaderParams.graph_id.name());
+		String nodeId = (String) request.get(GraphDACParams.node_id.name());
+		Property property = (Property) request.get(GraphDACParams.metadata.name());
+		if (!validateRequired(nodeId, property)) {
+			throw new ClientException(GraphDACErrorCodes.ERR_UPDATE_NODE_MISSING_REQ_PARAMS.name(),
+					"Required parameters are missing");
+		} else {
+			try {
+				Neo4JBoltNodeOperations.updatePropertyValue(graphId, nodeId, property, request);
+				return OK();
+			} catch (Exception e) {
+				return ERROR(e);
+			}
+		}
+	}
 
 	/*
 	 * (non-Javadoc)
