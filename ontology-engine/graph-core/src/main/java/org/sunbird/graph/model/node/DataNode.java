@@ -26,7 +26,7 @@ import org.sunbird.graph.dac.enums.RelationTypes;
 import org.sunbird.graph.dac.enums.SystemNodeTypes;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.dac.model.Relation;
-import org.sunbird.graph.exception.GraphEngineErrorCodes;
+import org.sunbird.graph.common.exception.GraphEngineErrorCodes;
 import org.sunbird.graph.exception.GraphRelationErrorCodes;
 import org.sunbird.graph.model.IRelation;
 import org.sunbird.graph.model.cache.CategoryCache;

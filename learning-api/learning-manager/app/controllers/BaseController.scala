@@ -36,10 +36,11 @@ abstract class BaseController(protected val cc: ControllerComponents)(implicit e
         request
     }
 
-    def getResult(request: org.sunbird.common.dto.Request) : Future[Result] = {
+    def getResult(apiId: String, request: org.sunbird.common.dto.Request) : Future[Result] = {
         val future = SunbirdMWService.execute(request)
         future.map(f => {
             val result = f.asInstanceOf[Response]
+            result.setId(apiId)
             val response = JavaJsonUtils.serialize(f);
             result.getResponseCode match {
                 case ResponseCode.OK => Ok(response).as("application/json")

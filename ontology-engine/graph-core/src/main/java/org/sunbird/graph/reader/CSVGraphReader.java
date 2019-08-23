@@ -20,7 +20,7 @@ import org.sunbird.graph.mgr.BaseGraphManager;
 import org.sunbird.graph.dac.enums.SystemNodeTypes;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.dac.model.Relation;
-import org.sunbird.graph.exception.GraphEngineErrorCodes;
+import org.sunbird.graph.common.exception.GraphEngineErrorCodes;
 import org.sunbird.graph.model.node.MetadataDefinition;
 import org.sunbird.graph.model.node.RelationDefinition;
 

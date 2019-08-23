@@ -12,7 +12,7 @@ import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.mgr.BaseGraphManager;
 import org.sunbird.graph.dac.enums.SystemNodeTypes;
 import org.sunbird.graph.dac.model.Node;
-import org.sunbird.graph.exception.GraphEngineErrorCodes;
+import org.sunbird.graph.common.exception.GraphEngineErrorCodes;
 import org.sunbird.graph.model.IRelation;
 import org.sunbird.graph.model.relation.HasRelRelation;
 

@@ -27,13 +27,13 @@ public class NodeManager extends BaseManager {
 
     private void createDataNode(Request request) throws Exception {
         ValidationResult result = validate("content", "1.0", request.getRequest());
-        Response response = new Response("org.sunbird.content.create");
+        Response response = new Response();
         if (result.isValid()) {
             Map<String, Object> inputWithDefault = JsonUtils.deserialize(result.getData(), Map.class);
             response.getResult().put("content", inputWithDefault);
             OK(response, self());
         } else {
-            ERROR("NODE_VALIDATION_FAILED", "Validation errors.", ResponseCode.CLIENT_ERROR, "messages", result.getMessages());
+            ERROR("NODE_VALIDATION_FAILED","Validation errors.", ResponseCode.CLIENT_ERROR, "messages", result.getMessages());
         }
     }
 }

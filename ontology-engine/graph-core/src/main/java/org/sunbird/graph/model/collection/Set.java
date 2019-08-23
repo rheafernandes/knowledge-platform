@@ -21,7 +21,7 @@ import org.sunbird.graph.dac.enums.SystemNodeTypes;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.dac.model.Relation;
 import org.sunbird.graph.dac.model.SearchCriteria;
-import org.sunbird.graph.exception.GraphEngineErrorCodes;
+import org.sunbird.graph.common.exception.GraphEngineErrorCodes;
 import org.sunbird.telemetry.logger.TelemetryManager;
 
 import akka.dispatch.Futures;

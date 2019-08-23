@@ -7,7 +7,7 @@ import org.sunbird.common.JsonUtils;
 import org.sunbird.common.exception.ClientException;
 import org.sunbird.graph.mgr.BaseGraphManager;
 import org.sunbird.graph.enums.ImportType;
-import org.sunbird.graph.exception.GraphEngineErrorCodes;
+import org.sunbird.graph.common.exception.GraphEngineErrorCodes;
 import org.sunbird.graph.importer.ImportData;
 import org.sunbird.graph.model.node.MetadataDefinition;
 

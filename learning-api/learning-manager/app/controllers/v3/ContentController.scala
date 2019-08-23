@@ -24,7 +24,7 @@ class ContentController @Inject()(cc: ControllerComponents, actorSystem: ActorSy
             val body = requestBody()
             val content = body.getOrElse(objectType, new java.util.HashMap()).asInstanceOf[java.util.Map[String, Object]];
             content.putAll(commonHeaders())
-            getResult(getRequest("createDataNode", content))
+            getResult("org.sunbird.content.create", getRequest("createDataNode", content))
         }
     }
 }

@@ -9,7 +9,6 @@ import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
 import org.sunbird.common.dto.ResponseParams;
 import org.sunbird.common.exception.*;
-import org.sunbird.graph.common.exception.GraphEngineErrorCodes;
 import scala.concurrent.Future;
 
 import java.util.ArrayList;

@@ -15,7 +15,7 @@ import org.sunbird.graph.common.enums.SystemProperties;
 import org.sunbird.graph.mgr.BaseGraphManager;
 import org.sunbird.graph.dac.enums.RelationTypes;
 import org.sunbird.graph.dac.enums.SystemNodeTypes;
-import org.sunbird.graph.exception.GraphEngineErrorCodes;
+import org.sunbird.graph.common.exception.GraphEngineErrorCodes;
 
 import akka.dispatch.Futures;
 import scala.concurrent.ExecutionContext;

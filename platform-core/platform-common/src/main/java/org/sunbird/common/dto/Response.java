@@ -19,10 +19,6 @@ public class Response implements Serializable {
 
     }
 
-    public Response(String id) {
-        this.id = id;
-    }
-
 
     private String id;
     private String ver = "3.0";

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import akka.dispatch.Futures;
 import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.JsonUtils;
 import org.sunbird.common.dto.Request;
@@ -16,7 +15,7 @@ import org.sunbird.common.exception.ServerException;
 import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.common.enums.SystemProperties;
 import org.sunbird.graph.dac.model.Node;
-import org.sunbird.graph.exception.GraphEngineErrorCodes;
+import org.sunbird.graph.common.exception.GraphEngineErrorCodes;
 import org.sunbird.graph.mgr.BaseGraphManager;
 import org.sunbird.graph.model.AbstractDomainObject;
 import org.sunbird.graph.model.INode;
@@ -51,7 +50,7 @@ public abstract class AbstractNode extends AbstractDomainObject implements INode
 	protected AbstractNode(BaseGraphManager manager, String graphId, String nodeId, Map<String, Object> metadata) {
         super(manager, graphId);
         if (null == manager || StringUtils.isBlank(graphId)) {
-            throw new ClientException(org.sunbird.graph.exception.GraphEngineErrorCodes.ERR_INVALID_NODE.name(), "Invalid Node");
+            throw new ClientException(GraphEngineErrorCodes.ERR_INVALID_NODE.name(), "Invalid Node");
         }
         this.nodeId = nodeId;
         this.metadata = metadata;

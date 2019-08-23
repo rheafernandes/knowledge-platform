@@ -7,7 +7,7 @@ import org.sunbird.common.exception.ClientException;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.dac.model.Relation;
 import org.sunbird.graph.enums.ImportType;
-import org.sunbird.graph.exception.GraphEngineErrorCodes;
+import org.sunbird.graph.common.exception.GraphEngineErrorCodes;
 
 public class GraphWriterFactory {
 

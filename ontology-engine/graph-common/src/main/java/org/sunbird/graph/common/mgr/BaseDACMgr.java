@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.dto.Response;
 import org.sunbird.common.dto.ResponseParams;
 import org.sunbird.common.exception.*;
-import org.sunbird.graph.common.exception.GraphEngineErrorCodes;
 import org.sunbird.telemetry.logger.TelemetryManager;
 
 import java.util.List;
@@ -44,7 +43,7 @@ public class BaseDACMgr {
             MiddlewareException mwException = (MiddlewareException) e;
             params.setErr(mwException.getErrCode());
         } else {
-            params.setErr(GraphEngineErrorCodes.ERR_SYSTEM_EXCEPTION.name());
+            params.setErr(ErrorCodes.ERR_SYSTEM_EXCEPTION.name());
         }
         params.setErrmsg(setErrMessage(e));
         response.setParams(params);
@@ -150,7 +149,7 @@ public class BaseDACMgr {
             MiddlewareException mwException = (MiddlewareException) e;
             params.setErr(mwException.getErrCode());
         } else {
-            params.setErr(GraphEngineErrorCodes.ERR_SYSTEM_EXCEPTION.name());
+            params.setErr(ErrorCodes.ERR_SYSTEM_EXCEPTION.name());
         }
         TelemetryManager.log("Exception occured in class :" + e.getClass().getName() + "with message :" + e.getMessage());
         params.setErrmsg(setErrMessage(e));
