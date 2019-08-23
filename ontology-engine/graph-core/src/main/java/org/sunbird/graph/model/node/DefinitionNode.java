@@ -31,25 +31,21 @@ public class DefinitionNode extends AbstractNode {
     public static final String IN_RELATIONS_KEY = SystemProperties.IL_IN_RELATIONS_KEY.name();
     public static final String OUT_RELATIONS_KEY = SystemProperties.IL_OUT_RELATIONS_KEY.name();
     public static final String REQUIRED_PROPERTIES = SystemProperties.IL_REQUIRED_PROPERTIES.name();
-    public static final String SYSTEM_TAGS_KEY = SystemProperties.IL_SYSTEM_TAGS_KEY.name();
 
     private String objectType;
     private List<MetadataDefinition> indexedMetadata;
     private List<MetadataDefinition> nonIndexedMetadata;
     private List<RelationDefinition> inRelations;
     private List<RelationDefinition> outRelations;
-    private List<TagDefinition> systemTags;
 
     public DefinitionNode(BaseGraphManager manager, String graphId, String objectType, List<MetadataDefinition> indexedMetadata,
-            List<MetadataDefinition> nonIndexedMetadata, List<RelationDefinition> inRelations, List<RelationDefinition> outRelations,
-            List<TagDefinition> systemTags) {
+                          List<MetadataDefinition> nonIndexedMetadata, List<RelationDefinition> inRelations, List<RelationDefinition> outRelations) {
         super(manager, graphId, SystemNodeTypes.DEFINITION_NODE.name() + "_" + objectType, null);
         this.objectType = objectType;
         this.indexedMetadata = indexedMetadata;
         this.nonIndexedMetadata = nonIndexedMetadata;
         this.inRelations = inRelations;
         this.outRelations = outRelations;
-        this.systemTags = systemTags;
     }
 
     public DefinitionNode(BaseGraphManager manager, Node defNode) {
@@ -112,18 +108,6 @@ public class DefinitionNode extends AbstractNode {
                 } catch (Exception e) {
                 }
             }
-            String sysTags = (String) metadata.get(SYSTEM_TAGS_KEY);
-            if (StringUtils.isNotBlank(sysTags)) {
-                try {
-                    this.systemTags = new ArrayList<TagDefinition>();
-                    List<Map<String, Object>> listMap = (List<Map<String, Object>>) JsonUtils.deserialize(sysTags, List.class);
-                    for (Map<String, Object> metaMap : listMap) {
-                        this.systemTags.add((TagDefinition) JsonUtils.convert(metaMap, TagDefinition.class));
-                    }
-                    otherMetadata.remove(SYSTEM_TAGS_KEY);
-                } catch (Exception e) {
-                }
-            }
             try {
                 otherMetadata.remove(REQUIRED_PROPERTIES);
             } catch (Exception e) {
@@ -146,7 +130,6 @@ public class DefinitionNode extends AbstractNode {
         dto.setProperties(properties);
         dto.setInRelations(inRelations);
         dto.setOutRelations(outRelations);
-        dto.setSystemTags(systemTags);
         dto.setMetadata(metadata);
         return dto;
     }
@@ -177,9 +160,6 @@ public class DefinitionNode extends AbstractNode {
             }
             if (null != outRelations && !outRelations.isEmpty()) {
                 metadata.put(OUT_RELATIONS_KEY, JsonUtils.serialize(outRelations));
-            }
-            if (null != systemTags && !systemTags.isEmpty()) {
-                metadata.put(SYSTEM_TAGS_KEY, JsonUtils.serialize(systemTags));
             }
             if (null != requiredKeys && !requiredKeys.isEmpty())
                 metadata.put(REQUIRED_PROPERTIES, convertListToArray(requiredKeys));

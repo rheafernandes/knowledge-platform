@@ -7,7 +7,6 @@ import org.sunbird.common.dto.Response;
 import org.sunbird.common.exception.ResponseCode;
 import org.sunbird.graph.engine.BaseManager;
 import org.sunbird.schema.dto.ValidationResult;
-
 import java.util.Map;
 
 @ActorConfig(tasks = {"createDataNode"})
@@ -36,4 +35,5 @@ public class NodeManager extends BaseManager {
             ERROR("NODE_VALIDATION_FAILED","Validation errors.", ResponseCode.CLIENT_ERROR, "messages", result.getMessages());
         }
     }
+
 }

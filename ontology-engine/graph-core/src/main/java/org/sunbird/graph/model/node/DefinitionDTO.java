@@ -18,7 +18,6 @@ public class DefinitionDTO implements Serializable {
     private List<MetadataDefinition> properties;
     private List<RelationDefinition> inRelations;
     private List<RelationDefinition> outRelations;
-    private List<TagDefinition> systemTags;
     private Map<String, Object> metadata;
 
     public String getIdentifier() {
@@ -59,14 +58,6 @@ public class DefinitionDTO implements Serializable {
 
     public void setOutRelations(List<RelationDefinition> outRelations) {
         this.outRelations = outRelations;
-    }
-
-    public List<TagDefinition> getSystemTags() {
-        return systemTags;
-    }
-
-    public void setSystemTags(List<TagDefinition> systemTags) {
-        this.systemTags = systemTags;
     }
 
     public Map<String, Object> getMetadata() {
@@ -129,18 +120,6 @@ public class DefinitionDTO implements Serializable {
                         this.outRelations.add((RelationDefinition) JsonUtils.convert(metaMap, RelationDefinition.class));
                     }
                     otherMetadata.remove(DefinitionNode.OUT_RELATIONS_KEY);
-                } catch (Exception e) {
-                }
-            }
-            String sysTags = (String) nodeMetadata.get(DefinitionNode.SYSTEM_TAGS_KEY);
-            if (StringUtils.isNotBlank(sysTags)) {
-                try {
-                    this.systemTags = new ArrayList<TagDefinition>();
-                    List<Map<String, Object>> listMap = (List<Map<String, Object>>) JsonUtils.deserialize(sysTags, List.class);
-                    for (Map<String, Object> metaMap : listMap) {
-                        this.systemTags.add((TagDefinition) JsonUtils.convert(metaMap, TagDefinition.class));
-                    }
-                    otherMetadata.remove(DefinitionNode.SYSTEM_TAGS_KEY);
                 } catch (Exception e) {
                 }
             }
