@@ -9,6 +9,11 @@
 	<artifactId>graph-core</artifactId>
 	<dependencies>
 		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-library</artifactId>
+			<version>${scala.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.sunbird</groupId>
 			<artifactId>graph-dac</artifactId>
 			<version>1.0-SNAPSHOT</version>

@@ -48,12 +48,12 @@ import org.sunbird.graph.model.node.DefinitionDTO;
 import org.sunbird.graph.model.node.DefinitionNode;
 import org.sunbird.graph.model.node.MetadataDefinition;
 import org.sunbird.graph.model.relation.RelationHandler;
-import org.sunbird.graph.reader.CSVImportMessageHandler;
-import org.sunbird.graph.reader.GraphReader;
-import org.sunbird.graph.reader.GraphReaderFactory;
-import org.sunbird.graph.reader.JsonGraphReader;
-import org.sunbird.graph.writer.GraphWriterFactory;
-import org.sunbird.graph.writer.RDFGraphWriter;
+//import org.sunbird.graph.reader.CSVImportMessageHandler;
+//import org.sunbird.graph.reader.GraphReader;
+//import org.sunbird.graph.reader.GraphReaderFactory;
+//import org.sunbird.graph.reader.JsonGraphReader;
+//import org.sunbird.graph.writer.GraphWriterFactory;
+//import org.sunbird.graph.writer.RDFGraphWriter;
 
 import akka.util.Timeout;
 import scala.concurrent.Future;
@@ -301,101 +301,6 @@ public class Graph extends AbstractDomainObject {
         } catch (Exception e) {
             throw new ServerException(GraphEngineErrorCodes.ERR_GRAPH_CREATE_RELATION_NODE_FAILED.name(),
                     e.getMessage(), e);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public void importGraph(final Request request) {
-        try {
-            final String graphId = (String) request.getContext().get(GraphHeaderParams.graph_id.name());
-            final String format = (String) request.get(GraphEngineParams.format.name());
-            final String taskId = request.get(GraphEngineParams.task_id.name()) == null ? null
-                    : (String) request.get(GraphEngineParams.task_id.name());
-            final InputStreamValue inputStream = (InputStreamValue) request.get(GraphEngineParams.input_stream.name());
-            // final String taskId = createTaskNode(graphId);
-            if (StringUtils.isBlank(graphId)) {
-                throw new ClientException(GraphEngineErrorCodes.ERR_GRAPH_IMPORT_INVALID_GRAPH_ID.name(),
-                        "GraphId is missing");
-            }
-            if (!manager.validateRequired(inputStream)) {
-                throw new ClientException(GraphEngineErrorCodes.ERR_GRAPH_IMPORT_INVALID_INPUTSTREAM.name(),
-                        "Import stream is missing");
-            } else {
-                // Get byte array.
-                try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-                    IOUtils.copy(inputStream.getInputStream(), baos);
-                    byte[] bytes = baos.toByteArray();
-                    inputStream.setInputStream(new ByteArrayInputStream(bytes));
-                    final ByteArrayInputStream byteInputStream = new ByteArrayInputStream(bytes);
-
-                    // Fetch Definition Nodes
-                    final Request defNodesReq = new Request(request);
-                    Property defNodeProperty = new Property(SystemProperties.IL_SYS_NODE_TYPE.name(),
-                            SystemNodeTypes.DEFINITION_NODE.name());
-                    defNodesReq.put(GraphDACParams.metadata.name(), defNodeProperty);
-
-                    Response res = searchMgr.getNodesByProperty(defNodesReq);
-
-                    if (manager.checkError(res)) {
-                        manager.ERROR(GraphEngineErrorCodes.ERR_GRAPH_IMPORT_UNKNOWN_ERROR.name(),
-                                manager.getErrorMessage(res), res.getResponseCode(), getParent());
-                    } else {
-                        Map<String, Map<String, MetadataDefinition>> propertyDataMap = new HashMap<String, Map<String, MetadataDefinition>>();
-                        List<Node> defNodes = (List<Node>) res.get(GraphDACParams.node_list.name());
-                        List<DefinitionNode> defNodesList = new ArrayList<DefinitionNode>();
-                        for (Node defNode : defNodes) {
-                            DefinitionNode node = new DefinitionNode(manager, defNode);
-                            defNodesList.add(node);
-                        }
-                        for (DefinitionNode node : defNodesList) {
-                            String objectType = node.getFunctionalObjectType();
-                            Map<String, MetadataDefinition> propMap = new HashMap<String, MetadataDefinition>();
-                            List<MetadataDefinition> indexedMeta = node.getIndexedMetadata();
-                            if (indexedMeta != null) {
-                                for (MetadataDefinition propDef : indexedMeta) {
-                                    propMap.put(propDef.getTitle(), propDef);
-                                    propMap.put(propDef.getPropertyName(), propDef);
-                                }
-                            }
-                            List<MetadataDefinition> nonIndexedMeta = node.getNonIndexedMetadata();
-                            if (nonIndexedMeta != null) {
-                                for (MetadataDefinition propDef : nonIndexedMeta) {
-                                    propMap.put(propDef.getTitle(), propDef);
-                                    propMap.put(propDef.getPropertyName(), propDef);
-                                }
-                            }
-                            propertyDataMap.put(objectType, propMap);
-                        }
-
-                        final ImportData importData = GraphReaderFactory.getObject(getManager(), format, graphId,
-                                inputStream.getInputStream(), propertyDataMap);
-                        request.put(GraphDACParams.import_input_object.name(), importData);
-                        request.put(GraphDACParams.task_id.name(), taskId);
-                        // Use ImportData object and import Graph.
-                        Response importResponse = graphMgr.importGraph(request);
-
-                        ResponseParams params = (ResponseParams) importResponse.getParams();
-                        if (StatusType.failed.name().equals(params.getStatus())) {
-                            getParent().tell(importResponse, manager.getSelf());
-                        } else {
-                            final Map<String, List<String>> importMsgMap = (Map<String, List<String>>) importResponse
-                                    .get(GraphDACParams.messages.name());
-                            CSVImportMessageHandler msgHandler = new CSVImportMessageHandler(byteInputStream);
-                            OutputStream outputStream = msgHandler.getOutputStream(importMsgMap);
-                            Map<String, Object> outputMap = new HashMap<String, Object>();
-                            outputMap.put(GraphEngineParams.output_stream.name(), new OutputStreamValue(outputStream));
-                            outputMap.put(GraphEngineParams.task_id.name(), taskId);
-                            manager.OK(outputMap, getParent());
-                        }
-
-                    }
-                } catch (Exception e) {
-                    manager.ERROR(e, GraphEngineParams.task_id.name(), taskId, getParent());
-                }
-            }
-
-        } catch (Exception e) {
-            throw new ServerException(GraphEngineErrorCodes.ERR_GRAPH_IMPORT_UNKNOWN_ERROR.name(), e.getMessage(), e);
         }
     }
 
@@ -648,140 +553,140 @@ public class Graph extends AbstractDomainObject {
         }
     }
 
-    public void importDefinitions(final Request request) {
-        String graphId = (String) request.getContext().get(GraphHeaderParams.graph_id.name());
-        String json = (String) request.get(GraphEngineParams.input_stream.name());
-        if (!manager.validateRequired(json)) {
-            throw new ClientException(GraphEngineErrorCodes.ERR_GRAPH_SAVE_DEF_NODE_MISSING_REQ_PARAMS.name(),
-                    "Input JSON is blank");
-        } else {
-            ObjectMapper mapper = new ObjectMapper();
-            GraphReader graphReader = null;
-            try {
-                graphReader = new JsonGraphReader(manager, graphId, json);
-            } catch (Exception e) {
-                throw new ClientException(GraphEngineErrorCodes.ERR_GRAPH_INVALID_REQUEST_FORMAT.name(),
-                        "Error! Invalid Request Format", e);
-            }
-            try {
-                if (graphReader.getValidations().size() > 0) {
-                    String validations = mapper.writeValueAsString(graphReader.getValidations());
-                    throw new ClientException(GraphEngineErrorCodes.ERR_GRAPH_IMPORT_VALIDATION_FAILED.name(),
-                            validations);
-                }
-                ImportData inputData = new ImportData(graphReader.getDefinitionNodes(), graphReader.getDataNodes(),
-                        graphReader.getRelations(), graphReader.getTagMembersMap());
-                final List<Node> nodes = inputData.getDefinitionNodes();
-                if (null == nodes || nodes.isEmpty()) {
-                    manager.ERROR(GraphEngineErrorCodes.ERR_GRAPH_SAVE_DEF_NODE_MISSING_REQ_PARAMS.name(),
-                            "Definition nodes list is empty", ResponseCode.CLIENT_ERROR, getParent());
-                } else {
-                    Map<String, List<String>> messageMap = new HashMap<String, List<String>>();
-                    final List<DefinitionNode> defNodes = new ArrayList<DefinitionNode>();
-                    for (Node node : nodes) {
-                        node.setGraphId(graphId);
-                        DefinitionNode defNode = new DefinitionNode(manager, node);
-                        defNodes.add(defNode);
-                        List<String> defNodeValidation = defNode.validateDefinitionNode();
-                        if (null != defNodeValidation && !defNodeValidation.isEmpty()) {
-                            messageMap.put(defNode.getNodeId(), defNodeValidation);
-                        }
-                    }
-                    if (null == messageMap || messageMap.isEmpty()) {
-                        final Request req = new Request(request);
-                        req.put(GraphDACParams.node_list.name(), nodes);
+//    public void importDefinitions(final Request request) {
+//        String graphId = (String) request.getContext().get(GraphHeaderParams.graph_id.name());
+//        String json = (String) request.get(GraphEngineParams.input_stream.name());
+//        if (!manager.validateRequired(json)) {
+//            throw new ClientException(GraphEngineErrorCodes.ERR_GRAPH_SAVE_DEF_NODE_MISSING_REQ_PARAMS.name(),
+//                    "Input JSON is blank");
+//        } else {
+//            ObjectMapper mapper = new ObjectMapper();
+//            GraphReader graphReader = null;
+//            try {
+//                graphReader = new JsonGraphReader(manager, graphId, json);
+//            } catch (Exception e) {
+//                throw new ClientException(GraphEngineErrorCodes.ERR_GRAPH_INVALID_REQUEST_FORMAT.name(),
+//                        "Error! Invalid Request Format", e);
+//            }
+//            try {
+//                if (graphReader.getValidations().size() > 0) {
+//                    String validations = mapper.writeValueAsString(graphReader.getValidations());
+//                    throw new ClientException(GraphEngineErrorCodes.ERR_GRAPH_IMPORT_VALIDATION_FAILED.name(),
+//                            validations);
+//                }
+//                ImportData inputData = new ImportData(graphReader.getDefinitionNodes(), graphReader.getDataNodes(),
+//                        graphReader.getRelations(), graphReader.getTagMembersMap());
+//                final List<Node> nodes = inputData.getDefinitionNodes();
+//                if (null == nodes || nodes.isEmpty()) {
+//                    manager.ERROR(GraphEngineErrorCodes.ERR_GRAPH_SAVE_DEF_NODE_MISSING_REQ_PARAMS.name(),
+//                            "Definition nodes list is empty", ResponseCode.CLIENT_ERROR, getParent());
+//                } else {
+//                    Map<String, List<String>> messageMap = new HashMap<String, List<String>>();
+//                    final List<DefinitionNode> defNodes = new ArrayList<DefinitionNode>();
+//                    for (Node node : nodes) {
+//                        node.setGraphId(graphId);
+//                        DefinitionNode defNode = new DefinitionNode(manager, node);
+//                        defNodes.add(defNode);
+//                        List<String> defNodeValidation = defNode.validateDefinitionNode();
+//                        if (null != defNodeValidation && !defNodeValidation.isEmpty()) {
+//                            messageMap.put(defNode.getNodeId(), defNodeValidation);
+//                        }
+//                    }
+//                    if (null == messageMap || messageMap.isEmpty()) {
+//                        final Request req = new Request(request);
+//                        req.put(GraphDACParams.node_list.name(), nodes);
+//
+//                        Response response = nodeMgr.importNodes(req);
+//                        if (manager.checkError(response)) {
+//                            manager.ERROR(GraphEngineErrorCodes.ERR_GRAPH_SAVE_DEF_NODE_FAILED_TO_CREATE.name(),
+//                                    manager.getErrorMessage(response), response.getResponseCode(), getParent());
+//                        } else {
+//                            for (DefinitionNode defNode : defNodes) {
+//                                defNode.loadToCache(request);
+//                            }
+//                            manager.OK(getParent());
+//                        }
+//                    } else {
+//                        manager.ERROR(GraphEngineErrorCodes.ERR_GRAPH_SAVE_DEF_NODE_VALIDATION_FAILED.name(),
+//                                "Definition nodes validation error", ResponseCode.CLIENT_ERROR,
+//                                GraphDACParams.messages.name(), messageMap, getParent());
+//                    }
+//                }
+//            } catch (Exception e) {
+//                throw new ServerException(GraphEngineErrorCodes.ERR_GRAPH_PROCESSING_ERROR.name(),
+//                        "Error! Something went wrong while validating the request", e);
+//            }
+//        }
+//    }
 
-                        Response response = nodeMgr.importNodes(req);
-                        if (manager.checkError(response)) {
-                            manager.ERROR(GraphEngineErrorCodes.ERR_GRAPH_SAVE_DEF_NODE_FAILED_TO_CREATE.name(),
-                                    manager.getErrorMessage(response), response.getResponseCode(), getParent());
-                        } else {
-                            for (DefinitionNode defNode : defNodes) {
-                                defNode.loadToCache(request);
-                            }
-                            manager.OK(getParent());
-                        }
-                    } else {
-                        manager.ERROR(GraphEngineErrorCodes.ERR_GRAPH_SAVE_DEF_NODE_VALIDATION_FAILED.name(),
-                                "Definition nodes validation error", ResponseCode.CLIENT_ERROR,
-                                GraphDACParams.messages.name(), messageMap, getParent());
-                    }
-                }
-            } catch (Exception e) {
-                throw new ServerException(GraphEngineErrorCodes.ERR_GRAPH_PROCESSING_ERROR.name(),
-                        "Error! Something went wrong while validating the request", e);
-            }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public void exportGraph(final Request request) {
-        OutputStream outputStream = null;
-        try {
-            final String format = (String) request.get(GraphEngineParams.format.name());
-            SearchCriteria sc = null;
-            if (null != request.get(GraphEngineParams.search_criteria.name()))
-                sc = (SearchCriteria) request.get(GraphEngineParams.search_criteria.name());
-
-            Response nodesResponse = null;
-            if (null == sc) {
-                Request nodesReq = new Request(request);
-                nodesResponse = searchMgr.getAllNodes(nodesReq);
-            } else {
-                Request nodesReq = new Request(request);
-                nodesReq.put(GraphDACParams.search_criteria.name(), sc);
-                nodesReq.put(GraphDACParams.get_tags.name(), true);
-                nodesResponse = searchMgr.searchNodes(nodesReq);
-            }
-
-            Response relationsResponse = null;
-            if (!StringUtils.equalsIgnoreCase(ImportType.CSV.name(), format)) {
-                Request relationsReq = new Request(request);
-                relationsResponse = searchMgr.getAllRelations(relationsReq);
-            } else {
-                Response blankResponse = new Response();
-                relationsResponse = blankResponse;
-            }
-
-            if (manager.checkError(nodesResponse)) {
-                String msg = manager.getErrorMessage(nodesResponse);
-                if (StringUtils.isNotBlank(msg)) {
-                    manager.ERROR(GraphEngineErrorCodes.ERR_GRAPH_EXPORT_UNKNOWN_ERROR.name(), msg,
-                            nodesResponse.getResponseCode(), getParent());
-                }
-            }
-
-            if (manager.checkError(relationsResponse)) {
-                String msg = manager.getErrorMessage(relationsResponse);
-                if (StringUtils.isNotBlank(msg)) {
-                    manager.ERROR(GraphEngineErrorCodes.ERR_GRAPH_EXPORT_UNKNOWN_ERROR.name(), msg,
-                            relationsResponse.getResponseCode(), getParent());
-                }
-            }
-
-            List<Node> nodes = (List<Node>) nodesResponse.get(GraphDACParams.node_list.name());
-            List<Relation> relations = (List<Relation>) relationsResponse.get(GraphDACParams.relations.name());
-            outputStream = new ByteArrayOutputStream();
-            outputStream = GraphWriterFactory.getData(format, nodes, relations);
-            Response response = new Response();
-            ResponseParams params = new ResponseParams();
-            params.setErr("0");
-            params.setStatus(StatusType.successful.name());
-            params.setErrmsg("Operation successful");
-            response.setParams(params);
-            response.put(GraphEngineParams.output_stream.name(), new OutputStreamValue(outputStream));
-            manager.returnResponse(Future.successful(response), getParent());
-
-        } catch (Exception e) {
-            throw new ServerException(GraphEngineErrorCodes.ERR_GRAPH_EXPORT_UNKNOWN_ERROR.name(), e.getMessage(), e);
-        } finally {
-            try {
-                if (null != outputStream)
-                    outputStream.close();
-            } catch (IOException e) {
-            }
-        }
-    }
+//    @SuppressWarnings("unchecked")
+//    public void exportGraph(final Request request) {
+//        OutputStream outputStream = null;
+//        try {
+//            final String format = (String) request.get(GraphEngineParams.format.name());
+//            SearchCriteria sc = null;
+//            if (null != request.get(GraphEngineParams.search_criteria.name()))
+//                sc = (SearchCriteria) request.get(GraphEngineParams.search_criteria.name());
+//
+//            Response nodesResponse = null;
+//            if (null == sc) {
+//                Request nodesReq = new Request(request);
+//                nodesResponse = searchMgr.getAllNodes(nodesReq);
+//            } else {
+//                Request nodesReq = new Request(request);
+//                nodesReq.put(GraphDACParams.search_criteria.name(), sc);
+//                nodesReq.put(GraphDACParams.get_tags.name(), true);
+//                nodesResponse = searchMgr.searchNodes(nodesReq);
+//            }
+//
+//            Response relationsResponse = null;
+//            if (!StringUtils.equalsIgnoreCase(ImportType.CSV.name(), format)) {
+//                Request relationsReq = new Request(request);
+//                relationsResponse = searchMgr.getAllRelations(relationsReq);
+//            } else {
+//                Response blankResponse = new Response();
+//                relationsResponse = blankResponse;
+//            }
+//
+//            if (manager.checkError(nodesResponse)) {
+//                String msg = manager.getErrorMessage(nodesResponse);
+//                if (StringUtils.isNotBlank(msg)) {
+//                    manager.ERROR(GraphEngineErrorCodes.ERR_GRAPH_EXPORT_UNKNOWN_ERROR.name(), msg,
+//                            nodesResponse.getResponseCode(), getParent());
+//                }
+//            }
+//
+//            if (manager.checkError(relationsResponse)) {
+//                String msg = manager.getErrorMessage(relationsResponse);
+//                if (StringUtils.isNotBlank(msg)) {
+//                    manager.ERROR(GraphEngineErrorCodes.ERR_GRAPH_EXPORT_UNKNOWN_ERROR.name(), msg,
+//                            relationsResponse.getResponseCode(), getParent());
+//                }
+//            }
+//
+//            List<Node> nodes = (List<Node>) nodesResponse.get(GraphDACParams.node_list.name());
+//            List<Relation> relations = (List<Relation>) relationsResponse.get(GraphDACParams.relations.name());
+//            outputStream = new ByteArrayOutputStream();
+//            outputStream = GraphWriterFactory.getData(format, nodes, relations);
+//            Response response = new Response();
+//            ResponseParams params = new ResponseParams();
+//            params.setErr("0");
+//            params.setStatus(StatusType.successful.name());
+//            params.setErrmsg("Operation successful");
+//            response.setParams(params);
+//            response.put(GraphEngineParams.output_stream.name(), new OutputStreamValue(outputStream));
+//            manager.returnResponse(Future.successful(response), getParent());
+//
+//        } catch (Exception e) {
+//            throw new ServerException(GraphEngineErrorCodes.ERR_GRAPH_EXPORT_UNKNOWN_ERROR.name(), e.getMessage(), e);
+//        } finally {
+//            try {
+//                if (null != outputStream)
+//                    outputStream.close();
+//            } catch (IOException e) {
+//            }
+//        }
+//    }
 
     @SuppressWarnings("unchecked")
     private Map<String, List<String>> getNodesValidationsFuture(Response defNodesResponse, final Response nodesResponse,
@@ -882,32 +787,32 @@ public class Graph extends AbstractDomainObject {
         return messages;
     }
 
-    public void exportNode(Request req) {
-        Request request = new Request(req);
-        request.copyRequestValueObjects(req.getRequest());
-        Response res = searchMgr.getNodeByUniqueId(request);
-
-        if (manager.checkError(res)) {
-            manager.ERROR(GraphEngineErrorCodes.ERR_GRAPH_EXPORT_NODE_UNKNOWN_ERROR.name(),
-                    manager.getErrorMessage(res), res.getResponseCode(), getParent());
-        } else {
-            Node node = (Node) res.get(GraphDACParams.node.name());
-            if (null == node || StringUtils.isBlank(node.getNodeType())
-                    || !StringUtils.equalsIgnoreCase(SystemNodeTypes.DATA_NODE.name(), node.getNodeType())) {
-                manager.ERROR(GraphEngineErrorCodes.ERR_GRAPH_EXPORT_NODE_NOT_FOUND.name(), "Failed to export node",
-                        ResponseCode.RESOURCE_NOT_FOUND, getParent());
-            } else {
-                RDFGraphWriter rdfWriter = new RDFGraphWriter();
-                try (InputStream is = rdfWriter.getRDF(node)) {
-                    manager.OK(GraphEngineParams.input_stream.name(), new InputStreamValue(is), getParent());
-                } catch (Exception e) {
-                    throw new ServerException(GraphEngineErrorCodes.ERR_GRAPH_EXPORT_NODE_UNKNOWN_ERROR.name(),
-                            e.getMessage(), e);
-                }
-            }
-
-        }
-    }
+//    public void exportNode(Request req) {
+//        Request request = new Request(req);
+//        request.copyRequestValueObjects(req.getRequest());
+//        Response res = searchMgr.getNodeByUniqueId(request);
+//
+//        if (manager.checkError(res)) {
+//            manager.ERROR(GraphEngineErrorCodes.ERR_GRAPH_EXPORT_NODE_UNKNOWN_ERROR.name(),
+//                    manager.getErrorMessage(res), res.getResponseCode(), getParent());
+//        } else {
+//            Node node = (Node) res.get(GraphDACParams.node.name());
+//            if (null == node || StringUtils.isBlank(node.getNodeType())
+//                    || !StringUtils.equalsIgnoreCase(SystemNodeTypes.DATA_NODE.name(), node.getNodeType())) {
+//                manager.ERROR(GraphEngineErrorCodes.ERR_GRAPH_EXPORT_NODE_NOT_FOUND.name(), "Failed to export node",
+//                        ResponseCode.RESOURCE_NOT_FOUND, getParent());
+//            } else {
+//                RDFGraphWriter rdfWriter = new RDFGraphWriter();
+//                try (InputStream is = rdfWriter.getRDF(node)) {
+//                    manager.OK(GraphEngineParams.input_stream.name(), new InputStreamValue(is), getParent());
+//                } catch (Exception e) {
+//                    throw new ServerException(GraphEngineErrorCodes.ERR_GRAPH_EXPORT_NODE_UNKNOWN_ERROR.name(),
+//                            e.getMessage(), e);
+//                }
+//            }
+//
+//        }
+//    }
 
     public void upsertRootNode(Request req) {
         try {

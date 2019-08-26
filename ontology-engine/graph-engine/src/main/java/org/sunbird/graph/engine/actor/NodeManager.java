@@ -6,6 +6,7 @@ import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
 import org.sunbird.common.exception.ResponseCode;
 import org.sunbird.graph.engine.BaseManager;
+import org.sunbird.graph.model.node.DataNode;
 import org.sunbird.schema.dto.ValidationResult;
 import java.util.Map;
 
@@ -28,6 +29,7 @@ public class NodeManager extends BaseManager {
         ValidationResult result = validate("content", "1.0", request.getRequest());
         Response response = new Response();
         if (result.isValid()) {
+            //DataNode node = new DataNode();
             Map<String, Object> inputWithDefault = JsonUtils.deserialize(result.getData(), Map.class);
             response.getResult().put("content", inputWithDefault);
             OK(response, self());
