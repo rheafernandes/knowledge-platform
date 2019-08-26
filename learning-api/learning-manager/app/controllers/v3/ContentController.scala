@@ -17,14 +17,9 @@ class ContentController @Inject()(cc: ControllerComponents, actorSystem: ActorSy
 
     def create() = Action.async { implicit request =>
         val headers = commonHeaders()
-        val channel = headers.getOrDefault("channel", "").asInstanceOf[String]
-        if (channel.isEmpty) {
-            Futures.successful(BadRequest("""{"message": "Header X-Channel-ID required."}""").as("application/json"))
-        } else {
-            val body = requestBody()
-            val content = body.getOrElse(objectType, new java.util.HashMap()).asInstanceOf[java.util.Map[String, Object]];
-            content.putAll(commonHeaders())
-            getResult("org.sunbird.content.create", getRequest("createDataNode", content))
-        }
+        val body = requestBody()
+        val content = body.getOrElse(objectType, new java.util.HashMap()).asInstanceOf[java.util.Map[String, Object]];
+        content.putAll(headers)
+        getResult("org.sunbird.content.create", getRequest("createContent", content))
     }
 }

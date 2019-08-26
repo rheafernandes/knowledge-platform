@@ -21,7 +21,6 @@
                         "application/vnd.ekstep.plugin-archive",
                         "application/vnd.ekstep.h5p-archive",
                         "application/pdf"
-
                     ]
                 },
                 "contentEncoding": {
@@ -57,6 +56,6 @@
                 }
             }
         }
-
-    ]
+    ],
+    "externalProperties": ["body"]
 }

@@ -31,7 +31,7 @@ abstract class BaseController(protected val cc: ControllerComponents)(implicit e
 
     def getRequest(operation: String, input: java.util.Map[String, AnyRef]): org.sunbird.common.dto.Request = {
         val request = new org.sunbird.common.dto.Request();
-        request.setOperation("createDataNode")
+        request.setOperation(operation)
         request.setRequest(input)
         request
     }

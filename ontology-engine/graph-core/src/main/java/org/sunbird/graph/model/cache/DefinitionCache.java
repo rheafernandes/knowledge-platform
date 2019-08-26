@@ -17,7 +17,6 @@ import org.sunbird.graph.dac.model.SearchCriteria;
 import org.sunbird.graph.model.node.DefinitionDTO;
 import org.sunbird.graph.model.node.RelationDefinition;
 
-import akka.actor.ActorRef;
 
 public class DefinitionCache extends BaseGraphManager {
 
@@ -102,7 +101,7 @@ public class DefinitionCache extends BaseGraphManager {
 	}
 
 	@Override
-	protected void invokeMethod(Request request, ActorRef parent) {
+	public void onReceive(Request request) {
 
 	}
 
