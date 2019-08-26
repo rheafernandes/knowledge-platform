@@ -274,7 +274,7 @@ public class DataNode extends AbstractNode {
 			Request request = new Request(req);
 			request.copyRequestValueObjects(req.getRequest());
 			Response response = nodeMgr.removePropertyValue(request);
-			manager.returnResponse(Future.successful(response), getParent());
+			manager.returnResponse(Futures.successful(response), getParent());
 		} catch (Exception e) {
 			manager.ERROR(e, getParent());
 		}

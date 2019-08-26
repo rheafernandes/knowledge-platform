@@ -1,5 +1,6 @@
 package org.sunbird.graph.model.relation;
 
+import akka.dispatch.Futures;
 import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
@@ -57,7 +58,7 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 				request.put(GraphDACParams.relation_type.name(), getRelationType());
 				request.put(GraphDACParams.end_node_id.name(), getEndNodeId());
 				request.put(GraphDACParams.metadata.name(), getMetadata());
-				Future<Object> response = Future.successful(graphMgr.addRelation(request));
+				Future<Object> response = Futures.successful(graphMgr.addRelation(request));
 				manager.returnResponse(response, getParent());
 			} else {
 				manager.OK(GraphDACParams.messages.name(), errMessages, getParent());
@@ -87,7 +88,7 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 		try {
 			Request request = new Request(req);
 			request.copyRequestValueObjects(req.getRequest());
-			Future<Object> response = Future.successful(graphMgr.deleteRelation(request));
+			Future<Object> response = Futures.successful(graphMgr.deleteRelation(request));
 			manager.returnResponse(response, getParent());
 		} catch (Exception e) {
 			throw new ServerException(GraphRelationErrorCodes.ERR_RELATION_DELETE.name(),
@@ -155,7 +156,7 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 			request.put(GraphDACParams.relation_type.name(), getRelationType());
 			request.put(GraphDACParams.end_node_id.name(), this.endNodeId);
 			request.put(GraphDACParams.property_key.name(), key);
-			Future<Object> response = Future.successful(searchMgr.getRelationProperty(request));
+			Future<Object> response = Futures.successful(searchMgr.getRelationProperty(request));
 			manager.returnResponse(response, getParent());
 		} catch (Exception e) {
 			throw new ServerException(GraphRelationErrorCodes.ERR_RELATION_GET_PROPERTY.name(),

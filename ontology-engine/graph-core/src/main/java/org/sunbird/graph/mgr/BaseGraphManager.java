@@ -9,6 +9,7 @@ import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
 import org.sunbird.common.dto.ResponseParams;
 import org.sunbird.common.exception.*;
+import org.sunbird.graph.common.exception.GraphEngineErrorCodes;
 import scala.concurrent.Future;
 
 import java.util.ArrayList;
@@ -81,7 +82,7 @@ public abstract class BaseGraphManager extends UntypedActor {
             MiddlewareException mwException = (MiddlewareException) e;
             params.setErr(mwException.getErrCode());
         } else {
-            params.setErr(GraphEngineErrorCodes.ERR_SYSTEM_EXCEPTION.name());
+            params.setErr(ErrorCodes.ERR_SYSTEM_EXCEPTION.name());
         }
         params.setErrmsg(setErrMessage(e));
         response.setParams(params);
@@ -195,7 +196,7 @@ public abstract class BaseGraphManager extends UntypedActor {
             MiddlewareException mwException = (MiddlewareException) e;
             params.setErr(mwException.getErrCode());
         } else {
-            params.setErr(GraphEngineErrorCodes.ERR_SYSTEM_EXCEPTION.name());
+            params.setErr(ErrorCodes.ERR_SYSTEM_EXCEPTION.name());
         }
         params.setErrmsg(setErrMessage(e));
         response.setParams(params);

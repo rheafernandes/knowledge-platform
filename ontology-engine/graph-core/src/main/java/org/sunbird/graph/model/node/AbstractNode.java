@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import akka.dispatch.Futures;
 import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.JsonUtils;
 import org.sunbird.common.dto.Request;
@@ -71,7 +72,7 @@ public abstract class AbstractNode extends AbstractDomainObject implements INode
 			if (null == errMessages || errMessages.isEmpty()) {
 				Request request = new Request(req);
 				request.put(GraphDACParams.node.name(), toNode());
-				Future<Object> response = Future.successful(nodeMgr.addNode(request));
+				Future<Object> response = Futures.successful(nodeMgr.addNode(request));
 				manager.returnResponse(response, getParent());
 			} else {
 				manager.ERROR(GraphEngineErrorCodes.ERR_GRAPH_ADD_NODE_VALIDATION_FAILED.name(),
@@ -97,7 +98,7 @@ public abstract class AbstractNode extends AbstractDomainObject implements INode
                 Request request = new Request(req);
                 request.put(GraphDACParams.node_id.name(), this.nodeId);
                 request.put(GraphDACParams.property_key.name(), key);
-				Future<Object> response = Future.successful(searchMgr.getNodeProperty(request));
+				Future<Object> response = Futures.successful(searchMgr.getNodeProperty(request));
                 manager.returnResponse(response, getParent());
             } catch (Exception e) {
                 manager.ERROR(e, getParent());
@@ -140,7 +141,7 @@ public abstract class AbstractNode extends AbstractDomainObject implements INode
         try {
             Request request = new Request(req);
             request.put(GraphDACParams.node_id.name(), getNodeId());
-			Future<Object> response = Future.successful(nodeMgr.deleteNode(request));
+			Future<Object> response = Futures.successful(nodeMgr.deleteNode(request));
             manager.returnResponse(response, getParent());
         } catch (Exception e) {
             manager.ERROR(e, getParent());
