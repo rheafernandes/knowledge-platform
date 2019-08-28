@@ -2,7 +2,6 @@ package org.sunbird.graph.engine.actor;
 
 import org.sunbird.actor.router.ActorConfig;
 import org.sunbird.common.dto.Request;
-import org.sunbird.common.dto.Response;
 import org.sunbird.graph.engine.DataNode;
 import org.sunbird.graph.mgr.BaseGraphManager;
 

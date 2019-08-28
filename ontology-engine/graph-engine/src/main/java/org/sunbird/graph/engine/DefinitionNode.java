@@ -1,6 +1,5 @@
 package org.sunbird.graph.engine;
 
-import org.sunbird.common.DateUtils;
 import org.sunbird.graph.engine.dto.Result;
 import org.sunbird.schema.SchemaValidatorFactory;
 import org.sunbird.schema.dto.ValidationResult;
@@ -20,8 +19,11 @@ public class DefinitionNode extends BaseDomainObject {
      * @throws Exception
      */
     public Result validate(Map<String, Object> data) throws Exception {
+        // TODO: Read JSON Schema of the given object,
+        //  execute conditional (if-then-else) statements and update request data.
         ValidationResult jsonResult = SchemaValidatorFactory.getInstance(objectType, version).validate(data);
-        jsonResult.getData().put("createdOn", DateUtils.formatCurrentDate());
+        // TODO: set audit properties to validated data.
+        setSystemProperties(jsonResult.getData());
         return new Result(graphId, objectType, jsonResult);
     }
 }

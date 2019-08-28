@@ -29,6 +29,7 @@ public class ContentActor extends BaseGraphManager {
 
     private void create(Request request) {
         Request createRequest = new Request(request,"createDataNode", objectType);
+        createRequest.setRequest(request.getRequest());
         Patterns.pipe(getResult(createRequest), getContext().getDispatcher()).to(sender());
     }
 

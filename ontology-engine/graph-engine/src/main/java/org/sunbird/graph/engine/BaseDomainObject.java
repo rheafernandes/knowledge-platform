@@ -1,6 +1,10 @@
 package org.sunbird.graph.engine;
 
 
+import org.sunbird.common.DateUtils;
+
+import java.util.Map;
+
 public abstract class BaseDomainObject {
 
     public String graphId = "domain";
@@ -10,5 +14,9 @@ public abstract class BaseDomainObject {
     public BaseDomainObject(String graphId, String objectType, String version) {
         this.objectType = objectType;
         this.version = version;
+    }
+
+    public void setSystemProperties(Map<String, Object> data) {
+        data.put("createdOn", DateUtils.formatCurrentDate());
     }
 }
