@@ -30,11 +30,6 @@ public class NodeManager extends BaseGraphManager {
         node.create(request);
     }
 
-    private void saveExternalProperties(Request request) {
-        Response response = new Response();
-        OK(response, self());
-    }
-
 
 
 
