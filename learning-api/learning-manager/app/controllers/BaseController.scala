@@ -29,11 +29,8 @@ abstract class BaseController(protected val cc: ControllerComponents)(implicit e
         }).flatten.toMap.asJava
     }
 
-    def getRequest(operation: String, input: java.util.Map[String, AnyRef]): org.sunbird.common.dto.Request = {
-        val request = new org.sunbird.common.dto.Request();
-        request.setOperation(operation)
-        request.setRequest(input)
-        request
+    def getRequest(input: java.util.Map[String, AnyRef], context: java.util.Map[String, AnyRef], operation: String): org.sunbird.common.dto.Request = {
+        new org.sunbird.common.dto.Request(context, input, operation, null);
     }
 
     def getResult(apiId: String, request: org.sunbird.common.dto.Request) : Future[Result] = {
@@ -41,12 +38,12 @@ abstract class BaseController(protected val cc: ControllerComponents)(implicit e
         future.map(f => {
             val result = f.asInstanceOf[Response]
             result.setId(apiId)
-            val response = JavaJsonUtils.serialize(f);
+            val response = JavaJsonUtils.serialize(result);
             result.getResponseCode match {
                 case ResponseCode.OK => Ok(response).as("application/json")
                 case ResponseCode.CLIENT_ERROR => BadRequest(response).as("application/json")
                 case ResponseCode.RESOURCE_NOT_FOUND => NotFound(response).as("application/json")
-                case _ => play.api.mvc.Results.InternalServerError(JavaJsonUtils.serialize((response))).as("application/json")
+                case _ => play.api.mvc.Results.InternalServerError(response).as("application/json")
             }
         })
     }

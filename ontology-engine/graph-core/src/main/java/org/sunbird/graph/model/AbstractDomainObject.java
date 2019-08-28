@@ -82,7 +82,7 @@ public abstract class AbstractDomainObject {
 
     protected Request getRequestObject(Request req, String manager, String operation, String key, Object value) {
         Request request = new Request(req);
-        request.setManagerName(manager);
+//        request.setManagerName(manager);
         request.setOperation(operation);
         if (StringUtils.isNotBlank(key) && null != value) {
             request.put(key, value);
@@ -92,7 +92,7 @@ public abstract class AbstractDomainObject {
 
     protected Request getRequestObject(Request req, String manager, String operation, Map<String, Object> params) {
         Request request = new Request(req);
-        request.setManagerName(manager);
+//        request.setManagerName(manager);
         request.setOperation(operation);
         if (null != params && !params.isEmpty()) {
             for (Entry<String, Object> param : params.entrySet()) {

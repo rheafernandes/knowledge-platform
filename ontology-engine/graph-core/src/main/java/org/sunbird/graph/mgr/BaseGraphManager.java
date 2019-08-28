@@ -5,7 +5,8 @@ import akka.dispatch.OnFailure;
 import akka.dispatch.OnSuccess;
 import org.apache.commons.lang3.StringUtils;
 import org.sunbird.actor.core.BaseActor;
-import org.sunbird.common.JsonUtils;
+import org.sunbird.actor.service.SunbirdMWService;
+import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
 import org.sunbird.common.dto.ResponseParams;
 import org.sunbird.common.exception.*;
@@ -17,6 +18,10 @@ import java.util.Map;
 import akka.dispatch.Mapper;
 
 public abstract class BaseGraphManager extends BaseActor {
+
+    public Future<Object> getResult(Request request) {
+        return SunbirdMWService.execute(request);
+    }
 
     // TODO: remove errorMessage - message is derived from code.
     public void ERROR(String errorCode, String errorMessage, ResponseCode code, String responseIdentifier, Object vo) {

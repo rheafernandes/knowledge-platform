@@ -42,20 +42,21 @@
         {
             "if": {
                 "properties": {
-                    "mimeType": {"const": "application/pdf"}
+                    "mimeType": {"const": "application/vnd.ekstep.ecml-archive"}
                 }
             },
             "then": {
                 "properties": {
-                    "contentEncoding": { "default": "gzip"}
+                    "contentEncoding": { "const": "gzip"}
                 }
             },
             "else" : {
                 "properties": {
-                    "contentEncoding": {"default": "identity"}
+                    "contentEncoding": {"const": "identity"}
                 }
             }
         }
     ],
+
     "externalProperties": ["body"]
 }

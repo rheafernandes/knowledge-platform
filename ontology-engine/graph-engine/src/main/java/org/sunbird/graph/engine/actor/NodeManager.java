@@ -7,8 +7,11 @@ import org.sunbird.graph.engine.DataNode;
 import org.sunbird.graph.mgr.BaseGraphManager;
 
 
-@ActorConfig(tasks = {"createDataNode", "saveExternalProperties"})
+@ActorConfig(tasks = {"createDataNode"})
 public class NodeManager extends BaseGraphManager {
+
+    // TODO: put it as part of request;
+    String graphId = "domain";
 
     @Override
     public void onReceive(Request request) throws Throwable {
@@ -17,19 +20,14 @@ public class NodeManager extends BaseGraphManager {
             case "createDataNode":
                 createDataNode(request);
                 break;
-            case "saveExternalProperties":
-                saveExternalProperties(request);
-                break;
             default:
                 ERROR(operation);
         }
     }
 
     private void createDataNode(Request request) throws Exception {
-        // TODO: create Graph Node with metadata
-        DataNode node = new DataNode(request.getObjectType(), "1.0");
-        Response response = node.create(request);
-        OK(response, self());
+        DataNode node = new DataNode(this, graphId, request.getObjectType(), "1.0");
+        node.create(request);
     }
 
     private void saveExternalProperties(Request request) {

@@ -112,7 +112,7 @@ public class Neo4JBoltNodeOperations {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Node addNode(String graphId, Node node, Request request) {
+	public static Node addNode(String graphId, Node node) {
 
 		if (StringUtils.isBlank(graphId))
 			throw new ClientException(DACErrorCodeConstants.INVALID_GRAPH.name(),
@@ -128,12 +128,12 @@ public class Neo4JBoltNodeOperations {
 			TelemetryManager.log("Session Initialised. | [Graph Id: " + graphId + "]");
 			node.setGraphId(graphId);
 
-			setRequestContextToNode(node, request);
+//			setRequestContextToNode(node, request);
 
 			Map<String, Object> parameterMap = new HashMap<String, Object>();
 			parameterMap.put(GraphDACParams.graphId.name(), graphId);
 			parameterMap.put(GraphDACParams.node.name(), node);
-			parameterMap.put(GraphDACParams.request.name(), request);
+//			parameterMap.put(GraphDACParams.request.name(), request);
 
 			NodeQueryGenerationUtil.generateCreateNodeCypherQuery(parameterMap);
 
@@ -181,6 +181,7 @@ public class Neo4JBoltNodeOperations {
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			if (!(e instanceof MiddlewareException)) {
 				throw new ServerException(DACErrorCodeConstants.CONNECTION_PROBLEM.name(),
 						DACErrorMessageConstants.CONNECTION_PROBLEM + " | " + e.getMessage());

@@ -88,7 +88,7 @@ public class Neo4JBoltNodeMgrImpl extends BaseDACMgr implements IGraphDACNodeMgr
 					"Invalid input node");
 		else {
 			try {
-				org.sunbird.graph.dac.model.Node addedNode = Neo4JBoltNodeOperations.addNode(graphId, node, request);
+				org.sunbird.graph.dac.model.Node addedNode = Neo4JBoltNodeOperations.addNode(graphId, node);
 				
 				// Creating Map for Response Values
 				Map<String, Object> responseMap = new HashMap<String, Object>();
