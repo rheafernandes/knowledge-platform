@@ -6,6 +6,7 @@ import org.sunbird.common.exception.ResponseCode;
 import org.sunbird.content.CommonContentNode;
 import org.sunbird.content.ECMLContentNode;
 import org.sunbird.content.IContentNode;
+import org.sunbird.content.PluginContentNode;
 
 import java.util.Map;
 
@@ -19,6 +20,9 @@ public class ContentNodeManager {
         switch (mimeType) {
             case "application/vnd.ekstep.ecml-archive":
                 node = new ECMLContentNode(data);
+                break;
+            case "application/vnd.ekstep.plugin-archive":
+                node = new PluginContentNode(data);
                 break;
             default:
                 node = new CommonContentNode(data);

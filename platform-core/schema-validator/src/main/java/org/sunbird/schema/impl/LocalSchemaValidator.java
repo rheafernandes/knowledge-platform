@@ -4,7 +4,6 @@ import org.apache.commons.collections4.MapUtils;
 import org.leadpony.justify.api.JsonSchema;
 import org.sunbird.common.JsonUtils;
 
-import javax.json.JsonArray;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,7 +17,7 @@ public class LocalSchemaValidator extends SchemaValidator {
 
     public LocalSchemaValidator(String name, String version) throws Exception {
         super(name, version);
-        String fileName = name + "-" + version + ".json";
+        String fileName = name.toLowerCase() + "-" + version + ".json";
         URI uri = getClass().getClassLoader().getResource( basePath + fileName).toURI();
         Path schemaPath = Paths.get(uri);
         this.schema = readSchema(schemaPath);

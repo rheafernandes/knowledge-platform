@@ -121,8 +121,6 @@ public class NodeUtil {
                 }
                 updateReturnMap(map, outRelMap, outRelDefMap);
             }
-            if (CollectionUtils.isNotEmpty(node.getTags()))
-                map.put("tags", node.getTags());
             map.put("identifier", node.getIdentifier());
         }
         return map;

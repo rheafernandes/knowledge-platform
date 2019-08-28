@@ -96,7 +96,6 @@ public class Neo4JBoltNodeMgrImpl extends BaseDACMgr implements IGraphDACNodeMgr
 				if (null != addedNode && null != addedNode.getMetadata())
 					responseMap.put(GraphDACParams.versionKey.name(),
 							addedNode.getMetadata().get(GraphDACParams.versionKey.name()));
-				
 				return OK(responseMap);
 			} catch (Exception e) {
 				return ERROR(e);

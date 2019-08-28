@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -29,11 +31,18 @@ public class Request implements Serializable {
     private String managerName;
     private String operation;
     private String request_id;
+    private String objectType;
 
     public Request() {
     	this.params = new RequestParams();
     	this.params.setMsgid(request_id);
-   
+    }
+
+    public Request(Map<String, Object> context, Map<String, Object> request, String objectType, String operation) {
+        this.context = context;
+        this.request = request;
+        this.objectType = objectType;
+        this.operation = operation;
     }
     
     public Request(Request request) {
@@ -45,7 +54,11 @@ public class Request implements Serializable {
     	}
     	if(StringUtils.isBlank(this.params.getMsgid()) && StringUtils.isNotBlank(request_id))
     		this.params.setMsgid(request_id);
-        this.context.putAll(request.getContext());
+    	if (MapUtils.isEmpty(this.context)) {
+    	    this.context = new HashMap<>();
+        }
+    	if (MapUtils.isNotEmpty(request.getContext()))
+            this.context.putAll(request.getContext());
     }
     
     public String getRequestId() {
@@ -148,4 +161,11 @@ public class Request implements Serializable {
 
     }
 
+    public String getObjectType() {
+        return objectType;
+    }
+
+    public void setObjectType(String objectType) {
+        this.objectType = objectType;
+    }
 }

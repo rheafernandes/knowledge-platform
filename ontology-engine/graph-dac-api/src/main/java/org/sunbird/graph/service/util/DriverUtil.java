@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.neo4j.driver.v1.Config;
 import org.sunbird.common.Platform;
 import org.sunbird.graph.service.common.DACConfigurationConstants;
 import org.sunbird.graph.service.common.GraphOperation;
@@ -32,36 +33,19 @@ public class DriverUtil {
 
 	public static Driver loadDriver(String graphId, GraphOperation graphOperation) {
 		TelemetryManager.log("Loading driver for Graph Id: "+ graphId);
-		String driverType = Platform.config.hasPath("neo4j.driver.type")
-				? Platform.config.getString("neo4j.driver.type")
-				: DACConfigurationConstants.NEO4J_SERVER_DRIVER_TYPE;
-		Driver driver = null;
 		String route = RoutingUtil.getRoute(graphId, graphOperation);
-		switch (driverType.toLowerCase()) {
-		case "simple":
-			TelemetryManager.log("Reading Simple Driver. | [Driver Initialization.]");
-			driver = GraphDatabase.driver(route, ConfigUtil.getConfig());
-			break;
-
-		case "medium":
-			TelemetryManager.log("Reading Medium Driver. | [Driver Initialization.]");
-			driver = GraphDatabase.driver(route, AuthTokenUtil.getAuthToken(), ConfigUtil.getConfig());
-			break;
-
-		case "complex":
-			TelemetryManager.log("Reading Complex Driver. | [Driver Initialization.]");
-			driver = GraphDatabase.driver(route, AuthTokenUtil.getAuthToken(),
-					ConfigUtil.getConfig());
-			break;
-
-		default:
-			TelemetryManager.log("Invalid Database (Bolt) Driver Type: " + driverType + " | [Default Driver Type is ]");
-			driver = GraphDatabase.driver(RoutingUtil.getRoute(graphId, null));
-			break;
-		}
+		Driver driver = GraphDatabase.driver(route, getConfig());
 		if (null != driver)
 			registerShutdownHook(driver);
 		return driver;
+	}
+
+	public static Config getConfig() {
+		Config.ConfigBuilder config = Config.build();
+		config.withEncryptionLevel(Config.EncryptionLevel.NONE);
+		config.withMaxIdleSessions(DACConfigurationConstants.NEO4J_SERVER_MAX_IDLE_SESSION);
+		config.withTrustStrategy(Config.TrustStrategy.trustAllCertificates());
+		return config.toConfig();
 	}
 
 	public static void closeDrivers() {
