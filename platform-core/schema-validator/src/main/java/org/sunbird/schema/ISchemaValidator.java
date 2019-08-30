@@ -2,14 +2,12 @@ package org.sunbird.schema;
 
 import org.sunbird.schema.dto.ValidationResult;
 
-import java.io.StringReader;
 import java.util.List;
+import java.util.Map;
 
 public interface ISchemaValidator {
 
-    ValidationResult validate(String data);
+    ValidationResult validate(Map<String, Object> data) throws Exception;
 
-    List<String> validate(StringReader input);
-
-    String withDefaultValues(String data);
+    ExternalSchema getExternalSchema();
 }

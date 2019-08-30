@@ -1,9 +1,10 @@
 package org.sunbird.graph.model;
 
+import org.sunbird.common.dto.Request;
+
 import java.util.List;
 import java.util.Map;
 
-import org.sunbird.common.dto.Request;
 
 /**
  * @author rayulu

@@ -1,5 +1,11 @@
 package org.sunbird.graph.model.relation;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
@@ -13,14 +19,9 @@ import org.sunbird.graph.mgr.BaseGraphManager;
 import org.sunbird.graph.model.AbstractDomainObject;
 import org.sunbird.graph.model.IRelation;
 import org.sunbird.graph.model.cache.DefinitionCache;
+
+import akka.dispatch.Futures;
 import scala.concurrent.Future;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 
 public abstract class AbstractRelation extends AbstractDomainObject implements IRelation {
 
@@ -57,7 +58,7 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 				request.put(GraphDACParams.relation_type.name(), getRelationType());
 				request.put(GraphDACParams.end_node_id.name(), getEndNodeId());
 				request.put(GraphDACParams.metadata.name(), getMetadata());
-				Future<Object> response = Future.successful(graphMgr.addRelation(request));
+				Future<Object> response = Futures.successful(graphMgr.addRelation(request));
 				manager.returnResponse(response, getParent());
 			} else {
 				manager.OK(GraphDACParams.messages.name(), errMessages, getParent());
@@ -87,7 +88,7 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 		try {
 			Request request = new Request(req);
 			request.copyRequestValueObjects(req.getRequest());
-			Future<Object> response = Future.successful(graphMgr.deleteRelation(request));
+			Future<Object> response = Futures.successful(graphMgr.deleteRelation(request));
 			manager.returnResponse(response, getParent());
 		} catch (Exception e) {
 			throw new ServerException(GraphRelationErrorCodes.ERR_RELATION_DELETE.name(),
@@ -155,15 +156,13 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 			request.put(GraphDACParams.relation_type.name(), getRelationType());
 			request.put(GraphDACParams.end_node_id.name(), this.endNodeId);
 			request.put(GraphDACParams.property_key.name(), key);
-			Future<Object> response = Future.successful(searchMgr.getRelationProperty(request));
-			manager.returnResponse(response, getParent());
+			Future<Object> response = Futures.successful(searchMgr.getRelationProperty(request));
+					manager.returnResponse(response, getParent());
 		} catch (Exception e) {
 			throw new ServerException(GraphRelationErrorCodes.ERR_RELATION_GET_PROPERTY.name(),
 					"Error in fetching the relation properties", e);
 		}
 	}
-
-
 
 	public void removeProperty(Request req) {
 		throw new ServerException(GraphRelationErrorCodes.ERR_RELATION_UNSUPPORTED_OPERATION.name(),
@@ -214,7 +213,6 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 			request.put(GraphDACParams.relation_type.name(), getRelationType());
 			request.put(GraphDACParams.end_node_id.name(), this.startNodeId);
 			Response res = searchMgr.checkCyclicLoop(request);
-
 			if (manager.checkError(res)) {
 				return manager.getErrorMessage(res);
 			} else {
@@ -265,19 +263,8 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 
 	}
 
-	protected String compareFutures(String future1, final String future2, final String property) {
-		if (StringUtils.isNotBlank(future1) && StringUtils.isNotBlank(future2)) {
-			if (StringUtils.equals(future1, future2)) {
-				return null;
-			} else {
-				return property + " values do not match";
-			}
-		} else {
-			return property + " cannot be empty";
-		}
-	}
 
-	protected String validateObjectTypes(String objectType, final String endNodeObjectType, final Request request) {
+	protected String validateObjectTypes(String objectType, final String endNodeObjectType) {
 
 		if (StringUtils.isNotBlank(objectType) && StringUtils.isNotBlank(endNodeObjectType)) {
 			List<String> outRelations = DefinitionCache.getOutRelationObjectTypes(graphId, objectType);

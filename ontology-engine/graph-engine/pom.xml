@@ -14,12 +14,12 @@
     <dependencies>
         <dependency>
             <groupId>org.sunbird</groupId>
-            <artifactId>actor-core</artifactId>
+            <artifactId>schema-validator</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.sunbird</groupId>
-            <artifactId>schema-validator</artifactId>
+            <artifactId>graph-core</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

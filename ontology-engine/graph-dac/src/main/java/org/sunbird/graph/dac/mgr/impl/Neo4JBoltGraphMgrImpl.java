@@ -10,13 +10,12 @@ import org.sunbird.common.exception.ClientException;
 import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.common.enums.GraphHeaderParams;
 import org.sunbird.graph.common.exception.GraphEngineErrorCodes;
-import org.sunbird.graph.common.mgr.BaseDACMgr;
 import org.sunbird.graph.dac.exception.GraphDACErrorCodes;
 import org.sunbird.graph.dac.mgr.IGraphDACGraphMgr;
 import org.sunbird.graph.importer.ImportData;
 import org.sunbird.graph.service.operation.Neo4JBoltGraphOperations;
 
-public class Neo4JBoltGraphMgrImpl extends BaseDACMgr implements IGraphDACGraphMgr {
+public class Neo4JBoltGraphMgrImpl extends BaseDACManager implements IGraphDACGraphMgr {
 
 	@Override
 	public Response createGraph(Request request) {

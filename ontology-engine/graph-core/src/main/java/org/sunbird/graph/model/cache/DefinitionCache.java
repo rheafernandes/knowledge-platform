@@ -8,16 +8,15 @@ import org.sunbird.common.dto.Response;
 import org.sunbird.graph.cache.mgr.impl.NodeCacheManager;
 import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.common.enums.GraphHeaderParams;
-import org.sunbird.graph.mgr.BaseGraphManager;
 import org.sunbird.graph.dac.enums.SystemNodeTypes;
 import org.sunbird.graph.dac.mgr.IGraphDACSearchMgr;
 import org.sunbird.graph.dac.mgr.impl.Neo4JBoltSearchMgrImpl;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.dac.model.SearchCriteria;
-import org.sunbird.graph.model.node.DefinitionDTO;
-import org.sunbird.graph.model.node.RelationDefinition;
 
-import akka.actor.ActorRef;
+import org.sunbird.graph.mgr.BaseGraphManager;
+import org.sunbird.graph.model.nodes.DefinitionDTO;
+import org.sunbird.graph.model.nodes.RelationDefinition;
 
 public class DefinitionCache extends BaseGraphManager {
 
@@ -102,7 +101,7 @@ public class DefinitionCache extends BaseGraphManager {
 	}
 
 	@Override
-	protected void invokeMethod(Request request, ActorRef parent) {
+	public void onReceive(Request request) throws Throwable {
 
 	}
 

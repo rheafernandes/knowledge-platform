@@ -15,13 +15,13 @@ import org.sunbird.common.exception.ResponseCode;
 import org.sunbird.graph.cache.mgr.impl.SetCacheManager;
 import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.common.enums.GraphHeaderParams;
-import org.sunbird.graph.mgr.BaseGraphManager;
 import org.sunbird.graph.dac.enums.RelationTypes;
 import org.sunbird.graph.dac.enums.SystemNodeTypes;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.dac.model.Relation;
 import org.sunbird.graph.dac.model.SearchCriteria;
-import org.sunbird.graph.common.exception.GraphEngineErrorCodes;
+import org.sunbird.graph.exception.GraphEngineErrorCodes;
+import org.sunbird.graph.mgr.BaseGraphManager;
 import org.sunbird.telemetry.logger.TelemetryManager;
 
 import akka.dispatch.Futures;
@@ -42,12 +42,13 @@ public class Set extends AbstractCollection {
 	private List<Relation> inRelations;
 	private List<Relation> outRelations;
 
+
 	public static enum SET_TYPES {
 		MATERIALISED_SET;
 	}
 
 	public Set(BaseGraphManager manager, String graphId, String id, String setObjectType,
-			Map<String, Object> metadata) {
+			   Map<String, Object> metadata) {
 		super(manager, graphId, id, metadata);
 		this.setObjectType = setObjectType;
 		this.setType = SET_TYPES.MATERIALISED_SET.name();
@@ -687,7 +688,8 @@ public class Set extends AbstractCollection {
 			this.memberObjectType = (String) metadata.get(SET_OBJECT_TYPE_KEY);
 			if (StringUtils.isNotBlank(setCriteria)) {
 				try {
-					SearchCriteria sc = JsonUtils.deserialize(setCriteria, SearchCriteria.class);
+					;
+					SearchCriteria sc = JsonUtils.convert(setCriteria, SearchCriteria.class);
 					this.criteria = sc;
 				} catch (Exception e) {
 				}

@@ -14,10 +14,10 @@ import org.sunbird.common.exception.ClientException;
 import org.sunbird.common.exception.ServerException;
 import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.common.enums.SystemProperties;
-import org.sunbird.graph.mgr.BaseGraphManager;
 import org.sunbird.graph.dac.enums.SystemNodeTypes;
 import org.sunbird.graph.dac.model.Node;
-import org.sunbird.graph.common.exception.GraphEngineErrorCodes;
+import org.sunbird.graph.exception.GraphEngineErrorCodes;
+import org.sunbird.graph.mgr.BaseGraphManager;
 import org.sunbird.graph.model.AbstractDomainObject;
 import org.sunbird.graph.model.ICollection;
 
@@ -197,10 +197,9 @@ public abstract class AbstractCollection extends AbstractDomainObject implements
             throw new ClientException(GraphEngineErrorCodes.ERR_GRAPH_INVALID_PROPERTY.name(), key + " is a reserved system property");
         }
         if (null != value) {
-
             if (value instanceof Map) {
                 try {
-                    value = new String(JsonUtils.serialize(value));
+                    value = JsonUtils.serialize(value);
                     if(null != metadata) 
                         metadata.put(key, value);
                 } catch (Exception e) {
@@ -211,7 +210,7 @@ public abstract class AbstractCollection extends AbstractDomainObject implements
                 Object[] array = getArray(key, list);
                 if (null == array) {
                     try {
-                        value = new String(JsonUtils.serialize(list));
+                        value = JsonUtils.serialize(list);
                         if(null != metadata) 
                             metadata.put(key, value);
                     } catch (Exception e) {

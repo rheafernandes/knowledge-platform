@@ -1,17 +1,15 @@
 package org.sunbird.graph.dac.mgr.impl;
 
-import org.sunbird.common.dto.Property;
-import org.sunbird.graph.common.enums.GraphDACParams;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.sunbird.common.dto.Property;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
 import org.sunbird.common.exception.ClientException;
+import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.common.enums.GraphHeaderParams;
-import org.sunbird.graph.common.mgr.BaseDACMgr;
 import org.sunbird.graph.dac.exception.GraphDACErrorCodes;
 import org.sunbird.graph.dac.mgr.IGraphDACSearchMgr;
 import org.sunbird.graph.dac.model.Filter;
@@ -25,7 +23,7 @@ import org.sunbird.graph.dac.model.SubGraph;
 import org.sunbird.graph.dac.model.Traverser;
 import org.sunbird.graph.service.operation.Neo4JBoltSearchOperations;
 
-public class Neo4JBoltSearchMgrImpl extends BaseDACMgr implements IGraphDACSearchMgr {
+public class Neo4JBoltSearchMgrImpl extends BaseDACManager implements IGraphDACSearchMgr {
 	
     @Override
 	public Response getNodeById(Request request) {
@@ -77,8 +75,8 @@ public class Neo4JBoltSearchMgrImpl extends BaseDACMgr implements IGraphDACSearc
     		}
     }
 
-    //@Override
-    public Response getNodesByProperty(Request request) {
+    @Override
+	public Response getNodesByProperty(Request request) {
         String graphId = (String) request.getContext().get(GraphHeaderParams.graph_id.name());
         Property property = (Property) request.get(GraphDACParams.metadata.name());
         Boolean getTags = (Boolean) request.get(GraphDACParams.get_tags.name());
@@ -86,14 +84,14 @@ public class Neo4JBoltSearchMgrImpl extends BaseDACMgr implements IGraphDACSearc
             throw new ClientException(GraphDACErrorCodes.ERR_GET_NODE_LIST_MISSING_REQ_PARAMS.name(), "Required parameters are missing");
         } else {
             try {
-                List<Node> nodeList = Neo4JBoltSearchOperations.getNodesByProperty(graphId, property, getTags, request);
-                return OK(GraphDACParams.node_list.name(), nodeList);
+				List<Node> nodeList = Neo4JBoltSearchOperations.getNodesByProperty(graphId, property, getTags, request);
+				return OK(GraphDACParams.node_list.name(), nodeList);
             } catch (Exception e) {
-                return ERROR(e);
+				return ERROR(e);
             }
         }
     }
-
+    
     @SuppressWarnings("unchecked")
 	@Override
 	public Response getNodesByUniqueIds(Request request) {
@@ -123,7 +121,7 @@ public class Neo4JBoltSearchMgrImpl extends BaseDACMgr implements IGraphDACSearc
 	}
 
     @Override
-    public Response getNodeProperty(Request request) {
+	public Response getNodeProperty(Request request) {
         String graphId = (String) request.getContext().get(GraphHeaderParams.graph_id.name());
         String nodeId = (String) request.get(GraphDACParams.node_id.name());
         String key = (String) request.get(GraphDACParams.property_key.name());
@@ -131,10 +129,10 @@ public class Neo4JBoltSearchMgrImpl extends BaseDACMgr implements IGraphDACSearc
             throw new ClientException(GraphDACErrorCodes.ERR_GET_NODE_PROPERTY_MISSING_REQ_PARAMS.name(), "Required parameters are missing");
         } else {
             try {
-                Property property = Neo4JBoltSearchOperations.getNodeProperty(graphId, nodeId, key, request);
-                return OK(GraphDACParams.property.name(), property);
+				Property property = Neo4JBoltSearchOperations.getNodeProperty(graphId, nodeId, key, request);
+				return OK(GraphDACParams.property.name(), property);
             } catch (Exception e) {
-                return ERROR(e);
+				return ERROR(e);
             }
         }
     }

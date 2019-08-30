@@ -1,19 +1,19 @@
 package org.sunbird.graph.model.relation;
 
+import org.sunbird.common.dto.Request;
+import org.sunbird.common.exception.ServerException;
+import org.sunbird.graph.dac.enums.SystemNodeTypes;
+import org.sunbird.graph.dac.model.Node;
+import org.sunbird.graph.exception.GraphRelationErrorCodes;
+import org.sunbird.graph.mgr.BaseGraphManager;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.sunbird.common.dto.Request;
-import org.sunbird.common.exception.ServerException;
-import org.sunbird.graph.mgr.BaseGraphManager;
-import org.sunbird.graph.dac.enums.SystemNodeTypes;
-import org.sunbird.graph.dac.model.Node;
-import org.sunbird.graph.exception.GraphRelationErrorCodes;
-
 public class HasRelRelation extends AbstractRelation {
-    
-    public static final String RELATION_NAME = "hasRelation"; 
+
+    public static final String RELATION_NAME = "hasRelation";
 
     public HasRelRelation(BaseGraphManager manager, String graphId, String startNodeId, String endNodeId) {
         super(manager, graphId, startNodeId, endNodeId);
@@ -25,20 +25,20 @@ public class HasRelRelation extends AbstractRelation {
     }
 
     @Override
-	public Map<String, List<String>> validateRelation(Request request) {
+    public Map<String, List<String>> validateRelation(Request request) {
         try {
-			List<String> futures = new ArrayList<String>();
+            List<String> futures = new ArrayList<String>();
             // Check node types: start node type should be Definition Node.
             // end node type should be Relation Node
-			Node startNode = getNode(request, this.startNodeId);
-			Node endNode = getNode(request, this.endNodeId);
-			String startNodeMsg = getNodeTypeFuture(this.startNodeId, startNode,
-					new String[] { SystemNodeTypes.DEFINITION_NODE.name() });
+            Node startNode = getNode(request, this.startNodeId);
+            Node endNode = getNode(request, this.endNodeId);
+            String startNodeMsg = getNodeTypeFuture(this.startNodeId, startNode,
+                    new String[] { SystemNodeTypes.DEFINITION_NODE.name() });
             futures.add(startNodeMsg);
-			String endNodeMsg = getNodeTypeFuture(this.endNodeId, endNode,
-					new String[] { SystemNodeTypes.RELATION_NODE.name() });
+            String endNodeMsg = getNodeTypeFuture(this.endNodeId, endNode,
+                    new String[] { SystemNodeTypes.RELATION_NODE.name() });
             futures.add(endNodeMsg);
-			return getMessageMap(futures);
+            return getMessageMap(futures);
         } catch (Exception e) {
             throw new ServerException(GraphRelationErrorCodes.ERR_RELATION_VALIDATE.name(), e.getMessage(), e);
         }

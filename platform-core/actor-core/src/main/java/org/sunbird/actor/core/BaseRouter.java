@@ -5,6 +5,7 @@ import akka.actor.Props;
 import akka.routing.FromConfig;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
@@ -25,17 +26,17 @@ public abstract class BaseRouter extends BaseActor {
         route(request);
     }
 
-    private Set<Class<? extends BaseActor>> getActors() {
+    private Set<Class<?>> getActors() {
         synchronized (BaseRouter.class) {
             Reflections reflections = new Reflections("org.sunbird");
-            Set<Class<? extends BaseActor>> actors = reflections.getSubTypesOf(BaseActor.class);
+            Set<Class<?>> actors = reflections.getTypesAnnotatedWith(ActorConfig.class);
             return actors;
         }
     }
 
     protected void initActors(ActorContext context, String name) {
-        Set<Class<? extends BaseActor>> actors = getActors();
-        for (Class<? extends BaseActor> actor : actors) {
+        Set<Class<?>> actors = getActors();
+        for (Class<?> actor : actors) {
             ActorConfig routerDetails = actor.getAnnotation(ActorConfig.class);
             if (null != routerDetails) {
                 String dispatcher = routerDetails.dispatcher();
@@ -55,7 +56,7 @@ public abstract class BaseRouter extends BaseActor {
         }
     }
 
-    private void createActor(ActorContext context, Class<? extends BaseActor> actor, String[] operations, String dispatcher) {
+    private void createActor(ActorContext context, Class<?> actor, String[] operations, String dispatcher) {
         if (null != operations && operations.length > 0) {
             Props props = null;
             if (StringUtils.isNotBlank(dispatcher)) {

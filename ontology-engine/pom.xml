@@ -17,8 +17,9 @@
         <module>cache-manager</module>
         <module>graph-dac-api</module>
         <module>graph-dac</module>
-<!--        <module>graph-core</module>-->
+        <module>graph-core</module>
         <module>graph-engine</module>
+        <module>graph-engine_2.11</module>
     </modules>
     <build>
         <pluginManagement>

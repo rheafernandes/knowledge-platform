@@ -11,20 +11,18 @@ import org.sunbird.common.dto.Response;
 import org.sunbird.common.exception.ClientException;
 import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.common.enums.GraphHeaderParams;
-import org.sunbird.graph.common.mgr.BaseDACMgr;
 import org.sunbird.graph.dac.exception.GraphDACErrorCodes;
 import org.sunbird.graph.dac.mgr.IGraphDACNodeMgr;
 import org.sunbird.graph.service.common.DACErrorCodeConstants;
 import org.sunbird.graph.service.common.DACErrorMessageConstants;
 import org.sunbird.graph.service.operation.Neo4JBoltNodeOperations;
-import org.sunbird.graph.service.operation.Neo4JBoltSearchOperations;
 
 /**
  * The Class GraphDACNodeMgrImpl.
  * 
  * @author Mohammad Azharuddin
  */
-public class Neo4JBoltNodeMgrImpl extends BaseDACMgr implements IGraphDACNodeMgr {
+public class Neo4JBoltNodeMgrImpl extends BaseDACManager implements IGraphDACNodeMgr {
 
 
 	/*
@@ -88,7 +86,7 @@ public class Neo4JBoltNodeMgrImpl extends BaseDACMgr implements IGraphDACNodeMgr
 					"Invalid input node");
 		else {
 			try {
-				org.sunbird.graph.dac.model.Node addedNode = Neo4JBoltNodeOperations.addNode(graphId, node, request);
+				org.sunbird.graph.dac.model.Node addedNode = Neo4JBoltNodeOperations.addNode(graphId, node);
 				
 				// Creating Map for Response Values
 				Map<String, Object> responseMap = new HashMap<String, Object>();
@@ -177,7 +175,7 @@ public class Neo4JBoltNodeMgrImpl extends BaseDACMgr implements IGraphDACNodeMgr
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * org.sunbird.graph.dac.mgr.IGraphDACNodeMgr#updatePropertyValue(org.sunbird.
 	 * common.dto.Request)

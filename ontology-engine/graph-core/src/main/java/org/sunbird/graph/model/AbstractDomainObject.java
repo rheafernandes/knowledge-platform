@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import akka.actor.ActorRef;
 import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.exception.ClientException;
@@ -17,6 +16,9 @@ import org.sunbird.graph.dac.mgr.IGraphDACSearchMgr;
 import org.sunbird.graph.dac.mgr.impl.Neo4JBoltGraphMgrImpl;
 import org.sunbird.graph.dac.mgr.impl.Neo4JBoltNodeMgrImpl;
 import org.sunbird.graph.dac.mgr.impl.Neo4JBoltSearchMgrImpl;
+import org.sunbird.graph.exception.GraphEngineErrorCodes;
+
+import akka.actor.ActorRef;
 import org.sunbird.graph.mgr.BaseGraphManager;
 
 public abstract class AbstractDomainObject {
@@ -25,9 +27,9 @@ public abstract class AbstractDomainObject {
     protected String graphId;
     private ActorRef parent;
 
-	protected IGraphDACGraphMgr graphMgr = new Neo4JBoltGraphMgrImpl();
-	protected IGraphDACSearchMgr searchMgr = new Neo4JBoltSearchMgrImpl();
-	protected IGraphDACNodeMgr nodeMgr = new Neo4JBoltNodeMgrImpl();
+    protected IGraphDACGraphMgr graphMgr = new Neo4JBoltGraphMgrImpl();
+    protected IGraphDACSearchMgr searchMgr = new Neo4JBoltSearchMgrImpl();
+    protected IGraphDACNodeMgr nodeMgr = new Neo4JBoltNodeMgrImpl();
 
     public AbstractDomainObject(BaseGraphManager manager, String graphId) {
         if (StringUtils.isBlank(graphId)) {
@@ -81,7 +83,6 @@ public abstract class AbstractDomainObject {
 
     protected Request getRequestObject(Request req, String manager, String operation, String key, Object value) {
         Request request = new Request(req);
-        request.setManagerName(manager);
         request.setOperation(operation);
         if (StringUtils.isNotBlank(key) && null != value) {
             request.put(key, value);
@@ -91,7 +92,6 @@ public abstract class AbstractDomainObject {
 
     protected Request getRequestObject(Request req, String manager, String operation, Map<String, Object> params) {
         Request request = new Request(req);
-        request.setManagerName(manager);
         request.setOperation(operation);
         if (null != params && !params.isEmpty()) {
             for (Entry<String, Object> param : params.entrySet()) {

@@ -3,13 +3,21 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "Content",
     "type": "object",
-    "required": ["name", "mimeType"],
+    "required": ["name","status", "mimeType", "channel"],
     "allOf": [
         {
             "$ref": "object-schema.json"
         },
         {
             "properties": {
+                "status": {
+                    "type": "string",
+                    "enum": ["Draft","Review","Redraft","Flagged","Live","Unlisted","Retired","Mock","Processing","FlagDraft","FlagReview","Failed"],
+                    "default": "Draft"
+                },
+                "channel": {
+                    "type": "string"
+                },
                 "mimeType": {
                     "default": "application/vnd.ekstep.ecml-archive",
                     "enum": [
@@ -24,6 +32,11 @@
 
                     ]
                 },
+                "osId": {
+                    "type": "string",
+                    "enum": ["org.ekstep.quiz.app"],
+                    "default": "org.ekstep.quiz.app"
+                },
                 "contentEncoding": {
                     "type": "string",
                     "enum": ["gzip", "identity"],
@@ -31,7 +44,8 @@
                 },
                 "contentDisposition": {
                     "type": "string",
-                    "enum": ["inline", "online", "attachment"]
+                    "enum": ["inline", "online", "attachment"],
+                    "default": "inline"
                 },
                 "mediaType": {
                     "type": "string",
@@ -41,19 +55,13 @@
             }
         }
     ],
-    "if": {
-        "properties": {
-            "mimeType": {"const": "application/pdf"}
-        }
+    "externalProperties": ["body"],
+    "external": {
+        "properties": ["body"],
+        "operation": "updateContentBody"
     },
-    "then": {
-        "properties": {
-            "contentEncoding": { "default": "gzip"}
-        }
-    },
-    "else" : {
-        "properties": {
-            "contentEncoding": {"default": "identity"}
-        }
+    "relations": {
+        "in": [],
+        "out": []
     }
 }

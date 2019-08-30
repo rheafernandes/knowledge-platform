@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -26,32 +28,37 @@ public class Request implements Serializable {
 
 	private Map<String, Object> request = new HashMap<String, Object>();
 
-    private String managerName;
     private String operation;
-    private String request_id;
+    private String objectType;
 
     public Request() {
     	this.params = new RequestParams();
-    	this.params.setMsgid(request_id);
-   
+    }
+
+    public Request(Map<String, Object> context, Map<String, Object> request, String operation, String objectType) {
+        this.context = context;
+        this.request = request;
+        this.operation = operation;
+        this.objectType = objectType;
     }
     
     public Request(Request request) {
     	this.params = request.getParams();
     	if (null == this.params)
     	    this.params = new RequestParams();
-    	else if (StringUtils.isNotBlank(this.params.getMsgid())) {
-    	    this.request_id = this.params.getMsgid();
-    	}
-    	if(StringUtils.isBlank(this.params.getMsgid()) && StringUtils.isNotBlank(request_id))
-    		this.params.setMsgid(request_id);
-        this.context.putAll(request.getContext());
+        this.context = new HashMap<>();
+    	if (MapUtils.isNotEmpty(request.getContext()))
+            this.context.putAll(request.getContext());
     }
-    
+
+    public Request(Request request, String operation, String objectType) {
+        this(request);
+        this.operation = operation;
+        this.objectType = objectType;
+    }
+
     public String getRequestId() {
-        if (null != this.params)
-            return this.params.getMsgid();
-        return request_id;
+        return null;
     }
 
     public Map<String, Object> getContext() {
@@ -76,21 +83,10 @@ public class Request implements Serializable {
     public Object get(String key) {
         return request.get(key);
     }
-    
-	public void setRequest_id(String request_id) {
-		this.request_id = request_id;
-	}
+
 
 	public void put(String key, Object vo) {
         request.put(key, vo);
-    }
-
-    public String getManagerName() {
-        return managerName;
-    }
-
-    public void setManagerName(String managerName) {
-        this.managerName = managerName;
     }
 
     public String getOperation() {
@@ -102,7 +98,7 @@ public class Request implements Serializable {
     }
 
     public void copyRequestValueObjects(Map<String, Object> map) {
-        if (null != map && map.size() > 0) {
+        if (MapUtils.isNotEmpty(map)) {
             this.request.putAll(map);
         }
     }
@@ -143,9 +139,13 @@ public class Request implements Serializable {
 
     public void setParams(RequestParams params) {
         this.params = params;
-    	if(this.params.getMsgid()==null&&request_id!=null)
-    		this.params.setMsgid(request_id);
-
     }
 
+    public String getObjectType() {
+        return objectType;
+    }
+
+    public void setObjectType(String objectType) {
+        this.objectType = objectType;
+    }
 }

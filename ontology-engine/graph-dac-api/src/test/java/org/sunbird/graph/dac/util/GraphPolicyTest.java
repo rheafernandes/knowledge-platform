@@ -88,7 +88,7 @@ public class GraphPolicyTest {
 		node.setObjectType("Content");
 		Request request = new Request();
 		request.setId(graphId);
-		Node res = Neo4JBoltNodeOperations.addNode(graphId, node, request);
+		Node res = Neo4JBoltNodeOperations.addNode(graphId, node);
 		assertEquals(graphId, res.getGraphId());
 		assertEquals(IL_UNIQUE_ID, res.getIdentifier());
 		assertEquals("Content", res.getObjectType());
@@ -105,7 +105,7 @@ public class GraphPolicyTest {
 		node.setObjectType("Content");
 		Request request = new Request();
 		request.setId(graphId);
-		Node res = Neo4JBoltNodeOperations.addNode(graphId, node, request);
+		Node res = Neo4JBoltNodeOperations.addNode(graphId, node);
 		assertEquals(graphId, res.getGraphId());
 		assertEquals(IL_UNIQUE_ID, res.getIdentifier());
 		assertEquals("Content", res.getObjectType());
@@ -122,7 +122,7 @@ public class GraphPolicyTest {
 		node.setObjectType("Content");
 		Request request = new Request();
 		request.setId(graphId);
-		Node res = Neo4JBoltNodeOperations.addNode(graphId, node, request);
+		Node res = Neo4JBoltNodeOperations.addNode(graphId, node);
 		assertEquals(graphId, res.getGraphId());
 		assertEquals(IL_UNIQUE_ID, res.getIdentifier());
 		assertEquals("Content", res.getObjectType());
@@ -140,7 +140,7 @@ public class GraphPolicyTest {
 		node.setObjectType("Content");
 		Request request = new Request();
 		request.setId(graphId);
-		Node res = Neo4JBoltNodeOperations.addNode(graphId, node, request);
+		Node res = Neo4JBoltNodeOperations.addNode(graphId, node);
 		assertEquals(graphId, res.getGraphId());
 		assertEquals(IL_UNIQUE_ID, res.getIdentifier());
 		assertEquals("Content", res.getObjectType());
@@ -157,7 +157,7 @@ public class GraphPolicyTest {
 		node.setObjectType("Content");
 		Request request = new Request();
 		request.setId(graphId);
-		Node res = Neo4JBoltNodeOperations.addNode(graphId, node, request);
+		Node res = Neo4JBoltNodeOperations.addNode(graphId, node);
 		assertEquals(graphId, res.getGraphId());
 		assertEquals(IL_UNIQUE_ID, res.getIdentifier());
 		assertEquals("Content", res.getObjectType());
@@ -175,7 +175,7 @@ public class GraphPolicyTest {
 		node.setObjectType("Content");
 		Request request = new Request();
 		request.setId(graphId);
-		Node res = Neo4JBoltNodeOperations.addNode(graphId, node, request);
+		Node res = Neo4JBoltNodeOperations.addNode(graphId, node);
 		assertEquals(graphId, res.getGraphId());
 		assertEquals(IL_UNIQUE_ID, res.getIdentifier());
 		assertEquals("Content", res.getObjectType());
@@ -191,7 +191,7 @@ public class GraphPolicyTest {
 		node.setObjectType("Content");
 		Request request = new Request();
 		request.setId(graphId);
-		Node res = Neo4JBoltNodeOperations.addNode(graphId, node, request);
+		Node res = Neo4JBoltNodeOperations.addNode(graphId, node);
 		assertEquals(graphId, res.getGraphId());
 		assertEquals("Content", res.getObjectType());
 	}
@@ -206,7 +206,7 @@ public class GraphPolicyTest {
 		node.setMetadata(setData());
 		Request request = new Request();
 		request.setId(graphId);
-		Node res = Neo4JBoltNodeOperations.addNode(graphId, node, request);
+		Node res = Neo4JBoltNodeOperations.addNode(graphId, node);
 		assertEquals(graphId, res.getGraphId());
 		assertEquals(IL_UNIQUE_ID, res.getIdentifier());
 	}
@@ -221,7 +221,7 @@ public class GraphPolicyTest {
 		node.setMetadata(setData());
 		Request request = new Request();
 		request.setId(graphId);
-		Node res = Neo4JBoltNodeOperations.addNode(graphId, node, request);
+		Node res = Neo4JBoltNodeOperations.addNode(graphId, node);
 		assertEquals(graphId, res.getGraphId());
 		assertEquals("Content", res.getObjectType());
 	}
@@ -238,7 +238,7 @@ public class GraphPolicyTest {
 		node.setMetadata(setData());
 		Request request = new Request();
 		request.setId(graphId);
-		Node res = Neo4JBoltNodeOperations.addNode(graphId, node, request);
+		Node res = Neo4JBoltNodeOperations.addNode(graphId, node);
 		assertEquals(graphId, res.getGraphId());
 		assertEquals(true, res.getObjectType()!="Content");
 	}
@@ -254,7 +254,7 @@ public class GraphPolicyTest {
 		node.setObjectType("Content");
 		Request request = new Request();
 		request.setId(graphId);
-		Node res = Neo4JBoltNodeOperations.addNode(graphId, node, request);
+		Node res = Neo4JBoltNodeOperations.addNode(graphId, node);
 		assertEquals(graphId, res.getGraphId());
 		assertEquals("Content", res.getObjectType());
 	}
@@ -270,7 +270,7 @@ public class GraphPolicyTest {
 		node.setObjectType("Content");
 		Request request = new Request();
 		request.setId(graphId);
-		Node res = Neo4JBoltNodeOperations.addNode(graphId, node, request);
+		Node res = Neo4JBoltNodeOperations.addNode(graphId, node);
 		assertEquals(graphId, res.getGraphId());
 		assertEquals("Content", res.getObjectType());
 	}
@@ -286,7 +286,7 @@ public class GraphPolicyTest {
 		node.setObjectType("Content");
 		Request request = new Request();
 		request.setId(graphId);
-		Node res = Neo4JBoltNodeOperations.addNode(null, node, request);
+		Node res = Neo4JBoltNodeOperations.addNode(graphId, node);
 		assertEquals(graphId, res.getGraphId());
 		assertEquals("Content", res.getObjectType());
 	}
@@ -296,10 +296,6 @@ public class GraphPolicyTest {
 		Request request = new Request();
 		request.setId(graphId);
 		Node node = Neo4JBoltSearchOperations.getNodeByUniqueId(graphId, "JAVA001", null, request);
-		List<String> tags = new ArrayList<String>();
-		tags.add("Language");
-		tags.add("Programming Language");
-		node.setTags(tags);
 		Node res = Neo4JBoltNodeOperations.updateNode(graphId, node, request);
 	}
 	
@@ -307,15 +303,11 @@ public class GraphPolicyTest {
 	public void updateNewNode(){
 		Request request = new Request();
 		request.setId(graphId);
-		List<String> tags = new ArrayList<String>();
 		Node node = new Node();
 		Map<String, Object> map = new HashMap<String,Object>();
 		map.put("Title", "Learn Scala Language");
 		map.put("code", "Java00122");
 		node.setMetadata(map);
-		tags.add("Language");
-		tags.add("Programming Language");
-		node.setTags(tags);
 		node.setGraphId(graphId);
 		node.setIdentifier("Java00122");
 		Node res = Neo4JBoltNodeOperations.updateNode(graphId, node, request);
@@ -328,15 +320,10 @@ public class GraphPolicyTest {
 		Node node = new Node();
 		node.setGraphId(graphId);
 		node.setIdentifier("SCALA001");
-		List<String> tags = new ArrayList<String>();
-		tags.add("programming languages");
 		Map<String, Object> scalaMap = new HashMap<String,Object>();
 		scalaMap.put("Title", "Learn Scala Language");
 		node.setMetadata(scalaMap);
-		tags.add("oops");
-		node.setTags(tags);
 		Node res = Neo4JBoltNodeOperations.upsertNode(graphId, node, request);
-		assertEquals(tags, res.getTags());
 	}
 	
 	@Test 

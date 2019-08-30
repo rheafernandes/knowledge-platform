@@ -1,5 +1,9 @@
 package org.sunbird.graph.model.relation;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.exception.ServerException;
 import org.sunbird.graph.dac.enums.RelationTypes;
@@ -7,11 +11,6 @@ import org.sunbird.graph.dac.enums.SystemNodeTypes;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.exception.GraphRelationErrorCodes;
 import org.sunbird.graph.mgr.BaseGraphManager;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 
 public class AssociationRelation extends AbstractRelation {
 
@@ -46,7 +45,7 @@ public class AssociationRelation extends AbstractRelation {
             // check if the relation is valid between object type definitions.
 			String objectType = getObjectTypeFuture(startNode);
 			String endNodeObjectType = getObjectTypeFuture(endNode);
-			String objectTypeMessages = validateObjectTypes(objectType, endNodeObjectType, request);
+			String objectTypeMessages = validateObjectTypes(objectType, endNodeObjectType);
             futures.add(objectTypeMessages);
 
 			return getMessageMap(futures);

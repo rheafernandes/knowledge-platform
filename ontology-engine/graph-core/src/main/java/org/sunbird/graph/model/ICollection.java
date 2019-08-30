@@ -1,7 +1,6 @@
 package org.sunbird.graph.model;
 
 import org.sunbird.common.dto.Request;
-import org.sunbird.graph.model.INode;
 
 public interface ICollection extends INode {
 

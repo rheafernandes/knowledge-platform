@@ -4,9 +4,9 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.exception.ClientException;
-import org.sunbird.graph.mgr.BaseGraphManager;
 import org.sunbird.graph.enums.CollectionTypes;
-import org.sunbird.graph.common.exception.GraphEngineErrorCodes;
+import org.sunbird.graph.exception.GraphEngineErrorCodes;
+import org.sunbird.graph.mgr.BaseGraphManager;
 import org.sunbird.graph.model.ICollection;
 
 public class CollectionHandler {

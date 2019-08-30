@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public enum CollectionTypes {
 
-    SET, SEQUENCE, TAG;
+    SET, SEQUENCE;
 
     public static boolean isValidCollectionType(String str) {
         CollectionTypes val = null;

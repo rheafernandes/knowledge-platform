@@ -1,10 +1,11 @@
 package org.sunbird.graph.mgr;
 
 import akka.actor.ActorRef;
-import akka.actor.UntypedActor;
 import akka.dispatch.OnFailure;
 import akka.dispatch.OnSuccess;
 import org.apache.commons.lang3.StringUtils;
+import org.sunbird.actor.core.BaseActor;
+import org.sunbird.actor.service.SunbirdMWService;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
 import org.sunbird.common.dto.ResponseParams;
@@ -16,21 +17,20 @@ import java.util.List;
 import java.util.Map;
 import akka.dispatch.Mapper;
 
-public abstract class BaseGraphManager extends UntypedActor {
+public abstract class BaseGraphManager extends BaseActor {
 
-    @Override
-    public void onReceive(Object message) throws Exception {
-        if (message instanceof Request) {
-            Request request = (Request) message;
-            invokeMethod(request, getSender());
-        } else if (message instanceof Response) {
-            // do nothing
-        } else {
-            unhandled(message);
-        }
+    public Future<Object> getResult(Request request) {
+        return SunbirdMWService.execute(request);
     }
 
-    protected abstract void invokeMethod(Request request, ActorRef parent);
+    // TODO: remove errorMessage - message is derived from code.
+    public void ERROR(String errorCode, String errorMessage, ResponseCode code, String responseIdentifier, Object vo) {
+        Response response = new Response();
+        response.put(responseIdentifier, vo);
+        response.setParams(getErrorStatus(errorCode, errorMessage));
+        response.setResponseCode(code);
+        sender().tell(response, getSelf());
+    }
 
     public void OK(ActorRef parent) {
         Response response = new Response();
@@ -81,7 +81,7 @@ public abstract class BaseGraphManager extends UntypedActor {
             MiddlewareException mwException = (MiddlewareException) e;
             params.setErr(mwException.getErrCode());
         } else {
-            params.setErr(GraphEngineErrorCodes.ERR_SYSTEM_EXCEPTION.name());
+            params.setErr(ErrorCodes.ERR_SYSTEM_EXCEPTION.name());
         }
         params.setErrmsg(setErrMessage(e));
         response.setParams(params);
@@ -195,7 +195,7 @@ public abstract class BaseGraphManager extends UntypedActor {
             MiddlewareException mwException = (MiddlewareException) e;
             params.setErr(mwException.getErrCode());
         } else {
-            params.setErr(GraphEngineErrorCodes.ERR_SYSTEM_EXCEPTION.name());
+            params.setErr(ErrorCodes.ERR_SYSTEM_EXCEPTION.name());
         }
         params.setErrmsg(setErrMessage(e));
         response.setParams(params);
