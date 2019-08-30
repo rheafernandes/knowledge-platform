@@ -15,6 +15,10 @@ public abstract class LocalCacheManager implements ICacheManager {
 
     ICacheHandler handler;
 
+    protected void init(String... channels){
+        subscribe(channels);
+    }
+
     @Override
     public void publish(String channel, String message) {
         RedisCacheUtil.publish(channel, message);

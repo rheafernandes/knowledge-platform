@@ -6,5 +6,5 @@ package org.sunbird.cache.handler;
  * @author Kumar Gauraw
  */
 public interface ICacheHandler {
-    public abstract Object execute(String operation, String key);
+    public abstract Object execute(String operation, String cacheKey, String objectKey);
 }

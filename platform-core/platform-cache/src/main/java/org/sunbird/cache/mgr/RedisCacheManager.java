@@ -17,15 +17,16 @@ public abstract class RedisCacheManager implements ICacheManager {
 
     ICacheHandler handler;
 
-    protected String getStringData(String key, String identifier) {
+    //this method can be called directly from final implmentation class getString(String key) 
+    protected String getStringData(String cacheKey, String objectKey) {
         try {
-            String data = RedisCacheUtil.getString(key);
+            String data = RedisCacheUtil.getString(cacheKey);
             if (StringUtils.isBlank(data) && null != handler) {
-                data = (String) handler.execute(CacheHandlerOperation.READ_STRING.name(), identifier);
+                data = (String) handler.execute(CacheHandlerOperation.READ_STRING.name(), cacheKey, objectKey);
             }
             return data;
         } catch (Exception e) {
-            TelemetryManager.error("Exception Occurred While  Fetching Data For Key : " + key + " | Exception is : ", e);
+            TelemetryManager.error("Exception Occurred While  Fetching Data For Key : " + cacheKey + " | Exception is : ", e);
             if (e instanceof ResourceNotFoundException)
                 throw e;
         }
