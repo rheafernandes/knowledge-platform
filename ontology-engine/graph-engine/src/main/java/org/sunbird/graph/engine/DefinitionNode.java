@@ -29,6 +29,7 @@ public class DefinitionNode extends BaseDomainObject {
         //  execute conditional (if-then-else) statements and update request data.
         ValidationResult jsonResult = SchemaValidatorFactory.getInstance(objectType, version).validate(data);
         // TODO: set audit properties to validated data.
+        // TODO: relation validation.
         setSystemProperties(jsonResult.getData());
         return new Result(graphId, objectType, jsonResult);
     }

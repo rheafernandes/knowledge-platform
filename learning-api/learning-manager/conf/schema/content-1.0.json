@@ -4,58 +4,54 @@
     "title": "Content",
     "type": "object",
     "required": ["name","status", "mimeType", "channel"],
-    "allOf": [
-        {
-            "$ref": "object-schema.json"
+    "properties": {
+        "name": {"type": "string", "minLength": 5},
+        "code": {"type":  "string"},
+        "createdOn": {"type": "string"},
+        "lastUpdatedOn": {"type": "string"},
+        "status": {
+            "type": "string",
+            "enum": ["Draft","Review","Redraft","Flagged","Live","Unlisted","Retired","Mock","Processing","FlagDraft","FlagReview","Failed"],
+            "default": "Draft"
         },
-        {
-            "properties": {
-                "status": {
-                    "type": "string",
-                    "enum": ["Draft","Review","Redraft","Flagged","Live","Unlisted","Retired","Mock","Processing","FlagDraft","FlagReview","Failed"],
-                    "default": "Draft"
-                },
-                "channel": {
-                    "type": "string"
-                },
-                "mimeType": {
-                    "default": "application/vnd.ekstep.ecml-archive",
-                    "enum": [
-                        "application/vnd.ekstep.ecml-archive",
-                        "application/vnd.ekstep.html-archive",
-                        "application/vnd.android.package-archive",
-                        "application/vnd.ekstep.content-archive",
-                        "application/vnd.ekstep.content-collection",
-                        "application/vnd.ekstep.plugin-archive",
-                        "application/vnd.ekstep.h5p-archive",
-                        "application/pdf"
+        "channel": {
+            "type": "string"
+        },
+        "mimeType": {
+            "default": "application/vnd.ekstep.ecml-archive",
+            "enum": [
+                "application/vnd.ekstep.ecml-archive",
+                "application/vnd.ekstep.html-archive",
+                "application/vnd.android.package-archive",
+                "application/vnd.ekstep.content-archive",
+                "application/vnd.ekstep.content-collection",
+                "application/vnd.ekstep.plugin-archive",
+                "application/vnd.ekstep.h5p-archive",
+                "application/pdf"
 
-                    ]
-                },
-                "osId": {
-                    "type": "string",
-                    "enum": ["org.ekstep.quiz.app"],
-                    "default": "org.ekstep.quiz.app"
-                },
-                "contentEncoding": {
-                    "type": "string",
-                    "enum": ["gzip", "identity"],
-                    "default": "identity"
-                },
-                "contentDisposition": {
-                    "type": "string",
-                    "enum": ["inline", "online", "attachment"],
-                    "default": "inline"
-                },
-                "mediaType": {
-                    "type": "string",
-                    "enum": ["content", "collection", "image", "video", "audio", "voice", "ecml", "document", "pdf", "text", "other"],
-                    "default": "content"
-                }
-            }
+            ]
+        },
+        "osId": {
+            "type": "string",
+            "enum": ["org.ekstep.quiz.app"],
+            "default": "org.ekstep.quiz.app"
+        },
+        "contentEncoding": {
+            "type": "string",
+            "enum": ["gzip", "identity"],
+            "default": "identity"
+        },
+        "contentDisposition": {
+            "type": "string",
+            "enum": ["inline", "online", "attachment"],
+            "default": "inline"
+        },
+        "mediaType": {
+            "type": "string",
+            "enum": ["content", "collection", "image", "video", "audio", "voice", "ecml", "document", "pdf", "text", "other"],
+            "default": "content"
         }
-    ],
-    "externalProperties": ["body"],
+    },
     "external": {
         "properties": ["body"],
         "operation": "updateContentBody"
