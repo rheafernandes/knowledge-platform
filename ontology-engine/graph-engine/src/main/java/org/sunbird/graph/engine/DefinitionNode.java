@@ -1,6 +1,7 @@
 package org.sunbird.graph.engine;
 
 import org.sunbird.graph.engine.dto.Result;
+import org.sunbird.schema.ExternalSchema;
 import org.sunbird.schema.SchemaValidatorFactory;
 import org.sunbird.schema.dto.ValidationResult;
 
@@ -10,6 +11,11 @@ public class DefinitionNode extends BaseDomainObject {
 
     public DefinitionNode(String graphId, String objectType, String version) {
         super(graphId, objectType, version);
+    }
+
+
+    public ExternalSchema getExternalSchema() throws Exception {
+        return SchemaValidatorFactory.getInstance(objectType, version).getExternalSchema();
     }
 
     /**

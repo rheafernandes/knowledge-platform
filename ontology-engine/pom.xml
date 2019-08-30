@@ -19,6 +19,7 @@
         <module>graph-dac</module>
         <module>graph-core</module>
         <module>graph-engine</module>
+        <module>graph-engine_2.11</module>
     </modules>
     <build>
         <pluginManagement>

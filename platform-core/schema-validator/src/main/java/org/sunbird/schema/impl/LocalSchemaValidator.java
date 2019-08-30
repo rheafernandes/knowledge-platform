@@ -3,6 +3,7 @@ package org.sunbird.schema.impl;
 import org.apache.commons.collections4.MapUtils;
 import org.leadpony.justify.api.JsonSchema;
 import org.sunbird.common.JsonUtils;
+import org.sunbird.schema.ExternalSchema;
 
 import java.net.URI;
 import java.nio.file.Path;
@@ -22,13 +23,13 @@ public class LocalSchemaValidator extends SchemaValidator {
         Path schemaPath = Paths.get(uri);
         this.schema = readSchema(schemaPath);
         Map<String, Object> schemaMap = JsonUtils.deserialize(schema.toString(), Map.class);
-        if (MapUtils.isNotEmpty(schemaMap) && null != schemaMap.get("externalProperties")) {
-            this.externalKeys = (List<String>) schemaMap.get("externalProperties");
+        if (MapUtils.isNotEmpty(schemaMap) && null != schemaMap.get("external")) {
+            this.externalSchema = JsonUtils.convert(schemaMap.get("external"), ExternalSchema.class);
         }
     }
 
-    public List<String> externalProperties() {
-        return externalKeys;
+    public ExternalSchema getExternalSchema() {
+        return externalSchema;
     }
 
 

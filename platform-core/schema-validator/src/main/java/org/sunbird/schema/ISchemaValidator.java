@@ -9,5 +9,5 @@ public interface ISchemaValidator {
 
     ValidationResult validate(Map<String, Object> data) throws Exception;
 
-    List<String> externalProperties();
+    ExternalSchema getExternalSchema();
 }

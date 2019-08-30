@@ -15,21 +15,26 @@ public class Result {
     private boolean valid = false;
     private List<String> messages;
     private Map<String, Object> externalData;
+    private String identifier;
     private Node node;
 
     public Result(String graphId, String objectType, ValidationResult result) {
         this.valid = result.isValid();
         this.externalData = result.getExternalData();
-        String identifier = (String) result.getData().get("identifier");
+        this.identifier = (String) result.getData().get("identifier");
         if (StringUtils.isBlank(identifier)) {
-            identifier = Identifier.getIdentifier(graphId, Identifier.getUniqueIdFromTimestamp());
+            this.identifier = Identifier.getIdentifier(graphId, Identifier.getUniqueIdFromTimestamp());
         }
-        this.node = new Node(identifier, SystemNodeTypes.DATA_NODE.name(), objectType);
+        this.node = new Node(this.identifier, SystemNodeTypes.DATA_NODE.name(), objectType);
         node.setMetadata(result.getData());
     }
 
     public boolean isValid() {
         return valid;
+    }
+
+    public String getIdentifier() {
+        return identifier;
     }
 
     public List<String> getMessages() {
