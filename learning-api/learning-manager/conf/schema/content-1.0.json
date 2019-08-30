@@ -57,7 +57,35 @@
         "operation": "updateContentBody"
     },
     "relations": {
-        "in": [],
-        "out": []
+        "concepts": {
+            "type": "associatedTo",
+            "direction": "out",
+            "objects": ["Concept"]
+        },
+        "questions": {
+            "type": "associatedTo",
+            "direction": "out",
+            "objects": ["AssessmentItem"]
+        },
+        "children": {
+            "type": "hasSequenceMember",
+            "direction": "out",
+            "objects": ["Content", "ContentImage"]
+        },
+        "collections": {
+            "type": "hasSequenceMember",
+            "direction": "in",
+            "objects": ["Content", "ContentImage"]
+        },
+        "usedByContent": {
+            "type": "associatedTo",
+            "direction": "in",
+            "objects": ["Content"]
+        },
+        "usesContent": {
+            "type": "associatedTo",
+            "direction": "out",
+            "objects": ["Content"]
+        }
     }
 }
