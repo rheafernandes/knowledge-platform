@@ -1,7 +1,9 @@
 package org.sunbird.graph.engine;
 
 import akka.dispatch.Futures;
+import akka.dispatch.Mapper;
 import akka.pattern.Patterns;
+import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
 import org.sunbird.common.exception.ResponseCode;
@@ -15,6 +17,8 @@ import scala.concurrent.Future;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 
 public class DataNode extends BaseDomainObject {
@@ -36,8 +40,23 @@ public class DataNode extends BaseDomainObject {
             Future<Object> updateRelResponse = updateRelations(Arrays.asList(), request.getContext());
             List<Future<Object>> futureList = Arrays.asList(extPropsResponse, updateRelResponse);
             // TODO: onComplete of futureList, if all successful - send the response.
-            Futures.sequence(futureList, manager.getContext().getDispatcher());
-            Patterns.pipe(Futures.successful(response), manager.getContext().dispatcher()).to(manager.sender());
+            Future<Iterable<Object>> future = Futures.sequence(futureList, manager.getContext().getDispatcher());
+            Future<Object> result = future.map(new Mapper<Iterable<Object>, Object>() {
+                @Override
+                public Object apply(Iterable<Object> f) {
+                    List<Response> resList = StreamSupport.stream(f.spliterator(), false)
+                            .filter(res -> {
+                        String code = ((Response) res).getResponseCode().name();
+                        return !StringUtils.equals(code, ResponseCode.OK.name());
+                    }).map(res -> (Response) res).collect(Collectors.toList());
+                    if (resList.size() == 0) {
+                        return response;
+                    } else {
+                        return resList.get(0);
+                    }
+                }
+            }, manager.getContext().dispatcher());
+            Patterns.pipe(result, manager.getContext().dispatcher()).to(manager.sender());
         } else {
             Response response = new Response();
             response.setResponseCode(ResponseCode.CLIENT_ERROR);

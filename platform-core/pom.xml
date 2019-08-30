@@ -16,6 +16,7 @@
         <module>actor-core</module>
         <module>schema-validator</module>
         <module>platform-cache</module>
+        <module>cassandra-connector</module>
     </modules>
     <build>
         <pluginManagement>
