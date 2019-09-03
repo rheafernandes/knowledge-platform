@@ -12,14 +12,11 @@ import java.util.Map;
 
 public class Result {
 
-    private boolean valid = false;
-    private List<String> messages;
     private Map<String, Object> externalData;
     private String identifier;
     private Node node;
 
     public Result(String graphId, String objectType, ValidationResult result) {
-        this.valid = result.isValid();
         this.externalData = result.getExternalData();
         this.identifier = (String) result.getMetadata().get("identifier");
         if (StringUtils.isBlank(identifier)) {
@@ -29,16 +26,8 @@ public class Result {
         node.setMetadata(result.getMetadata());
     }
 
-    public boolean isValid() {
-        return valid;
-    }
-
     public String getIdentifier() {
         return identifier;
-    }
-
-    public List<String> getMessages() {
-        return messages;
     }
 
     public Map<String, Object> getExternalData() {

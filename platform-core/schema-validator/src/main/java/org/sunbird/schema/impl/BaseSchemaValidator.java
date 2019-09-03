@@ -91,12 +91,15 @@ public abstract class BaseSchemaValidator implements ISchemaValidator {
     }
 
     public Map<String, Object> getRelations(Map<String, Object> data) {
-        Set<String> relKeys = this.getConfig().getObject("relations").keySet();
-        Map<String, Object> relationData = data.entrySet().stream().filter(e -> relKeys.contains(e.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        for (String relKey: relKeys) {
-            data.remove(relKey);
+        if (this.getConfig().hasPath("relations")) {
+            Set<String> relKeys = this.getConfig().getObject("relations").keySet();
+            Map<String, Object> relationData = data.entrySet().stream().filter(e -> relKeys.contains(e.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            for (String relKey: relKeys) {
+                data.remove(relKey);
+            }
+            return relationData;
+        } else {
+            return null;
         }
-        return relationData;
     }
-
 }

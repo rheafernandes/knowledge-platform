@@ -24,28 +24,20 @@ class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, v
 
     @throws[Exception]
     def create(request: Request): Unit = {
-        val data = request.getRequest
-        val validationResult = validate(objectType, data)
-        if (validationResult.isValid) {
-            val response = createNode(validationResult.getNode)
-            val extPropsResponse = saveExternalProperties(validationResult.getIdentifier, validationResult.getExternalData, request.getContext, "updateContentBody")
-            val updateRelResponse = updateRelations(util.Arrays.asList(), request.getContext)
-            val futureList = List(extPropsResponse, updateRelResponse)
-            val future = Future.sequence(futureList).map(list => {
-                val errList = list.map(f => f.asInstanceOf[Response]).filter(res => !StringUtils.equals(res.getResponseCode.name(), ResponseCode.OK.name()));
-                if (errList.isEmpty) {
-                    response
-                } else {
-                    errList(0)
-                }
-            });
-            Patterns.pipe(future, ec).to(manager.sender())
-        } else {
-            val response = new Response
-            response.setResponseCode(ResponseCode.CLIENT_ERROR)
-            response.put("messages", validationResult.getMessages)
-            manager.sender() ! response
-        }
+        val validationResult = validate(objectType, request.getRequest)
+        val response = createNode(validationResult.getNode)
+        val extPropsResponse = saveExternalProperties(validationResult.getIdentifier, validationResult.getExternalData, request.getContext, "updateContentBody")
+        val updateRelResponse = updateRelations(util.Arrays.asList(), request.getContext)
+        val futureList = List(extPropsResponse, updateRelResponse)
+        val future = Future.sequence(futureList).map(list => {
+            val errList = list.map(f => f.asInstanceOf[Response]).filter(res => !StringUtils.equals(res.getResponseCode.name(), ResponseCode.OK.name()));
+            if (errList.isEmpty) {
+                response
+            } else {
+                errList(0)
+            }
+        });
+        Patterns.pipe(future, ec).to(manager.sender())
     }
 
     @throws[Exception]
