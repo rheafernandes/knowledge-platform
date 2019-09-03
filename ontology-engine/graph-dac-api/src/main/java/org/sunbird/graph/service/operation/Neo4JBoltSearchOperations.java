@@ -229,11 +229,9 @@ public class Neo4JBoltSearchOperations {
 	 *            the graph id
 	 * @param searchCriteria
 	 *            the search criteria
-	 * @param request
-	 *            the request
 	 * @return the node by unique ids
 	 */
-	public static List<Node> getNodeByUniqueIds(String graphId, SearchCriteria searchCriteria, Request request) {
+	public static List<Node> getNodeByUniqueIds(String graphId, SearchCriteria searchCriteria) {
 
 		if (StringUtils.isBlank(graphId))
 			throw new ClientException(DACErrorCodeConstants.INVALID_GRAPH.name(),
@@ -252,7 +250,6 @@ public class Neo4JBoltSearchOperations {
 			Map<String, Object> parameterMap = new HashMap<String, Object>();
 			parameterMap.put(GraphDACParams.graphId.name(), graphId);
 			parameterMap.put(GraphDACParams.searchCriteria.name(), searchCriteria);
-			parameterMap.put(GraphDACParams.request.name(), request);
 
 			String query = SearchQueryGenerationUtil.generateGetNodeByUniqueIdsCypherQuery(parameterMap);
 			Map<String, Object> params = searchCriteria.getParams();

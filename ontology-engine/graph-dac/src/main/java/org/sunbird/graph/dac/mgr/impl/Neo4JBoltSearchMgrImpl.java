@@ -112,7 +112,7 @@ public class Neo4JBoltSearchMgrImpl extends BaseDACManager implements IGraphDACS
 			searchCriteria.addMetadata(mc);
 			searchCriteria.setCountQuery(false);
             try {
-				List<Node> nodes = Neo4JBoltSearchOperations.getNodeByUniqueIds(graphId, searchCriteria, request);
+				List<Node> nodes = Neo4JBoltSearchOperations.getNodeByUniqueIds(graphId, searchCriteria);
 				return OK(GraphDACParams.node_list.name(), nodes);
             } catch (Exception e) {
 				return ERROR(e);

@@ -3,6 +3,7 @@ package org.sunbird.graph.engine;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.sunbird.graph.engine.dto.Result;
+import org.sunbird.graph.util.NodeValidator;
 import org.sunbird.schema.ISchemaValidator;
 import org.sunbird.schema.SchemaValidatorFactory;
 import org.sunbird.schema.dto.ValidationResult;
@@ -49,6 +50,9 @@ public class DefinitionNode extends BaseDomainObject {
 
             // TODO: use ids and validate them using NodeValidator.validate(List<String> ids)
             // get all the ids and objectType - List size and ids size
+            List<Map<String,Object>> nodesInfo = NodeValidator.validate(ids);
+            //TODO: Remove this sysout
+            System.out.println("nodesInfo : "+nodesInfo);
 
         } else {
 
