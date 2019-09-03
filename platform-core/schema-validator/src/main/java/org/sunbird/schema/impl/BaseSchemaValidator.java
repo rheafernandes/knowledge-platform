@@ -2,7 +2,6 @@ package org.sunbird.schema.impl;
 
 
 import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
 import org.leadpony.justify.api.*;
 import org.sunbird.common.JsonUtils;
 import org.sunbird.schema.ISchemaValidator;
@@ -52,7 +51,6 @@ public abstract class BaseSchemaValidator implements ISchemaValidator {
      */
     protected JsonSchema readSchema(Path path) {
         try (JsonSchemaReader reader = schemaReaderFactory.createSchemaReader(path)) {
-            this.config = ConfigFactory.parseFile(path.toFile());
             return reader.read();
         }
     }
