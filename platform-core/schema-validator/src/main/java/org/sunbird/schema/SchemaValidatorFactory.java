@@ -1,6 +1,6 @@
 package org.sunbird.schema;
 
-import org.sunbird.schema.impl.LocalSchemaValidator;
+import org.sunbird.schema.impl.JsonSchemaValidator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +19,7 @@ public class SchemaValidatorFactory {
     }
 
     private static ISchemaValidator initSchema(String name, String version) throws Exception {
-        ISchemaValidator schema = new LocalSchemaValidator(name, version);
+        ISchemaValidator schema = new JsonSchemaValidator(name, version);
         schemaMap.put(getKey(name, version), schema);
         return schema;
     }

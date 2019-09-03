@@ -21,12 +21,12 @@ public class Result {
     public Result(String graphId, String objectType, ValidationResult result) {
         this.valid = result.isValid();
         this.externalData = result.getExternalData();
-        this.identifier = (String) result.getData().get("identifier");
+        this.identifier = (String) result.getMetadata().get("identifier");
         if (StringUtils.isBlank(identifier)) {
             this.identifier = Identifier.getIdentifier(graphId, Identifier.getUniqueIdFromTimestamp());
         }
         this.node = new Node(this.identifier, SystemNodeTypes.DATA_NODE.name(), objectType);
-        node.setMetadata(result.getData());
+        node.setMetadata(result.getMetadata());
     }
 
     public boolean isValid() {

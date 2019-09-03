@@ -3,10 +3,8 @@ package org.sunbird.schema.impl;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import org.apache.commons.collections4.CollectionUtils;
 import org.leadpony.justify.api.*;
 import org.sunbird.common.JsonUtils;
-import org.sunbird.schema.ExternalSchema;
 import org.sunbird.schema.ISchemaValidator;
 import org.sunbird.schema.dto.ValidationResult;
 
@@ -18,17 +16,16 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public abstract class SchemaValidator implements ISchemaValidator {
+public abstract class BaseSchemaValidator implements ISchemaValidator {
 
     public static String name;
     public static String version;
     protected static final JsonValidationService service = JsonValidationService.newInstance();
     public static JsonSchema schema;
-    protected static ExternalSchema externalSchema;
     protected static JsonSchemaReaderFactory schemaReaderFactory;
-    public static Config config;
+    protected static Config config;
 
-    public SchemaValidator(String name, String version) {
+    public BaseSchemaValidator(String name, String version) {
         this.name = name;
         this.version = version;
         this.schemaReaderFactory = service.createSchemaReaderFactoryBuilder()
@@ -39,6 +36,13 @@ public abstract class SchemaValidator implements ISchemaValidator {
 
     public abstract JsonSchema resolveSchema(URI id);
 
+    /**
+     *
+     * @return
+     */
+    public Config getConfig() {
+        return config;
+    }
 
     /**
      * Reads the JSON schema from the specified path.
@@ -59,16 +63,14 @@ public abstract class SchemaValidator implements ISchemaValidator {
         Map<String, Object> dataMap = JsonUtils.deserialize(dataWithDefaults, Map.class);
         Map<String, Object> externalData = new HashMap<>();
         Map<String, Object> relations = getRelations(dataMap);
-        System.out.println("Relations: " + relations);
-        if (externalSchema == null || CollectionUtils.isEmpty(externalSchema.getProperties())) {
-            return new ValidationResult(messages, dataMap, externalData);
+        if (config == null || !config.hasPath("externalProperties")) {
+            return new ValidationResult(messages, dataMap, relations, externalData);
         } else {
-            List<String> extProps = externalSchema.getProperties();
+            Set<String> extProps = config.getObject("externalProperties").keySet();
             externalData = dataMap.entrySet().stream().filter(f -> extProps.contains(f.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             dataMap = dataMap.entrySet().stream().filter(f -> !extProps.contains(f.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-            return new ValidationResult(messages, dataMap, externalData);
+            return new ValidationResult(messages, dataMap, relations, externalData);
         }
-
     }
 
     private List<String> validate(StringReader input) {
@@ -88,10 +90,13 @@ public abstract class SchemaValidator implements ISchemaValidator {
         return reader.readValue().toString();
     }
 
-    private Map<String, Object> getRelations(Map<String, Object> data) {
-        Set<String> relNames = this.config.getObject("relations").keySet();
-        Map<String, Object> relations = data.entrySet().stream().filter(entry -> relNames.contains(entry.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        return relations;
+    public Map<String, Object> getRelations(Map<String, Object> data) {
+        Set<String> relKeys = this.getConfig().getObject("relations").keySet();
+        Map<String, Object> relationData = data.entrySet().stream().filter(e -> relKeys.contains(e.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        for (String relKey: relKeys) {
+            data.remove(relKey);
+        }
+        return relationData;
     }
 
 }
