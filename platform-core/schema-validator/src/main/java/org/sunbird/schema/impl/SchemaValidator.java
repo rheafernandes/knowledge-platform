@@ -1,6 +1,8 @@
 package org.sunbird.schema.impl;
 
 
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import org.apache.commons.collections4.CollectionUtils;
 import org.leadpony.justify.api.*;
 import org.sunbird.common.JsonUtils;
@@ -24,6 +26,7 @@ public abstract class SchemaValidator implements ISchemaValidator {
     public static JsonSchema schema;
     protected static ExternalSchema externalSchema;
     protected static JsonSchemaReaderFactory schemaReaderFactory;
+    public static Config config;
 
     public SchemaValidator(String name, String version) {
         this.name = name;
@@ -31,6 +34,7 @@ public abstract class SchemaValidator implements ISchemaValidator {
         this.schemaReaderFactory = service.createSchemaReaderFactoryBuilder()
                 .withSchemaResolver(this::resolveSchema)
                 .build();
+
     }
 
     public abstract JsonSchema resolveSchema(URI id);
@@ -44,6 +48,7 @@ public abstract class SchemaValidator implements ISchemaValidator {
      */
     protected JsonSchema readSchema(Path path) {
         try (JsonSchemaReader reader = schemaReaderFactory.createSchemaReader(path)) {
+            this.config = ConfigFactory.parseFile(path.toFile());
             return reader.read();
         }
     }
@@ -53,6 +58,8 @@ public abstract class SchemaValidator implements ISchemaValidator {
         List<String> messages = validate(new StringReader(dataWithDefaults));
         Map<String, Object> dataMap = JsonUtils.deserialize(dataWithDefaults, Map.class);
         Map<String, Object> externalData = new HashMap<>();
+        Map<String, Object> relations = getRelations(dataMap);
+        System.out.println("Relations: " + relations);
         if (externalSchema == null || CollectionUtils.isEmpty(externalSchema.getProperties())) {
             return new ValidationResult(messages, dataMap, externalData);
         } else {
@@ -61,9 +68,10 @@ public abstract class SchemaValidator implements ISchemaValidator {
             dataMap = dataMap.entrySet().stream().filter(f -> !extProps.contains(f.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             return new ValidationResult(messages, dataMap, externalData);
         }
+
     }
 
-    public List<String> validate(StringReader input) {
+    private List<String> validate(StringReader input) {
         List<String> messages = new ArrayList<>();
         ProblemHandler handler = service.createProblemPrinter(s -> {messages.add(s);});
         try (JsonReader reader = service.createReader(input, schema, handler)) {
@@ -78,6 +86,12 @@ public abstract class SchemaValidator implements ISchemaValidator {
         JsonReaderFactory readerFactory = service.createReaderFactory(config.getAsMap());
         JsonReader reader = readerFactory.createReader(new StringReader(data));
         return reader.readValue().toString();
+    }
+
+    private Map<String, Object> getRelations(Map<String, Object> data) {
+        Set<String> relNames = this.config.getObject("relations").keySet();
+        Map<String, Object> relations = data.entrySet().stream().filter(entry -> relNames.contains(entry.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return relations;
     }
 
 }
