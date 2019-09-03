@@ -2,9 +2,8 @@ package org.sunbird.graph.model.nodes
 
 import java.util
 
-import akka.dispatch.Futures
 import akka.pattern.Patterns
-import org.apache.commons.collections4.MapUtils
+import org.apache.commons.collections4.{CollectionUtils, MapUtils}
 import org.apache.commons.lang3.StringUtils
 import org.sunbird.common.dto.{Request, Response}
 import org.sunbird.common.exception.ResponseCode
@@ -12,8 +11,10 @@ import org.sunbird.graph.dac.model.{Node, Relation}
 import org.sunbird.graph.engine.dto.Result
 import org.sunbird.graph.engine.BaseDomainObject
 import org.sunbird.graph.mgr.BaseGraphManager
+import org.sunbird.graph.model.relation.RelationHandler
 import org.sunbird.graph.service.operation.Neo4JBoltNodeOperations
 
+import scala.collection.JavaConversions._
 import scala.concurrent.{ExecutionContext, Future}
 
 
@@ -24,28 +25,21 @@ class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, v
 
     @throws[Exception]
     def create(request: Request): Unit = {
-        val data = request.getRequest
-        val validationResult = validate(objectType, data)
-        if (validationResult.isValid) {
-            val response = createNode(validationResult.getNode)
-            val extPropsResponse = saveExternalProperties(validationResult.getIdentifier, validationResult.getExternalData, request.getContext, "updateContentBody")
-            val updateRelResponse = updateRelations(util.Arrays.asList(), request.getContext)
-            val futureList = List(extPropsResponse, updateRelResponse)
-            val future = Future.sequence(futureList).map(list => {
-                val errList = list.map(f => f.asInstanceOf[Response]).filter(res => !StringUtils.equals(res.getResponseCode.name(), ResponseCode.OK.name()));
-                if (errList.isEmpty) {
-                    response
-                } else {
-                    errList(0)
-                }
-            });
-            Patterns.pipe(future, ec).to(manager.sender())
-        } else {
-            val response = new Response
-            response.setResponseCode(ResponseCode.CLIENT_ERROR)
-            response.put("messages", validationResult.getMessages)
-            manager.sender() ! response
-        }
+        request.getContext.put("graph_id", graphId)
+        val validationResult = validate(objectType, request.getRequest)
+        val response = createNode(validationResult.getNode)
+        val extPropsResponse = saveExternalProperties(validationResult.getIdentifier, validationResult.getExternalData, request.getContext)
+        val updateRelResponse = updateRelations(validationResult.getNode.getOutRelations, request.getContext)
+        val futureList = List(extPropsResponse, updateRelResponse)
+        val future = Future.sequence(futureList).map(list => {
+            val errList = list.map(f => f.asInstanceOf[Response]).filter(res => !StringUtils.equals(res.getResponseCode.name(), ResponseCode.OK.name()));
+            if (errList.isEmpty) {
+                response
+            } else {
+                errList(0)
+            }
+        });
+        Patterns.pipe(future, ec).to(manager.sender())
     }
 
     @throws[Exception]
@@ -61,10 +55,10 @@ class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, v
         response
     }
 
-    private def saveExternalProperties(identifier: String, externalProps: util.Map[String, AnyRef], context: util.Map[String, AnyRef], operation: String): Future[AnyRef] = {
+    private def saveExternalProperties(identifier: String, externalProps: util.Map[String, AnyRef], context: util.Map[String, AnyRef]): Future[AnyRef] = {
         if (MapUtils.isNotEmpty(externalProps)) {
             externalProps.put("identifier", identifier)
-            val request = new Request(context, externalProps, operation, objectType)
+            val request = new Request(context, externalProps, "updateContentBody", objectType)
             manager.getResult(request)
         } else {
             Future(new Response())
@@ -72,7 +66,16 @@ class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, v
     }
 
     private def updateRelations(relations: util.List[Relation], context: util.Map[String, AnyRef]) : Future[AnyRef] = {
-        // TODO: update Relations using Graph Manager Actor.
-        Futures.successful(new Response)
+        if (CollectionUtils.isNotEmpty(relations)) {
+            relations.toList.map(relation => RelationHandler.getRelation(manager, graphId, relation.getStartNodeId, relation.getRelationType, relation.getEndNodeId, new util.HashMap()))
+                            .map(relation => {
+                                val req = new Request()
+                                req.setContext(context)
+                                relation.createRelation(req)
+                            })
+            Future(new Response())
+        } else {
+            Future(new Response)
+        }
     }
 }
