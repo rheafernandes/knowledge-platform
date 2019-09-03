@@ -51,41 +51,5 @@
             "enum": ["content", "collection", "image", "video", "audio", "voice", "ecml", "document", "pdf", "text", "other"],
             "default": "content"
         }
-    },
-    "external": {
-        "properties": ["body"],
-        "operation": "updateContentBody"
-    },
-    "relations": {
-        "concepts": {
-            "type": "associatedTo",
-            "direction": "out",
-            "objects": ["Concept"]
-        },
-        "questions": {
-            "type": "associatedTo",
-            "direction": "out",
-            "objects": ["AssessmentItem"]
-        },
-        "children": {
-            "type": "hasSequenceMember",
-            "direction": "out",
-            "objects": ["Content", "ContentImage"]
-        },
-        "collections": {
-            "type": "hasSequenceMember",
-            "direction": "in",
-            "objects": ["Content", "ContentImage"]
-        },
-        "usedByContent": {
-            "type": "associatedTo",
-            "direction": "in",
-            "objects": ["Content"]
-        },
-        "usesContent": {
-            "type": "associatedTo",
-            "direction": "out",
-            "objects": ["Content"]
-        }
     }
 }

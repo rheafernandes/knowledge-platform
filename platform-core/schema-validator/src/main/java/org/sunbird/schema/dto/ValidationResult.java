@@ -9,16 +9,18 @@ public class ValidationResult {
 
     private boolean valid = false;
     private List<String> messages;
-    private Map<String, Object> data;
+    private Map<String, Object> metadata;
     private Map<String, Object> externalData;
+    private Map<String, Object> relations;
 
-    public ValidationResult(List<String> messages, Map<String, Object> data, Map<String, Object> externalData) {
+    public ValidationResult(List<String> messages, Map<String, Object> metadata, Map<String, Object> relations, Map<String, Object> externalData) {
         if (CollectionUtils.isEmpty(messages)) {
             this.valid = true;
         } else {
             this.messages = messages;
         }
-        this.data = data;
+        this.metadata = metadata;
+        this.relations = relations;
         this.externalData = externalData;
     }
 
@@ -30,8 +32,12 @@ public class ValidationResult {
         return messages;
     }
 
-    public Map<String, Object> getData() {
-        return data;
+    public Map<String, Object> getMetadata() {
+        return metadata;
+    }
+
+    public Map<String, Object> getRelations() {
+        return relations;
     }
 
     public Map<String, Object> getExternalData() {
@@ -40,6 +46,6 @@ public class ValidationResult {
 
     @Override
     public String toString() {
-        return "valid: " + valid + " | " + "messages: " +  messages + " | " + " data(with defaults): " + data;
+        return "valid: " + valid + " | " + "messages: " +  messages + " | " + " metadata(with defaults): " + metadata;
     }
 }

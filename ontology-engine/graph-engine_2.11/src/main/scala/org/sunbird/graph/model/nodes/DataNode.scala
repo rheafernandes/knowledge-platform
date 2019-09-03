@@ -28,7 +28,7 @@ class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, v
         val validationResult = validate(objectType, data)
         if (validationResult.isValid) {
             val response = createNode(validationResult.getNode)
-            val extPropsResponse = saveExternalProperties(validationResult.getIdentifier, validationResult.getExternalData, request.getContext, definition.getExternalSchema.getOperation)
+            val extPropsResponse = saveExternalProperties(validationResult.getIdentifier, validationResult.getExternalData, request.getContext, "updateContentBody")
             val updateRelResponse = updateRelations(util.Arrays.asList(), request.getContext)
             val futureList = List(extPropsResponse, updateRelResponse)
             val future = Future.sequence(futureList).map(list => {
