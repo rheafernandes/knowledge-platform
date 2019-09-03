@@ -1,5 +1,6 @@
 package org.sunbird.schema.impl;
 
+import com.typesafe.config.ConfigFactory;
 import org.apache.commons.collections4.MapUtils;
 import org.leadpony.justify.api.JsonSchema;
 import org.sunbird.common.JsonUtils;
@@ -8,7 +9,6 @@ import org.sunbird.schema.ExternalSchema;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Map;
 
 
@@ -26,6 +26,7 @@ public class LocalSchemaValidator extends SchemaValidator {
         if (MapUtils.isNotEmpty(schemaMap) && null != schemaMap.get("external")) {
             this.externalSchema = JsonUtils.convert(schemaMap.get("external"), ExternalSchema.class);
         }
+        ConfigFactory.parseFile(schemaPath.toFile());
     }
 
     public ExternalSchema getExternalSchema() {
