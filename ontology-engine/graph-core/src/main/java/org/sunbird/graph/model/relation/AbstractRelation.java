@@ -39,6 +39,7 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 		super(manager, graphId);
 		if (null == manager || StringUtils.isBlank(graphId) || StringUtils.isBlank(startNodeId)
 				|| StringUtils.isBlank(endNodeId)) {
+			System.out.println("GraphId: " + graphId + " startNodeId: " + startNodeId + " endNodeId: " +endNodeId);
 			throw new ClientException(GraphRelationErrorCodes.ERR_INVALID_RELATION.name(), "Invalid Relation");
 		}
 		this.startNodeId = startNodeId;

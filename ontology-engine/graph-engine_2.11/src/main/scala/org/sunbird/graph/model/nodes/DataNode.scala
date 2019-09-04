@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils
 import org.sunbird.common.dto.{Request, Response}
 import org.sunbird.common.exception.ResponseCode
 import org.sunbird.graph.dac.model.{Node, Relation}
-import org.sunbird.graph.engine.dto.Result
+import org.sunbird.graph.engine.dto.{ProcessingNode, Result}
 import org.sunbird.graph.engine.BaseDomainObject
 import org.sunbird.graph.mgr.BaseGraphManager
 import org.sunbird.graph.model.relation.RelationHandler
@@ -26,10 +26,10 @@ class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, v
     @throws[Exception]
     def create(request: Request): Unit = {
         request.getContext.put("graph_id", graphId)
-        val validationResult = validate(objectType, request.getRequest)
+        val validationResult = validate(request.getRequest)
         val response = createNode(validationResult.getNode)
         val extPropsResponse = saveExternalProperties(validationResult.getIdentifier, validationResult.getExternalData, request.getContext)
-        val updateRelResponse = updateRelations(validationResult.getNode.getOutRelations, request.getContext)
+        val updateRelResponse = updateRelations(validationResult.getNewRelations, request.getContext)
         val futureList = List(extPropsResponse, updateRelResponse)
         val future = Future.sequence(futureList).map(list => {
             val errList = list.map(f => f.asInstanceOf[Response]).filter(res => !StringUtils.equals(res.getResponseCode.name(), ResponseCode.OK.name()));
@@ -43,8 +43,10 @@ class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, v
     }
 
     @throws[Exception]
-    private def validate(objectType: String, data: util.Map[String, AnyRef]): Result = {
-        definition.validate(data)
+    private def validate(input: util.Map[String, AnyRef]): ProcessingNode = {
+        val node = definition.getNode(input)
+        definition.validate(node)
+        node
     }
 
     private def createNode(node: Node): Response = {

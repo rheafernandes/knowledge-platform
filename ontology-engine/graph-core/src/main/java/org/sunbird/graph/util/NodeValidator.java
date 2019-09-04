@@ -2,6 +2,7 @@ package org.sunbird.graph.util;
 
 import org.sunbird.common.exception.ResourceNotFoundException;
 import org.sunbird.common.exception.ServerException;
+import org.sunbird.graph.common.enums.SystemProperties;
 import org.sunbird.graph.dac.model.Filter;
 import org.sunbird.graph.dac.model.MetadataCriterion;
 import org.sunbird.graph.dac.model.Node;
@@ -52,9 +53,9 @@ public class NodeValidator {
         MetadataCriterion mc = null;
         if (identifiers.size() == 1) {
             mc = MetadataCriterion
-                    .create(Arrays.asList(new Filter("identifier", SearchConditions.OP_EQUAL, identifiers.get(0))));
+                    .create(Arrays.asList(new Filter(SystemProperties.IL_UNIQUE_ID.name(), SearchConditions.OP_EQUAL, identifiers.get(0))));
         } else {
-            mc = MetadataCriterion.create(Arrays.asList(new Filter("identifier", SearchConditions.OP_IN, identifiers)));
+            mc = MetadataCriterion.create(Arrays.asList(new Filter(SystemProperties.IL_UNIQUE_ID.name(), SearchConditions.OP_IN, identifiers)));
         }
         searchCriteria.addMetadata(mc);
         searchCriteria.setCountQuery(false);

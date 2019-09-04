@@ -55,20 +55,19 @@ public abstract class BaseSchemaValidator implements ISchemaValidator {
         }
     }
 
+    public ValidationResult getStructuredData(Map<String, Object> input) {
+        Map<String, Object> relations = getRelations(input);
+        Map<String, Object> externalData = getExternalProps(input);
+        return new ValidationResult(input, relations, externalData);
+    }
+
     public ValidationResult validate(Map<String, Object> data) throws Exception {
         String dataWithDefaults = withDefaultValues(JsonUtils.serialize(data));
         List<String> messages = validate(new StringReader(dataWithDefaults));
         Map<String, Object> dataMap = JsonUtils.deserialize(dataWithDefaults, Map.class);
-        Map<String, Object> externalData = new HashMap<>();
+        Map<String, Object> externalData = getExternalProps(dataMap);
         Map<String, Object> relations = getRelations(dataMap);
-        if (config == null || !config.hasPath("externalProperties")) {
-            return new ValidationResult(messages, dataMap, relations, externalData);
-        } else {
-            Set<String> extProps = config.getObject("externalProperties").keySet();
-            externalData = dataMap.entrySet().stream().filter(f -> extProps.contains(f.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-            dataMap = dataMap.entrySet().stream().filter(f -> !extProps.contains(f.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-            return new ValidationResult(messages, dataMap, relations, externalData);
-        }
+        return new ValidationResult(messages, dataMap, relations, externalData);
     }
 
     private List<String> validate(StringReader input) {
@@ -88,7 +87,18 @@ public abstract class BaseSchemaValidator implements ISchemaValidator {
         return reader.readValue().toString();
     }
 
-    public Map<String, Object> getRelations(Map<String, Object> data) {
+    private Map<String, Object> getExternalProps(Map<String, Object> input) {
+        Map<String, Object> externalData = new HashMap<>();
+        if (config != null && config.hasPath("externalProperties")) {
+            Set<String> extProps = config.getObject("externalProperties").keySet();
+            externalData = input.entrySet().stream().filter(f -> extProps.contains(f.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            input = input.entrySet().stream().filter(f -> !extProps.contains(f.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        }
+        return externalData;
+
+    }
+
+    private Map<String, Object> getRelations(Map<String, Object> data) {
         if (this.getConfig().hasPath("relations")) {
             Set<String> relKeys = this.getConfig().getObject("relations").keySet();
             Map<String, Object> relationData = data.entrySet().stream().filter(e -> relKeys.contains(e.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
