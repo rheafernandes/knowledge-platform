@@ -8,8 +8,8 @@ import org.apache.commons.lang3.StringUtils
 import org.sunbird.common.dto.{Request, Response}
 import org.sunbird.common.exception.ResponseCode
 import org.sunbird.graph.dac.model.{Node, Relation}
-import org.sunbird.graph.engine.dto.ProcessingNode
 import org.sunbird.graph.engine.BaseDomainObject
+import org.sunbird.graph.engine.dto.ProcessingNode
 import org.sunbird.graph.mgr.BaseGraphManager
 import org.sunbird.graph.model.relation.RelationHandler
 import org.sunbird.graph.service.operation.Neo4JBoltNodeOperations
@@ -28,7 +28,7 @@ class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, v
         val validationResult = validate(request.getRequest)
         val response = createNode(validationResult.getNode)
         val extPropsResponse = saveExternalProperties(validationResult.getIdentifier, validationResult.getExternalData, request.getContext)
-        val updateRelResponse = updateRelations(validationResult.getNewRelations, request.getContext)
+        val updateRelResponse = updateRelations(validationResult, request.getContext)
         val futureList = List(extPropsResponse, updateRelResponse)
         val future = Future.sequence(futureList).map(list => {
             val errList = list.map(f => f.asInstanceOf[Response]).filter(res => !StringUtils.equals(res.getResponseCode.name(), ResponseCode.OK.name()));
@@ -66,9 +66,10 @@ class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, v
         }
     }
 
-    private def updateRelations(relations: util.List[Relation], context: util.Map[String, AnyRef]) : Future[AnyRef] = {
+    private def updateRelations(node: ProcessingNode, context: util.Map[String, AnyRef]) : Future[AnyRef] = {
+        val relations: util.List[Relation] = node.getNewRelations
         if (CollectionUtils.isNotEmpty(relations)) {
-            relations.toList.map(relation => RelationHandler.getRelation(manager, graphId, relation.getStartNodeId, relation.getRelationType, relation.getEndNodeId, new util.HashMap()))
+            relations.toList.map(relation => RelationHandler.getRelation(manager, graphId, node.getRelationNode(relation.getStartNodeId), relation.getRelationType, node.getRelationNode(relation.getEndNodeId), new util.HashMap()))
                             .map(relation => {
                                 val req = new Request()
                                 req.setContext(context)

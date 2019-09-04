@@ -25,25 +25,25 @@ import scala.concurrent.Future;
 
 public abstract class AbstractRelation extends AbstractDomainObject implements IRelation {
 
-	protected String startNodeId;
-	protected String endNodeId;
+	protected Node startNode;
+	protected Node endNode;
 	protected Map<String, Object> metadata;
 
-	protected AbstractRelation(BaseGraphManager manager, String graphId, String startNodeId, String endNodeId,
+	protected AbstractRelation(BaseGraphManager manager, String graphId, Node startNode, Node endNode,
 							   Map<String, Object> metadata) {
-		this(manager, graphId, startNodeId, endNodeId);
+		this(manager, graphId, startNode, endNode);
 		this.metadata = metadata;
 	}
 
-	protected AbstractRelation(BaseGraphManager manager, String graphId, String startNodeId, String endNodeId) {
+	protected AbstractRelation(BaseGraphManager manager, String graphId, Node startNode, Node endNode) {
 		super(manager, graphId);
-		if (null == manager || StringUtils.isBlank(graphId) || StringUtils.isBlank(startNodeId)
-				|| StringUtils.isBlank(endNodeId)) {
-			System.out.println("GraphId: " + graphId + " startNodeId: " + startNodeId + " endNodeId: " +endNodeId);
+		if (null == manager || StringUtils.isBlank(graphId) || StringUtils.isBlank(startNode.getIdentifier())
+				|| StringUtils.isBlank(endNode.getIdentifier())) {
+			System.out.println("GraphId: " + graphId + " startNodeId: " + startNode.getIdentifier() + " endNodeId: " +endNode.getIdentifier());
 			throw new ClientException(GraphRelationErrorCodes.ERR_INVALID_RELATION.name(), "Invalid Relation");
 		}
-		this.startNodeId = startNodeId;
-		this.endNodeId = endNodeId;
+		this.startNode = startNode;
+		this.endNode = endNode;
 	}
 
 	public void create(final Request req) {
@@ -55,9 +55,9 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 			List<String> errMessages = getErrorMessages(messageMap);
 			if (null == errMessages || errMessages.isEmpty()) {
 				Request request = new Request(req);
-				request.put(GraphDACParams.start_node_id.name(), getStartNodeId());
+				request.put(GraphDACParams.start_node_id.name(), getStartNode().getIdentifier());
 				request.put(GraphDACParams.relation_type.name(), getRelationType());
-				request.put(GraphDACParams.end_node_id.name(), getEndNodeId());
+				request.put(GraphDACParams.end_node_id.name(), getEndNode().getIdentifier());
 				request.put(GraphDACParams.metadata.name(), getMetadata());
 				Future<Object> response = Futures.successful(graphMgr.addRelation(request));
 				manager.returnResponse(response, getParent());
@@ -72,9 +72,9 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 
 	public String createRelation(final Request req) {
 		Request request = new Request(req);
-		request.put(GraphDACParams.start_node_id.name(), getStartNodeId());
+		request.put(GraphDACParams.start_node_id.name(), getStartNode().getIdentifier());
 		request.put(GraphDACParams.relation_type.name(), getRelationType());
-		request.put(GraphDACParams.end_node_id.name(), getEndNodeId());
+		request.put(GraphDACParams.end_node_id.name(), getEndNode().getIdentifier());
 		request.put(GraphDACParams.metadata.name(), getMetadata());
 
 		Response res = graphMgr.addRelation(request);
@@ -100,9 +100,9 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 	@Override
 	public String deleteRelation(Request req) {
 		Request request = new Request(req);
-		request.put(GraphDACParams.start_node_id.name(), getStartNodeId());
+		request.put(GraphDACParams.start_node_id.name(), getStartNode().getIdentifier());
 		request.put(GraphDACParams.relation_type.name(), getRelationType());
-		request.put(GraphDACParams.end_node_id.name(), getEndNodeId());
+		request.put(GraphDACParams.end_node_id.name(), getEndNode().getIdentifier());
 
 		Response res = graphMgr.deleteRelation(request);
 		if (manager.checkError(res)) {
@@ -129,16 +129,16 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 	}
 
 	public Relation toRelation() {
-		Relation relation = new Relation(this.startNodeId, getRelationType(), this.endNodeId);
+		Relation relation = new Relation(this.startNode.getIdentifier(), getRelationType(), this.endNode.getIdentifier());
 		return relation;
 	}
 
-	public String getStartNodeId() {
-		return this.startNodeId;
+	public Node getStartNode() {
+		return this.startNode;
 	}
 
-	public String getEndNodeId() {
-		return this.endNodeId;
+	public Node getEndNode() {
+		return this.endNode;
 	}
 
 	public Map<String, Object> getMetadata() {
@@ -153,9 +153,9 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 		try {
 			String key = (String) req.get(GraphDACParams.property_key.name());
 			Request request = new Request(req);
-			request.put(GraphDACParams.start_node_id.name(), this.startNodeId);
+			request.put(GraphDACParams.start_node_id.name(), this.startNode.getIdentifier());
 			request.put(GraphDACParams.relation_type.name(), getRelationType());
-			request.put(GraphDACParams.end_node_id.name(), this.endNodeId);
+			request.put(GraphDACParams.end_node_id.name(), this.endNode.getIdentifier());
 			request.put(GraphDACParams.property_key.name(), key);
 			Future<Object> response = Futures.successful(searchMgr.getRelationProperty(request));
 					manager.returnResponse(response, getParent());
@@ -184,7 +184,7 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 					messages.add(msg);
 			}
 		}
-		map.put(getStartNodeId(), messages);
+		map.put(getStartNode().getIdentifier(), messages);
 		return map;
 
 	}
@@ -210,9 +210,9 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 	protected String checkCycle(Request req) {
 		try {
 			Request request = new Request(req);
-			request.put(GraphDACParams.start_node_id.name(), this.endNodeId);
+			request.put(GraphDACParams.start_node_id.name(), this.endNode.getIdentifier());
 			request.put(GraphDACParams.relation_type.name(), getRelationType());
-			request.put(GraphDACParams.end_node_id.name(), this.startNodeId);
+			request.put(GraphDACParams.end_node_id.name(), this.startNode.getIdentifier());
 			Response res = searchMgr.checkCyclicLoop(request);
 			if (manager.checkError(res)) {
 				return manager.getErrorMessage(res);
@@ -222,9 +222,9 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 					String msg = (String) res.get(GraphDACParams.message.name());
 					return msg;
 				} else {
-					if (StringUtils.equals(startNodeId, endNodeId))
-						return "Relation '" + getRelationType() + "' cannot be created between: " + getStartNodeId()
-								+ " and " + getEndNodeId();
+					if (StringUtils.equals(startNode.getIdentifier(), endNode.getIdentifier()))
+						return "Relation '" + getRelationType() + "' cannot be created between: " + getStartNode().getIdentifier()
+								+ " and " + getEndNode().getIdentifier();
 					else
 						return null;
 				}

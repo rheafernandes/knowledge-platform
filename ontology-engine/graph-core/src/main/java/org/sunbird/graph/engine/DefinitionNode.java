@@ -65,7 +65,9 @@ public class DefinitionNode extends BaseDomainObject {
                     .flatMap(List::stream)
                     .filter(id -> StringUtils.isNotBlank(id)).distinct().collect(Collectors.toList());
             ids.remove(node.getIdentifier());
-            NodeValidator.validate(graphId, ids);
+            Map<String, Node> relationNodes = NodeValidator.validate(graphId, ids);
+            relationNodes.put(node.getIdentifier(), node);
+            node.setRelationNodes(relationNodes);
         }
         System.out.println("Time to validate relations: " + (System.currentTimeMillis() - startTime));
     }

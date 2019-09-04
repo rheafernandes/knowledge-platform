@@ -14,12 +14,12 @@ import org.sunbird.graph.mgr.BaseGraphManager;
 
 public class AssociationRelation extends AbstractRelation {
 
-    public AssociationRelation(BaseGraphManager manager, String graphId, String startNodeId, String endNodeId, Map<String, Object> metadata) {
-        super(manager, graphId, startNodeId, endNodeId, metadata);
+    public AssociationRelation(BaseGraphManager manager, String graphId, Node startNode, Node endNode, Map<String, Object> metadata) {
+        super(manager, graphId, startNode, endNode, metadata);
     }
     
-    public AssociationRelation(BaseGraphManager manager, String graphId, String startNodeId, String endNodeId) {
-        super(manager, graphId, startNodeId, endNodeId);
+    public AssociationRelation(BaseGraphManager manager, String graphId, Node startNode, Node endNode) {
+        super(manager, graphId, startNode, endNode);
     }
 
     @Override
@@ -33,12 +33,10 @@ public class AssociationRelation extends AbstractRelation {
 			List<String> futures = new ArrayList<String>();
             // Check node types: start node type should be data node.
             // end node type should be data node
-			Node startNode = getNode(request, this.startNodeId);
-			Node endNode = getNode(request, this.endNodeId);
-			String startNodeMsg = getNodeTypeFuture(this.startNodeId, startNode,
+			String startNodeMsg = getNodeTypeFuture(startNode.getIdentifier(), startNode,
 					new String[] { SystemNodeTypes.DATA_NODE.name() });
             futures.add(startNodeMsg);
-			String endNodeMsg = getNodeTypeFuture(this.endNodeId, endNode,
+			String endNodeMsg = getNodeTypeFuture(endNode.getIdentifier(), endNode,
 					new String[] { SystemNodeTypes.DATA_NODE.name(), SystemNodeTypes.SET.name() });
             futures.add(endNodeMsg);
 
