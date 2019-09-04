@@ -68,9 +68,7 @@ public class DefinitionNode extends BaseDomainObject {
 
             // TODO: use ids and validate them using NodeValidator.validate(List<String> ids)
             // get all the ids and objectType - List size and ids size
-            List<Map<String,Object>> nodesInfo = NodeValidator.validate(ids);
-            //TODO: Remove this sysout
-            System.out.println("nodesInfo : "+nodesInfo);
+            List<Node> nodes = NodeValidator.validate(graphId, ids);
         }
         return relations;
     }
