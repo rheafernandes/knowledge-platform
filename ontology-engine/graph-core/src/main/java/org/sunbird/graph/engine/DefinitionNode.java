@@ -57,6 +57,7 @@ public class DefinitionNode extends BaseDomainObject {
     }
 
     private void validateRelations(ProcessingNode node) {
+        long startTime = System.currentTimeMillis();
         List<Relation> relations = node.getNewRelations();
         if(CollectionUtils.isNotEmpty(relations)) {
             List<String> ids = relations.stream()
@@ -66,11 +67,13 @@ public class DefinitionNode extends BaseDomainObject {
             ids.remove(node.getIdentifier());
             NodeValidator.validate(graphId, ids);
         }
+        System.out.println("Time to validate relations: " + (System.currentTimeMillis() - startTime));
     }
 
     public ProcessingNode getNode(Map<String, Object> input) {
         ValidationResult result = schemaValidator.getStructuredData(input);
         Node node = new Node(graphId, result.getMetadata());
+        // TODO: set SYS_NODE_TYPE, FUNC_OBJECT_TYPE
         node.setNodeType(SystemNodeTypes.DATA_NODE.name());
         node.setObjectType(objectType);
         if(StringUtils.isBlank(node.getIdentifier())) {
