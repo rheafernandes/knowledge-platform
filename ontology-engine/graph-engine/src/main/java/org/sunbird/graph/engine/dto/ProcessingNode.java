@@ -1,8 +1,6 @@
 package org.sunbird.graph.engine.dto;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.sunbird.graph.common.Identifier;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.dac.model.Relation;
 import org.sunbird.graph.service.operation.Neo4JBoltSearchOperations;
