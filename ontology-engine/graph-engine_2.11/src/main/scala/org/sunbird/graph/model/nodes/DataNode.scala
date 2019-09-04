@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils
 import org.sunbird.common.dto.{Request, Response}
 import org.sunbird.common.exception.ResponseCode
 import org.sunbird.graph.dac.model.{Node, Relation}
-import org.sunbird.graph.engine.dto.{ProcessingNode, Result}
+import org.sunbird.graph.engine.dto.ProcessingNode
 import org.sunbird.graph.engine.BaseDomainObject
 import org.sunbird.graph.mgr.BaseGraphManager
 import org.sunbird.graph.model.relation.RelationHandler
@@ -25,7 +25,6 @@ class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, v
 
     @throws[Exception]
     def create(request: Request): Unit = {
-        request.getContext.put("graph_id", graphId)
         val validationResult = validate(request.getRequest)
         val response = createNode(validationResult.getNode)
         val extPropsResponse = saveExternalProperties(validationResult.getIdentifier, validationResult.getExternalData, request.getContext)
@@ -73,6 +72,7 @@ class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, v
                             .map(relation => {
                                 val req = new Request()
                                 req.setContext(context)
+                                relation.validateRelation(req)
                                 relation.createRelation(req)
                             })
             Future(new Response())
