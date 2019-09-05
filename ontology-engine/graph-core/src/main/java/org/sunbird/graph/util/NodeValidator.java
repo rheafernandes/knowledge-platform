@@ -13,6 +13,7 @@ import org.sunbird.graph.service.operation.Neo4JBoltSearchOperations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,15 +30,17 @@ public class NodeValidator {
      * @param identifiers
      * @return List<Node>
      */
-    public static List<Node> validate(String graphId, List<String> identifiers) {
+    public static Map<String, Node> validate(String graphId, List<String> identifiers) {
         List<Map<String, Object>> result;
         List<Node> nodes = getDataNodes(graphId, identifiers);
+        Map<String, Node> relationNodes = new HashMap<>();
         if (nodes.size() != identifiers.size()) {
             List<String> invalidIds = identifiers.stream().filter(id -> nodes.stream().noneMatch(node -> node.getIdentifier().equals(id)))
                     .collect(Collectors.toList());
             throw new ResourceNotFoundException(GraphEngineErrorCodes.ERR_INVALID_NODE.name(), "Node Not Found With Identifier " + invalidIds);
         } else {
-            return nodes;
+            relationNodes = nodes.stream().collect(Collectors.toMap(node -> node.getIdentifier(), node -> node));
+            return relationNodes;
         }
     }
 

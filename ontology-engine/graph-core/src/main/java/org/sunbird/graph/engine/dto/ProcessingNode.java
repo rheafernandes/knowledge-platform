@@ -6,6 +6,7 @@ import org.sunbird.graph.dac.model.Relation;
 import org.sunbird.graph.service.operation.Neo4JBoltSearchOperations;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ public class ProcessingNode extends Node {
     private List<Relation> newRelations = new ArrayList<>();
     private List<Relation> deletedRelations = new ArrayList<>();
     private Map<String, Object> externalData;
+    private Map<String, Node> relationNodes = new HashMap<>();
 
     public ProcessingNode(Node node, Map<String, Object> externalData) {
         setId(node.getId());
@@ -79,5 +81,13 @@ public class ProcessingNode extends Node {
 
     public Map<String, Object> getExternalData() {
         return externalData;
+    }
+
+    public Node getRelationNode(String identifier) {
+        return relationNodes.get(identifier);
+    }
+
+    public void setRelationNodes(Map<String, Node> relationNodes) {
+        this.relationNodes.putAll(relationNodes);
     }
 }
