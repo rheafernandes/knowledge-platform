@@ -8,7 +8,7 @@ import org.sunbird.graph.dac.enums.SystemNodeTypes;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.dac.model.Relation;
 import org.sunbird.graph.engine.dto.ProcessingNode;
-import org.sunbird.graph.util.NodeValidator;
+import org.sunbird.graph.validator.NodeValidator;
 import org.sunbird.schema.ISchemaValidator;
 import org.sunbird.schema.SchemaValidatorFactory;
 import org.sunbird.schema.dto.ValidationResult;

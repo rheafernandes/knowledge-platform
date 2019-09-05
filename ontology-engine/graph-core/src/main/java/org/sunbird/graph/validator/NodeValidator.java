@@ -1,4 +1,4 @@
-package org.sunbird.graph.util;
+package org.sunbird.graph.validator;
 
 import org.sunbird.common.exception.ResourceNotFoundException;
 import org.sunbird.common.exception.ServerException;
