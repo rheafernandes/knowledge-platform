@@ -1,7 +1,8 @@
-package org.sunbird.content.actors;
+package org.sunbird.actors.content;
 
 import akka.pattern.Patterns;
 import org.sunbird.actor.router.ActorConfig;
+import org.sunbird.common.Platform;
 import org.sunbird.common.dto.Request;
 
 import org.sunbird.graph.mgr.BaseGraphManager;
@@ -30,6 +31,7 @@ public class ContentActor extends BaseGraphManager {
     private void create(Request request) {
         Request createRequest = new Request(request,"createDataNode", objectType);
         createRequest.setRequest(request.getRequest());
+        createRequest.getContext().put("store_name","content_data_store");
         Patterns.pipe(getResult(createRequest), getContext().getDispatcher()).to(sender());
     }
 
