@@ -2,14 +2,16 @@ package org.sunbird.graph.model;
 
 import org.sunbird.graph.engine.DefinitionNode;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DefinitionFactory {
 
-    private Map<String, DefinitionNode> definitions = new HashMap<>();
+    private static Map<String, DefinitionNode> definitions = new HashMap<>();
 
-    public DefinitionNode getDefinition(String graphId, String objectType, String version) throws Exception {
+    public static DefinitionNode getDefinition(String graphId, String objectType, String version) throws Exception {
         String key = getKey(graphId, objectType, version);
         if (definitions.containsKey(key)) {
             return definitions.get(key);
@@ -20,7 +22,17 @@ public class DefinitionFactory {
         }
     }
 
-    private String getKey(String graphId, String objectType, String version) {
+    public static List<String> getOutRelationObjectTypes(String graphId, String objectType, String version) {
+        try {
+            DefinitionNode definition = getDefinition(graphId, objectType, version);
+            return definition.getOutRelationObjectTypes();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Arrays.asList();
+    }
+
+    private static String getKey(String graphId, String objectType, String version) {
         return graphId + ":" + objectType + ":" + version;
     }
 }

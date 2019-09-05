@@ -17,12 +17,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DefinitionNode extends BaseDomainObject {
 
     private ISchemaValidator schemaValidator;
     private Map<String, Object> inRelationSchema;
     private Map<String, Object> outRelationSchema;
+    private List<String> outRelationObjectTypes;
 
     public DefinitionNode(String graphId, String objectType, String version) throws Exception {
         super(graphId, objectType, version);
@@ -37,9 +39,19 @@ public class DefinitionNode extends BaseDomainObject {
                 Map<String, String> relation = (Map<String, String>) e.getValue();
                 return StringUtils.equalsIgnoreCase(relation.get("direction"), "out");
             }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+            this.outRelationObjectTypes = this.outRelationSchema.values().stream().map(s -> (Map<String, Object>) s)
+                    .map(s -> {
+                        String type = (String) s.get("type");
+                        List<String> objects = (List<String>)s.get("objects");
+                        return objects.stream().map(obj -> type + ":" + obj);
+                    }).flatMap(Stream::distinct).collect(Collectors.toList());
         }
     }
 
+    public List<String> getOutRelationObjectTypes() {
+        return outRelationObjectTypes;
+    }
 
     /**
      *

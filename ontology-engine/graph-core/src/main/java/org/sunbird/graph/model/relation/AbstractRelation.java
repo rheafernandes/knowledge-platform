@@ -17,8 +17,8 @@ import org.sunbird.graph.dac.model.Relation;
 import org.sunbird.graph.exception.GraphRelationErrorCodes;
 import org.sunbird.graph.mgr.BaseGraphManager;
 import org.sunbird.graph.model.AbstractDomainObject;
+import org.sunbird.graph.model.DefinitionFactory;
 import org.sunbird.graph.model.IRelation;
-import org.sunbird.graph.model.cache.DefinitionCache;
 
 import akka.dispatch.Futures;
 import scala.concurrent.Future;
@@ -268,7 +268,7 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 	protected String validateObjectTypes(String objectType, final String endNodeObjectType) {
 
 		if (StringUtils.isNotBlank(objectType) && StringUtils.isNotBlank(endNodeObjectType)) {
-			List<String> outRelations = DefinitionCache.getOutRelationObjectTypes(graphId, objectType);
+			List<String> outRelations = DefinitionFactory.getOutRelationObjectTypes(graphId, objectType, "1.0");
 			boolean found = false;
 			if (null != outRelations && !outRelations.isEmpty()) {
 				for (String outRel : outRelations) {
