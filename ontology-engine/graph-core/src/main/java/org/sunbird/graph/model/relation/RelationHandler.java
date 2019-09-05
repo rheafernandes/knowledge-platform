@@ -3,6 +3,7 @@ package org.sunbird.graph.model.relation;
 import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.exception.ClientException;
 import org.sunbird.graph.dac.enums.RelationTypes;
+import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.exception.GraphRelationErrorCodes;
 import org.sunbird.graph.mgr.BaseGraphManager;
 import org.sunbird.graph.model.IRelation;
@@ -11,15 +12,15 @@ import java.util.Map;
 
 public class RelationHandler {
 
-    public static IRelation getRelation(BaseGraphManager manager, String graphId, String startNodeId,
-                                        String relationType, String endNodeId, Map<String, Object> metadata) {
+    public static IRelation getRelation(BaseGraphManager manager, String graphId, Node startNode,
+                                        String relationType, Node endNode, Map<String, Object> metadata) {
 
         if (StringUtils.isNotBlank(relationType) && RelationTypes.isValidRelationType(relationType)) {
 
             if (StringUtils.equals(RelationTypes.ASSOCIATED_TO.relationName(), relationType)) {
-                return new AssociationRelation(manager, graphId, startNodeId, endNodeId, metadata);
+                return new AssociationRelation(manager, graphId, startNode, endNode, metadata);
             } else if (StringUtils.equals(RelationTypes.SEQUENCE_MEMBERSHIP.relationName(), relationType)) {
-                return new SequenceMembershipRelation(manager, graphId, startNodeId, endNodeId, metadata);
+                return new SequenceMembershipRelation(manager, graphId, startNode, endNode, metadata);
             }
 
 //            if (StringUtils.equals(RelationTypes.HIERARCHY.relationName(), relationType)) {

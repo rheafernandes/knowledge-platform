@@ -1,6 +1,7 @@
 package org.sunbird.graph.model;
 
 import org.sunbird.common.dto.Request;
+import org.sunbird.graph.dac.model.Node;
 
 import java.util.List;
 import java.util.Map;
@@ -16,9 +17,9 @@ public interface IRelation extends IPropertyContainer {
 
     String getRelationType();
 
-    String getStartNodeId();
+    Node getStartNode();
 
-    String getEndNodeId();
+    Node getEndNode();
     
     Map<String, Object> getMetadata();
 

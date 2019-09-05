@@ -1,7 +1,8 @@
-package org.sunbird.graph.util;
+package org.sunbird.graph.validator;
 
 import org.sunbird.common.exception.ResourceNotFoundException;
 import org.sunbird.common.exception.ServerException;
+import org.sunbird.graph.common.enums.SystemProperties;
 import org.sunbird.graph.dac.model.Filter;
 import org.sunbird.graph.dac.model.MetadataCriterion;
 import org.sunbird.graph.dac.model.Node;
@@ -12,6 +13,7 @@ import org.sunbird.graph.service.operation.Neo4JBoltSearchOperations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,15 +30,17 @@ public class NodeValidator {
      * @param identifiers
      * @return List<Node>
      */
-    public static List<Node> validate(String graphId, List<String> identifiers) {
+    public static Map<String, Node> validate(String graphId, List<String> identifiers) {
         List<Map<String, Object>> result;
         List<Node> nodes = getDataNodes(graphId, identifiers);
+        Map<String, Node> relationNodes = new HashMap<>();
         if (nodes.size() != identifiers.size()) {
             List<String> invalidIds = identifiers.stream().filter(id -> nodes.stream().noneMatch(node -> node.getIdentifier().equals(id)))
                     .collect(Collectors.toList());
             throw new ResourceNotFoundException(GraphEngineErrorCodes.ERR_INVALID_NODE.name(), "Node Not Found With Identifier " + invalidIds);
         } else {
-            return nodes;
+            relationNodes = nodes.stream().collect(Collectors.toMap(node -> node.getIdentifier(), node -> node));
+            return relationNodes;
         }
     }
 
@@ -52,9 +56,9 @@ public class NodeValidator {
         MetadataCriterion mc = null;
         if (identifiers.size() == 1) {
             mc = MetadataCriterion
-                    .create(Arrays.asList(new Filter("identifier", SearchConditions.OP_EQUAL, identifiers.get(0))));
+                    .create(Arrays.asList(new Filter(SystemProperties.IL_UNIQUE_ID.name(), SearchConditions.OP_EQUAL, identifiers.get(0))));
         } else {
-            mc = MetadataCriterion.create(Arrays.asList(new Filter("identifier", SearchConditions.OP_IN, identifiers)));
+            mc = MetadataCriterion.create(Arrays.asList(new Filter(SystemProperties.IL_UNIQUE_ID.name(), SearchConditions.OP_IN, identifiers)));
         }
         searchCriteria.addMetadata(mc);
         searchCriteria.setCountQuery(false);

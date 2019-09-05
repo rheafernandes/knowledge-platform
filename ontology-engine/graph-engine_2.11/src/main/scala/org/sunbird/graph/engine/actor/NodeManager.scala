@@ -3,6 +3,7 @@ package org.sunbird.graph.engine.actor
 import org.sunbird.actor.router.ActorConfig
 import org.sunbird.common.dto.{Request, Response}
 import org.sunbird.graph.mgr.BaseGraphManager
+import org.sunbird.graph.model.nodes.DataNode
 
 @ActorConfig(tasks = Array("createDataNode", "saveExternalProperties"))
 class NodeManager extends BaseGraphManager {
@@ -24,7 +25,8 @@ class NodeManager extends BaseGraphManager {
 
     @throws[Exception]
     private def createDataNode(request: Request): Unit = {
-        val node = new org.sunbird.graph.model.nodes.DataNode(this, graphId, request.getObjectType, "1.0")
+        val node = new DataNode(this, graphId, request.getObjectType, "1.0")
+        request.getContext.put("graph_id", graphId)
         node.create(request)
     }
 }
