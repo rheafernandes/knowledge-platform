@@ -35,6 +35,6 @@ public class NodeExternalStoreFactory {
     }
 
     private static String getKey(String keyspace, String table) {
-        return "store-" + keyspace + table;
+        return "store-" + keyspace +"-"+ table;
     }
 }
