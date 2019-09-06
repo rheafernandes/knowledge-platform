@@ -14,6 +14,9 @@ public class ContentActor extends BaseGraphManager {
     public static String objectType = "Content";
     public static String version = "1.0";
 
+    private static final String CONTENT_KEYSPACE_NAME = Platform.config.hasPath("content.keyspace.name") ? Platform.config.getString("content.keyspace.name") : "content_store";
+    private static final String CONTENT_TABLE_NAME = Platform.config.hasPath("content.keyspace.table") ? Platform.config.getString("content.keyspace.table") : "content_data";
+
     @Override
     public void onReceive(Request request) throws Throwable {
         String operation = request.getOperation();
@@ -31,7 +34,8 @@ public class ContentActor extends BaseGraphManager {
     private void create(Request request) {
         Request createRequest = new Request(request,"createDataNode", objectType);
         createRequest.setRequest(request.getRequest());
-        createRequest.getContext().put("store_name","content_data_store");
+        createRequest.getContext().put("keyspace",CONTENT_KEYSPACE_NAME);
+        createRequest.getContext().put("table",CONTENT_TABLE_NAME);
         Patterns.pipe(getResult(createRequest), getContext().getDispatcher()).to(sender());
     }
 

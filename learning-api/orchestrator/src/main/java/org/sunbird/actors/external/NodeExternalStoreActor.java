@@ -9,8 +9,6 @@ import org.sunbird.external.store.NodeExternalStore;
 import org.sunbird.external.store.NodeExternalStoreFactory;
 import org.sunbird.graph.mgr.BaseGraphManager;
 
-import java.util.Map;
-
 @ActorConfig(tasks = {"updateExternalProps"})
 public class NodeExternalStoreActor extends BaseGraphManager {
 
@@ -18,7 +16,7 @@ public class NodeExternalStoreActor extends BaseGraphManager {
 
     @Override
     public void onReceive(Request request) throws Throwable {
-        externalStore = NodeExternalStoreFactory.getStoreInstance((String)request.getContext().get("store_name"));
+        externalStore = NodeExternalStoreFactory.getStoreInstance((String)request.getContext().get("keyspace"), (String)request.getContext().get("table"));
         String operation = request.getOperation();
         switch (operation) {
             case "updateExternalProps":
