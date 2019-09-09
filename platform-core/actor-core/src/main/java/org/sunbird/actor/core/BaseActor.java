@@ -48,6 +48,7 @@ public abstract class BaseActor extends UntypedAbstractActor {
     if (e instanceof MiddlewareException) {
       MiddlewareException mwException = (MiddlewareException) e;
       params.setErr(mwException.getErrCode());
+      response.put("messages", mwException.getMessages());
     } else {
       params.setErr("ERR_SYSTEM_EXCEPTION");
     }
