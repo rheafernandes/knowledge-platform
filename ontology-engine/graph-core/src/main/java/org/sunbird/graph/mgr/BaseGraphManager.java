@@ -295,23 +295,15 @@ public abstract class BaseGraphManager extends BaseActor {
         Response finalResponse = new Response();
         ResponseParams responseParams = new ResponseParams();
         responseParams.setStatus(ResponseParams.StatusType.failed.name());
+        responseParams.setErr(priorityResponseCode.name());
+        responseParams.setErrmsg(priorityResponseCode.name());
         finalResponse.setResponseCode(priorityResponseCode);
         finalResponse.setParams(responseParams);
-        finalResponse.putAll(responses.stream()
-                .filter(response -> response.getResponseCode() != ResponseCode.OK)
-                .collect(Collectors.toMap(response -> response.getResponseCode().name(),
-                        response -> response.getParams().getErrmsg(),
-                        (val1, val2) -> {
-                            if (val1 instanceof List) {
-                                return new ArrayList() {{
-                                    addAll((List) val1);
-                                    add(val2);
-                                }};
-                            } else
-                                return (Arrays.asList(val1, val2));
-                        })));
+        handleUnsuccessfulMessages(finalResponse, responses);
+        handleSuccessfulMessages(finalResponse, responses);
         return finalResponse;
     }
+
 
     private Response handleSuccessResponse(ResponseCode priorityResponseCode, List<Response> responses) {
         Response finalResponse = new Response();
@@ -319,17 +311,7 @@ public abstract class BaseGraphManager extends BaseActor {
         responseParams.setStatus(ResponseParams.StatusType.failed.name());
         finalResponse.setResponseCode(priorityResponseCode);
         finalResponse.setParams(responseParams);
-        finalResponse.putAll(responses.stream().flatMap(response -> response.getResult().entrySet().stream())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-                        (val1, val2) -> {
-                            if (val1 instanceof List) {
-                                return new ArrayList() {{
-                                    addAll((List) val1);
-                                    add(val2);
-                                }};
-                            } else
-                                return (Arrays.asList(val1, val2));
-                        })));
+        handleSuccessfulMessages(finalResponse, responses);
         return finalResponse;
     }
 
@@ -344,5 +326,39 @@ public abstract class BaseGraphManager extends BaseActor {
         if (responseCodes.contains(ResponseCode.RESOURCE_NOT_FOUND))
             return ResponseCode.RESOURCE_NOT_FOUND;
         return ResponseCode.OK;
+    }
+
+    private static Response handleSuccessfulMessages(Response finalResponse, List<Response> responses) {
+        finalResponse.putAll(responses.stream()
+                .filter(response -> response.getResponseCode() == ResponseCode.OK)
+                .flatMap(response -> response.getResult().entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (val1, val2) -> {
+                            if (val1 instanceof List) {
+                                return new ArrayList() {{
+                                    addAll((List) val1);
+                                    add(val2);
+                                }};
+                            } else
+                                return (Arrays.asList(val1, val2));
+                        })));
+        return finalResponse;
+    }
+
+    private static Response handleUnsuccessfulMessages(Response finalResponse, List<Response> responses) {
+        finalResponse.putAll(responses.stream()
+                .filter(response -> response.getResponseCode() != ResponseCode.OK)
+                .collect(Collectors.toMap(response -> response.getResponseCode().name(),
+                        response -> response.getParams().getErrmsg(),
+                        (val1, val2) -> {
+                            if (val1 instanceof List) {
+                                return new ArrayList() {{
+                                    addAll((List) val1);
+                                    add(val2);
+                                }};
+                            } else
+                                return (Arrays.asList(val1, val2));
+                        })));
+        return finalResponse;
     }
 }
