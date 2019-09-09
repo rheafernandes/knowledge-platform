@@ -13,8 +13,11 @@ import org.sunbird.common.exception.*;
 import scala.concurrent.Future;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import akka.dispatch.Mapper;
 
 public abstract class BaseGraphManager extends BaseActor {
@@ -276,5 +279,70 @@ public abstract class BaseGraphManager extends BaseActor {
         } else {
             return "Something went wrong in server while processing the request";
         }
+    }
+
+    public Response handleResponses(List<Response> responses) {
+        ResponseCode responseCode = getResponseCode(responses);
+        Response response;
+        if (StringUtils.equals(ResponseCode.OK.name(), responseCode.name()))
+            response = handleSuccessResponse(responseCode, responses);
+        else
+            response = handleErrorResponse(responseCode, responses);
+        return response;
+    }
+
+    private Response handleErrorResponse(ResponseCode priorityResponseCode, List<Response> responses) {
+        Response finalResponse = new Response();
+        ResponseParams responseParams = new ResponseParams();
+        responseParams.setStatus(ResponseParams.StatusType.failed.name());
+        finalResponse.setResponseCode(priorityResponseCode);
+        finalResponse.setParams(responseParams);
+        finalResponse.putAll(responses.stream()
+                .filter(response -> response.getResponseCode() != ResponseCode.OK)
+                .collect(Collectors.toMap(response -> response.getResponseCode().name(),
+                        response -> response.getParams().getErrmsg(),
+                        (val1, val2) -> {
+                            if (val1 instanceof List) {
+                                return new ArrayList() {{
+                                    addAll((List) val1);
+                                    add(val2);
+                                }};
+                            } else
+                                return (Arrays.asList(val1, val2));
+                        })));
+        return finalResponse;
+    }
+
+    private Response handleSuccessResponse(ResponseCode priorityResponseCode, List<Response> responses) {
+        Response finalResponse = new Response();
+        ResponseParams responseParams = new ResponseParams();
+        responseParams.setStatus(ResponseParams.StatusType.failed.name());
+        finalResponse.setResponseCode(priorityResponseCode);
+        finalResponse.setParams(responseParams);
+        finalResponse.putAll(responses.stream().flatMap(response -> response.getResult().entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (val1, val2) -> {
+                            if (val1 instanceof List) {
+                                return new ArrayList() {{
+                                    addAll((List) val1);
+                                    add(val2);
+                                }};
+                            } else
+                                return (Arrays.asList(val1, val2));
+                        })));
+        return finalResponse;
+    }
+
+    private static ResponseCode getResponseCode(List<Response> responses) {
+        List<ResponseCode> responseCodes = responses.stream().map(response -> response.getResponseCode()).collect(Collectors.toList());
+        if (responseCodes.contains(ResponseCode.SERVER_ERROR))
+            return ResponseCode.SERVER_ERROR;
+        if (responseCodes.contains(ResponseCode.PARTIAL_SUCCESS))
+            return ResponseCode.PARTIAL_SUCCESS;
+        if (responseCodes.contains(ResponseCode.CLIENT_ERROR))
+            return ResponseCode.CLIENT_ERROR;
+        if (responseCodes.contains(ResponseCode.RESOURCE_NOT_FOUND))
+            return ResponseCode.RESOURCE_NOT_FOUND;
+        return ResponseCode.OK;
     }
 }

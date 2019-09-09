@@ -37,7 +37,7 @@ class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, v
             if (errList.isEmpty) {
                 response
             } else {
-                errList.head
+                manager.handleResponses(errList)
             }
         })
         Patterns.pipe(future, ec).to(manager.sender())
