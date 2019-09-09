@@ -5,12 +5,14 @@ import java.util
 import akka.pattern.Patterns
 import org.apache.commons.collections4.{CollectionUtils, MapUtils}
 import org.apache.commons.lang3.StringUtils
+import org.sunbird.actor.router.RequestRouter
 import org.sunbird.common.dto.{Request, Response}
 import org.sunbird.common.exception.ResponseCode
 import org.sunbird.graph.dac.model.{Node, Relation}
 import org.sunbird.graph.engine.BaseDomainObject
 import org.sunbird.graph.engine.dto.ProcessingNode
 import org.sunbird.graph.mgr.BaseGraphManager
+import org.sunbird.graph.model.IRelation
 import org.sunbird.graph.model.relation.RelationHandler
 import org.sunbird.graph.service.operation.Neo4JBoltNodeOperations
 
@@ -31,13 +33,13 @@ class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, v
         val updateRelResponse = updateRelations(validationResult, request.getContext)
         val futureList = List(extPropsResponse, updateRelResponse)
         val future = Future.sequence(futureList).map(list => {
-            val errList = list.map(f => f.asInstanceOf[Response]).filter(res => !StringUtils.equals(res.getResponseCode.name(), ResponseCode.OK.name()));
+            val errList = list.map(f => f.asInstanceOf[Response]).filter(res => !StringUtils.equals(res.getResponseCode.name(), ResponseCode.OK.name()))
             if (errList.isEmpty) {
                 response
             } else {
-                errList(0)
+                errList.head
             }
-        });
+        })
         Patterns.pipe(future, ec).to(manager.sender())
     }
 
@@ -69,14 +71,16 @@ class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, v
     private def updateRelations(node: ProcessingNode, context: util.Map[String, AnyRef]) : Future[AnyRef] = {
         val relations: util.List[Relation] = node.getNewRelations
         if (CollectionUtils.isNotEmpty(relations)) {
-            relations.toList.map(relation => RelationHandler.getRelation(manager, graphId, node.getRelationNode(relation.getStartNodeId), relation.getRelationType, node.getRelationNode(relation.getEndNodeId), new util.HashMap()))
-                            .map(relation => {
-                                val req = new Request()
-                                req.setContext(context)
-                                relation.validateRelation(req)
-                                relation.createRelation(req)
-                            })
-            Future(new Response())
+            val relationList: List[IRelation] = relations.toList.map(relation =>
+                RelationHandler.getRelation(manager, graphId, node.getRelationNode(relation.getStartNodeId),
+                    relation.getRelationType, node.getRelationNode(relation.getEndNodeId), new util.HashMap()))
+            val request: Request = new Request
+            request.setContext(context)
+            request.setOperation("createNewRelations")
+            request.put("relations", relationList)
+
+            manager.getResult(request);
+            //Future(new Response())
         } else {
             Future(new Response)
         }
