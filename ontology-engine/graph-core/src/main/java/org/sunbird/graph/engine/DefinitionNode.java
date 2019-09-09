@@ -78,6 +78,7 @@ public class DefinitionNode extends BaseDomainObject {
                     .filter(id -> StringUtils.isNotBlank(id)).distinct().collect(Collectors.toList());
             ids.remove(node.getIdentifier());
             Map<String, Node> relationNodes = NodeValidator.validate(graphId, ids);
+            node.setNodeType(SystemNodeTypes.DATA_NODE.name());
             relationNodes.put(node.getIdentifier(), node);
             node.setRelationNodes(relationNodes);
         }
