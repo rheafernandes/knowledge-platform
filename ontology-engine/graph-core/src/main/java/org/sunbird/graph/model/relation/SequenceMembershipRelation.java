@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.exception.ServerException;
 import org.sunbird.graph.dac.enums.RelationTypes;
@@ -28,7 +29,8 @@ public class SequenceMembershipRelation extends AbstractRelation {
 			List<String> futures = new ArrayList<String>();
             // check for cycle
 			String cyclicCheck = checkCycle(request);
-            futures.add(cyclicCheck);
+			if(StringUtils.isNotBlank(cyclicCheck))
+                futures.add(cyclicCheck);
 			return getMessageMap(futures);
         } catch (Exception e) {
             throw new ServerException(GraphRelationErrorCodes.ERR_RELATION_VALIDATE.name(), e.getMessage(), e);

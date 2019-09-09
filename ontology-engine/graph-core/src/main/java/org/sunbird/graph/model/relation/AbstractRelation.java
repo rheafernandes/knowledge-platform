@@ -1,11 +1,7 @@
 package org.sunbird.graph.model.relation;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import akka.dispatch.Futures;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
@@ -19,9 +15,14 @@ import org.sunbird.graph.mgr.BaseGraphManager;
 import org.sunbird.graph.model.AbstractDomainObject;
 import org.sunbird.graph.model.DefinitionFactory;
 import org.sunbird.graph.model.IRelation;
-
-import akka.dispatch.Futures;
 import scala.concurrent.Future;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public abstract class AbstractRelation extends AbstractDomainObject implements IRelation {
 
@@ -175,36 +176,14 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 				"Set Property is not supported on relations");
 	}
 
-	protected Map<String, List<String>> getMessageMap(Iterable<String> aggregate) {
-		Map<String, List<String>> map = new HashMap<String, List<String>>();
+	protected Map<String, List<String>> getMessageMap(List<String> aggregate) {
+		Map<String, List<String>> map = new HashMap<>();
 		List<String> messages = new ArrayList<String>();
-		if (null != aggregate) {
-			for (String msg : aggregate) {
-				if (StringUtils.isNotBlank(msg))
-					messages.add(msg);
-			}
+		if(CollectionUtils.isNotEmpty(aggregate)){
+				map.put(getStartNode().getIdentifier(), messages);
 		}
-		map.put(getStartNode().getIdentifier(), messages);
 		return map;
 
-	}
-
-	protected Node getNode(Request request, String nodeId) {
-		try {
-			Request newReq = new Request(request);
-			newReq.put(GraphDACParams.node_id.name(), nodeId);
-
-			Response res = searchMgr.getNodeByUniqueId(newReq);
-			if (!manager.checkError(res)) {
-				Node node = (Node) res.get(GraphDACParams.node.name());
-				return node;
-			} else {
-				return null;
-			}
-		} catch (Exception e) {
-			throw new ServerException(GraphRelationErrorCodes.ERR_RELATION_VALIDATE.name(),
-					"Error occured while validating the relation", e);
-		}
 	}
 
 	protected String checkCycle(Request req) {
@@ -236,17 +215,13 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 		}
 	}
 
-	protected String getNodeTypeFuture(String nodeId, Node node, final String[] nodeTypes) {
-		if (null == node) {
-			return "Node '" + nodeId + "' not Found";
-		} else {
-			if (Arrays.asList(nodeTypes).contains(node.getNodeType())) {
+	protected String getNodeTypeFuture(Node node, List<String> nodeTypes) {
+			if (nodeTypes.contains(node.getNodeType())) {
 				return null;
 			} else {
 				return "Node " + node.getIdentifier() + " is not a " + nodeTypes;
 			}
 		}
-	}
 
 	protected String getNodeTypeFuture(Node nodeFuture) {
 		if (null != nodeFuture)

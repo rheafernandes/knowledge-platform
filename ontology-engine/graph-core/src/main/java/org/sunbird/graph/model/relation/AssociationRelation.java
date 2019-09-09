@@ -1,9 +1,13 @@
 package org.sunbird.graph.model.relation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.exception.ServerException;
 import org.sunbird.graph.dac.enums.RelationTypes;
@@ -33,20 +37,27 @@ public class AssociationRelation extends AbstractRelation {
 			List<String> futures = new ArrayList<String>();
             // Check node types: start node type should be data node.
             // end node type should be data node
-			String startNodeMsg = getNodeTypeFuture(startNode.getIdentifier(), startNode,
-					new String[] { SystemNodeTypes.DATA_NODE.name() });
-            futures.add(startNodeMsg);
-			String endNodeMsg = getNodeTypeFuture(endNode.getIdentifier(), endNode,
-					new String[] { SystemNodeTypes.DATA_NODE.name(), SystemNodeTypes.SET.name() });
-            futures.add(endNodeMsg);
+			String startNodeMsg = getNodeTypeFuture(startNode,
+                    Arrays.asList(SystemNodeTypes.DATA_NODE.name()));
+			if(StringUtils.isNotBlank(startNodeMsg))
+                futures.add(startNodeMsg);
+			String endNodeMsg = getNodeTypeFuture(endNode,
+                    Arrays.asList(SystemNodeTypes.DATA_NODE.name(), SystemNodeTypes.SET.name()));
+            if(StringUtils.isNotBlank(endNodeMsg))
+                futures.add(endNodeMsg);
 
             // check if the relation is valid between object type definitions.
-			String objectType = getObjectTypeFuture(startNode);
-			String endNodeObjectType = getObjectTypeFuture(endNode);
+			String objectType = startNode.getObjectType();
+			String endNodeObjectType = endNode.getObjectType();
 			String objectTypeMessages = validateObjectTypes(objectType, endNodeObjectType);
-            futures.add(objectTypeMessages);
+            if(StringUtils.isNotBlank(objectTypeMessages))
+                futures.add(objectTypeMessages);
 
-			return getMessageMap(futures);
+            Map<String, List<String>> map = new HashMap<>();
+            if(CollectionUtils.isNotEmpty(futures)){
+                map.put(getStartNode().getIdentifier(), futures);
+            }
+			return map;
         } catch (Exception e) {
             throw new ServerException(GraphRelationErrorCodes.ERR_RELATION_VALIDATE.name(), e.getMessage(), e);
         }
