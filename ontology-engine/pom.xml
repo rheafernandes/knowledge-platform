@@ -14,7 +14,6 @@
 
     <modules>
         <module>graph-common</module>
-        <module>cache-manager</module>
         <module>graph-dac-api</module>
         <module>graph-dac</module>
         <module>graph-core</module>

@@ -69,7 +69,6 @@ public class DefinitionNode extends BaseDomainObject {
     }
 
     private void validateRelations(ProcessingNode node) {
-        long startTime = System.currentTimeMillis();
         List<Relation> relations = node.getNewRelations();
         if(CollectionUtils.isNotEmpty(relations)) {
             List<String> ids = relations.stream()
@@ -81,8 +80,8 @@ public class DefinitionNode extends BaseDomainObject {
             node.setNodeType(SystemNodeTypes.DATA_NODE.name());
             relationNodes.put(node.getIdentifier(), node);
             node.setRelationNodes(relationNodes);
+            // TODO: behavior validation should be here.
         }
-        System.out.println("Time to validate relations: " + (System.currentTimeMillis() - startTime));
     }
 
     public ProcessingNode getNode(Map<String, Object> input) {

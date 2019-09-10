@@ -9,8 +9,8 @@ import org.sunbird.common.exception.ClientException;
 import org.sunbird.common.exception.MiddlewareException;
 import org.sunbird.common.exception.ResourceNotFoundException;
 import org.sunbird.common.exception.ServerException;
-import org.sunbird.graph.cache.mgr.impl.NodeCacheManager;
-import org.sunbird.graph.cache.util.RedisStoreUtil;
+//import org.sunbird.graph.cache.mgr.impl.NodeCacheManager;
+//import org.sunbird.graph.cache.util.RedisStoreUtil;
 import org.sunbird.graph.common.Identifier;
 
 import org.sunbird.graph.common.enums.AuditProperties;
@@ -385,7 +385,7 @@ public class Neo4JBoltNodeOperations {
 					TelemetryManager.log("Remove Property Value Operation | ", record.asMap());
 			}
 
-			NodeCacheManager.deleteDataNode(graphId, nodeId);
+//			NodeCacheManager.deleteDataNode(graphId, nodeId);
 
 		} catch (Exception e) {
 			throw new ServerException(DACErrorCodeConstants.CONNECTION_PROBLEM.name(),
@@ -424,7 +424,7 @@ public class Neo4JBoltNodeOperations {
 					TelemetryManager.log("Update Property Values Operation | ", record.asMap());
 			}
 
-			NodeCacheManager.deleteDataNode(graphId, nodeId);
+//			NodeCacheManager.deleteDataNode(graphId, nodeId);
 		} catch (Exception e) {
 			throw new ServerException(DACErrorCodeConstants.CONNECTION_PROBLEM.name(),
 					DACErrorMessageConstants.CONNECTION_PROBLEM + " | " + e.getMessage());
@@ -458,11 +458,11 @@ public class Neo4JBoltNodeOperations {
 					TelemetryManager.log("Delete Node Operation | ", record.asMap());
 			}
 
-			NodeCacheManager.deleteDataNode(graphId, nodeId);
-			try {
-				RedisStoreUtil.deleteNodeProperties(graphId, nodeId);
-			} catch (Exception e) {
-			}
+//			NodeCacheManager.deleteDataNode(graphId, nodeId);
+//			try {
+//				RedisStoreUtil.deleteNodeProperties(graphId, nodeId);
+//			} catch (Exception e) {
+//			}
 
 		} catch (Exception e) {
 			throw new ServerException(DACErrorCodeConstants.CONNECTION_PROBLEM.name(),
@@ -589,9 +589,9 @@ public class Neo4JBoltNodeOperations {
 		if (StringUtils.isNotBlank(neo4JNode.get(GraphDACParams.versionKey.name()).asString()))
 			cacheMap.put(GraphDACParams.versionKey.name(), neo4JNode.get(GraphDACParams.versionKey.name()).asString());
 
-		if (cacheMap.size() > 0)
-			RedisStoreUtil.saveNodeProperties(graphId, nodeId, cacheMap);
-		NodeCacheManager.deleteDataNode(graphId, nodeId);
+//		if (cacheMap.size() > 0)
+//			RedisStoreUtil.saveNodeProperties(graphId, nodeId, cacheMap);
+//		NodeCacheManager.deleteDataNode(graphId, nodeId);
 	}
 
 }
