@@ -24,9 +24,9 @@ import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
  */
 public abstract class CassandraStore {
 
-	private String keySpace;
-	private String table;
-	private List<String> primaryKey;
+	protected String keySpace;
+	protected String table;
+	protected List<String> primaryKey;
 
 	public CassandraStore(String keySpace, String table, List<String> primaryKey) {
 		this.keySpace = keySpace;

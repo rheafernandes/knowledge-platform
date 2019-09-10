@@ -50,6 +50,14 @@
             "type": "string",
             "enum": ["content", "collection", "image", "video", "audio", "voice", "ecml", "document", "pdf", "text", "other"],
             "default": "content"
+        },
+        "testJson": {
+            "type": "string",
+            "format": "json"
+        },
+        "testUri": {
+            "type": "string",
+            "format": "url"
         }
     }
 }

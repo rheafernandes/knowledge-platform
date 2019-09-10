@@ -61,7 +61,7 @@ class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, v
     private def saveExternalProperties(identifier: String, externalProps: util.Map[String, AnyRef], context: util.Map[String, AnyRef]): Future[AnyRef] = {
         if (MapUtils.isNotEmpty(externalProps)) {
             externalProps.put("identifier", identifier)
-            val request = new Request(context, externalProps, "updateContentBody", objectType)
+            val request = new Request(context, externalProps, "updateExternalProps", objectType)
             manager.getResult(request)
         } else {
             Future(new Response())
