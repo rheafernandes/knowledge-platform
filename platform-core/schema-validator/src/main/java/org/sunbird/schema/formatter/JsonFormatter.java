@@ -30,16 +30,10 @@ public class JsonFormatter implements FormatAttribute {
         String str = null;
         try {
             str = ((JsonString) value).getString();
-            data = mapper.readValue(str, new TypeReference<Map<String, Object>>() {
-            });
+            data = mapper.readTree(str);
         } catch (Exception e) {
-            try {
-                data = mapper.readValue(str, new TypeReference<List<Object>>() {
-                });
-            } catch (Exception ex) {
-                return false;
-            }
+            return false;
         }
-        return null != data ? true : false;
+        return null != data ;
     }
 }
