@@ -1,7 +1,7 @@
-package org.sunbird.preprocess
+package org.sunbird.graph.schema
 
 import org.sunbird.graph.engine.dto.ProcessingNode
-import org.sunbird.schema.{CoreDomainObject, ISchemaValidator, SchemaValidatorFactory}
+import org.sunbird.schema.{ISchemaValidator, SchemaValidatorFactory}
 
 abstract class IDefinitionNode(graphId: String, objectType: String, version: String = "1.0") extends CoreDomainObject(graphId, objectType, version) {
 
