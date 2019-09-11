@@ -10,8 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.exception.ResourceNotFoundException;
 import org.sunbird.common.exception.ServerException;
-import org.sunbird.graph.cache.mgr.impl.NodeCacheManager;
-import org.sunbird.graph.cache.util.RedisStoreUtil;
 import org.sunbird.graph.common.Identifier;
 import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.common.enums.GraphEngineParams;
@@ -234,8 +232,8 @@ public class Neo4JBoltGraphOperations {
 					for (Record record : result.list())
 						TelemetryManager.log("'Create Relation' Operation Finished.", record.asMap());
 				}
-				NodeCacheManager.deleteDataNode(graphId, startNodeId);
-				NodeCacheManager.deleteDataNode(graphId, endNodeId);
+//				NodeCacheManager.deleteDataNode(graphId, startNodeId);
+//				NodeCacheManager.deleteDataNode(graphId, endNodeId);
 			}
 		} catch (Exception e) {
 			throw new ServerException(DACErrorCodeConstants.CONNECTION_PROBLEM.name(),
@@ -307,8 +305,8 @@ public class Neo4JBoltGraphOperations {
 							TelemetryManager.log("'Update Relation' Operation Finished.", record.asMap());
 						}
 					}
-					NodeCacheManager.deleteDataNode(graphId, startNodeId);
-					NodeCacheManager.deleteDataNode(graphId, endNodeId);
+//					NodeCacheManager.deleteDataNode(graphId, startNodeId);
+//					NodeCacheManager.deleteDataNode(graphId, endNodeId);
 				}
 			} catch (Exception e) {
 				throw new ServerException(DACErrorCodeConstants.CONNECTION_PROBLEM.name(),
@@ -367,8 +365,8 @@ public class Neo4JBoltGraphOperations {
 					TelemetryManager.log("'Delete Relation' Operation Finished.", record.asMap());
 				}
 			}
-			NodeCacheManager.deleteDataNode(graphId, startNodeId);
-			NodeCacheManager.deleteDataNode(graphId, endNodeId);
+//			NodeCacheManager.deleteDataNode(graphId, startNodeId);
+//			NodeCacheManager.deleteDataNode(graphId, endNodeId);
 		} catch (Exception e) {
 			throw new ServerException(DACErrorCodeConstants.CONNECTION_PROBLEM.name(),
 					DACErrorMessageConstants.CONNECTION_PROBLEM + " | " + e.getMessage());
@@ -602,8 +600,8 @@ public class Neo4JBoltGraphOperations {
 			for (Record record : result.list()) {
 				TelemetryManager.log("'Remove Relation Metadata' Operation Finished.", record.asMap());
 			}
-			NodeCacheManager.deleteDataNode(graphId, startNodeId);
-			NodeCacheManager.deleteDataNode(graphId, endNodeId);
+//			NodeCacheManager.deleteDataNode(graphId, startNodeId);
+//			NodeCacheManager.deleteDataNode(graphId, endNodeId);
 		}
 	}
 
@@ -1115,9 +1113,9 @@ public class Neo4JBoltGraphOperations {
 		if (StringUtils.isNotBlank(neo4JNode.get(GraphDACParams.status.name()).asString()))
 			cacheMap.put(GraphDACParams.status.name(), neo4JNode.get(GraphDACParams.status.name()).asString());
 
-		if (cacheMap.size() > 0)
-			RedisStoreUtil.saveNodeProperties(graphId, nodeId, cacheMap);
-		NodeCacheManager.deleteDataNode(graphId, nodeId);
+//		if (cacheMap.size() > 0)
+//			RedisStoreUtil.saveNodeProperties(graphId, nodeId, cacheMap);
+//		NodeCacheManager.deleteDataNode(graphId, nodeId);
 		
 		
 	}
