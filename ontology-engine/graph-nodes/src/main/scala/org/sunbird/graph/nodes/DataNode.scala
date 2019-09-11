@@ -1,11 +1,10 @@
-package org.sunbird.graph.model.nodes
+package org.sunbird.graph.nodes
 
 import java.util
 
 import akka.pattern.Patterns
 import org.apache.commons.collections4.{CollectionUtils, MapUtils}
 import org.apache.commons.lang3.StringUtils
-import org.sunbird.actor.router.RequestRouter
 import org.sunbird.common.dto.{Request, Response}
 import org.sunbird.common.exception.ResponseCode
 import org.sunbird.graph.dac.model.{Node, Relation}
@@ -81,7 +80,6 @@ class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, v
             request.put("relations", relationList)
 
             manager.getResult(request);
-            //Future(new Response())
         } else {
             Future(new Response)
         }
