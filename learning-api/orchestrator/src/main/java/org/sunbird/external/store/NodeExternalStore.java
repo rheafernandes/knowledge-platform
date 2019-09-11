@@ -32,7 +32,6 @@ public class NodeExternalStore extends CassandraStore {
         request.forEach((key, value) -> insertQuery.value(key, "textAsBlob(" + value + ")"));
         try {
             Session session = CassandraConnector.getSession();
-            System.out.println("Query : " + insertQuery.toString() );
             session.execute(insertQuery);
         }catch(Exception e) {
             TelemetryManager.error("Exception Occurred While Saving The Record. | Exception is : " + e.getMessage(), e);

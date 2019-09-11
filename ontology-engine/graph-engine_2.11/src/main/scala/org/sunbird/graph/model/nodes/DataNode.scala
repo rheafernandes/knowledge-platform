@@ -9,21 +9,22 @@ import org.sunbird.actor.router.RequestRouter
 import org.sunbird.common.dto.{Request, Response}
 import org.sunbird.common.exception.ResponseCode
 import org.sunbird.graph.dac.model.{Node, Relation}
-import org.sunbird.graph.engine.BaseDomainObject
 import org.sunbird.graph.engine.dto.ProcessingNode
 import org.sunbird.graph.mgr.BaseGraphManager
 import org.sunbird.graph.model.IRelation
 import org.sunbird.graph.model.relation.RelationHandler
 import org.sunbird.graph.service.operation.Neo4JBoltNodeOperations
+import org.sunbird.schema.{CoreDomainObject, DefinitionNode}
 
 import scala.collection.JavaConversions._
 import scala.concurrent.{ExecutionContext, Future}
 
 
-class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, version: String) extends BaseDomainObject(graphId, objectType, version) {
+class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, version: String) extends CoreDomainObject(graphId, objectType, version) {
 
     implicit val ec: ExecutionContext = manager.getContext().dispatcher
-    val definition: org.sunbird.graph.engine.DefinitionNode = new org.sunbird.graph.engine.DefinitionNode(graphId, objectType, "1.0")
+//    val definition: org.sunbird.graph.engine.DefinitionNode = new org.sunbird.graph.engine.DefinitionNode(graphId, objectType, "1.0")
+    val definition = new DefinitionNode(graphId, objectType)
 
     @throws[Exception]
     def create(request: Request): Unit = {
