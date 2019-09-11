@@ -1,8 +1,7 @@
-package org.sunbird.schema
+package org.sunbird.graph.schema
 
 import org.sunbird.graph.engine.dto.ProcessingNode
 import org.sunbird.preprocess.{BaseDefinitionNode, RelationValidator, SchemaValidator}
-
 
 class DefinitionNode(graphId: String, objectType: String, version: String = "1.0") extends BaseDefinitionNode(graphId , objectType, version) with RelationValidator with SchemaValidator {
 

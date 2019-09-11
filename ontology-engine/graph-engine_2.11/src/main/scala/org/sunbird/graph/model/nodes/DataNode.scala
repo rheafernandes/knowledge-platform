@@ -13,8 +13,8 @@ import org.sunbird.graph.engine.dto.ProcessingNode
 import org.sunbird.graph.mgr.BaseGraphManager
 import org.sunbird.graph.model.IRelation
 import org.sunbird.graph.model.relation.RelationHandler
+import org.sunbird.graph.schema.{CoreDomainObject, DefinitionNode}
 import org.sunbird.graph.service.operation.Neo4JBoltNodeOperations
-import org.sunbird.schema.{CoreDomainObject, DefinitionNode}
 
 import scala.collection.JavaConversions._
 import scala.concurrent.{ExecutionContext, Future}
