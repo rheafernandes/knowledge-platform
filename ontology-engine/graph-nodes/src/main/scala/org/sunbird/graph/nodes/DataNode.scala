@@ -12,7 +12,7 @@ import org.sunbird.graph.engine.dto.ProcessingNode
 import org.sunbird.graph.mgr.BaseGraphManager
 import org.sunbird.graph.model.IRelation
 import org.sunbird.graph.model.relation.RelationHandler
-import org.sunbird.graph.schema.{CoreDomainObject, DefinitionNode}
+import org.sunbird.graph.schema.{CoreDomainObject, DefinitionFactory, DefinitionNode}
 import org.sunbird.graph.service.operation.Neo4JBoltNodeOperations
 
 import scala.collection.JavaConversions._
@@ -22,8 +22,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, version: String) extends CoreDomainObject(graphId, objectType, version) {
 
     implicit val ec: ExecutionContext = manager.getContext().dispatcher
-//    val definition: org.sunbird.graph.engine.DefinitionNode = new org.sunbird.graph.engine.DefinitionNode(graphId, objectType, "1.0")
-    val definition = new DefinitionNode(graphId, objectType)
+    val definition = DefinitionFactory.getDefinition(graphId, objectType, version)
 
     @throws[Exception]
     def create(request: Request): Unit = {

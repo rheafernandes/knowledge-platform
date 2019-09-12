@@ -2,7 +2,7 @@ package org.sunbird.graph.schema
 
 object DefinitionFactory {
 
-    var definitions: Map[String, DefinitionNode] = Map()
+    private var definitions: Map[String, DefinitionNode] = Map()
 
     def getDefinition(graphId: String, objectType: String, version: String): DefinitionNode = {
         val key = getKey(graphId, objectType, version)
