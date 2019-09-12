@@ -13,16 +13,13 @@ import org.sunbird.graph.dac.model.Relation;
 import org.sunbird.graph.exception.GraphRelationErrorCodes;
 import org.sunbird.graph.mgr.BaseGraphManager;
 import org.sunbird.graph.model.AbstractDomainObject;
-import org.sunbird.graph.model.DefinitionFactory;
 import org.sunbird.graph.model.IRelation;
 import scala.concurrent.Future;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public abstract class AbstractRelation extends AbstractDomainObject implements IRelation {
 
@@ -243,7 +240,9 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 	protected String validateObjectTypes(String objectType, final String endNodeObjectType) {
 
 		if (StringUtils.isNotBlank(objectType) && StringUtils.isNotBlank(endNodeObjectType)) {
-			List<String> outRelations = DefinitionFactory.getOutRelationObjectTypes(graphId, objectType, "1.0");
+			// TODO: update after implementing Definition Factory.
+			List<String> outRelations = new ArrayList();
+//			List<String> outRelations = DefinitionFactory.getOutRelationObjectTypes(graphId, objectType, "1.0");
 			boolean found = false;
 			if (null != outRelations && !outRelations.isEmpty()) {
 				for (String outRel : outRelations) {

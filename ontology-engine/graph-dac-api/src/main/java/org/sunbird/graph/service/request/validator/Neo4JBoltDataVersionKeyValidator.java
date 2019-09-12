@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.DateUtils;
 import org.sunbird.common.Platform;
 import org.sunbird.common.exception.ClientException;
-import org.sunbird.graph.cache.util.RedisStoreUtil;
+//import org.sunbird.graph.cache.util.RedisStoreUtil;
 import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.service.common.DACConfigurationConstants;
@@ -31,8 +31,8 @@ public class Neo4JBoltDataVersionKeyValidator extends Neo4JBoltBaseValidator {
 			// then default Mode is OFF
 			if (StringUtils.isBlank(versionCheckMode))
 				versionCheckMode = NodeUpdateMode.OFF.name();
-			RedisStoreUtil.saveNodeProperty(graphId, node.getObjectType(), GraphDACParams.versionCheckMode.name(),
-					versionCheckMode);
+//			RedisStoreUtil.saveNodeProperty(graphId, node.getObjectType(), GraphDACParams.versionCheckMode.name(),
+//					versionCheckMode);
 		}
 
 		// Checking of Node Update Version Checking is either 'STRICT'

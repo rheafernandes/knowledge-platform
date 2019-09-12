@@ -14,11 +14,13 @@
 
     <modules>
         <module>graph-common</module>
-        <module>cache-manager</module>
         <module>graph-dac-api</module>
         <module>graph-dac</module>
         <module>graph-core</module>
         <module>graph-engine_2.11</module>
+        <module>graph-schema</module>
+        <module>graph-nodes</module>
+        <module>graph-relations</module>
     </modules>
     <build>
         <pluginManagement>
