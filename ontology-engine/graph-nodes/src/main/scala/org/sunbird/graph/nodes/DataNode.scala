@@ -5,7 +5,9 @@ import java.util
 import akka.pattern.Patterns
 import org.apache.commons.collections4.{CollectionUtils, MapUtils}
 import org.apache.commons.lang3.StringUtils
-import org.sunbird.common.dto.{Request, Response}
+import org.sunbird.actor.router.RequestRouter
+import org.sunbird.common.dto.{Request, Response, ResponseHandler}
+
 import org.sunbird.common.exception.ResponseCode
 import org.sunbird.graph.dac.model.{Node, Relation}
 import org.sunbird.graph.engine.dto.ProcessingNode
@@ -36,7 +38,7 @@ class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, v
             if (errList.isEmpty) {
                 response
             } else {
-                errList.head
+                ResponseHandler.handleResponses(errList)
             }
         })
         Patterns.pipe(future, ec).to(manager.sender())
