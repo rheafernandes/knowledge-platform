@@ -1,7 +1,7 @@
 package org.sunbird.graph.service.request.validator;
 
 import org.apache.commons.lang3.StringUtils;
-import org.sunbird.graph.cache.util.RedisStoreUtil;
+//import org.sunbird.graph.cache.util.RedisStoreUtil;
 import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.dac.enums.SystemNodeTypes;
 import org.sunbird.graph.dac.model.Node;
@@ -20,7 +20,7 @@ public class Neo4jBoltValidator extends Neo4JBoltDataVersionKeyValidator {
 		if (!nodeType.equalsIgnoreCase(SystemNodeTypes.DATA_NODE.name()))
 			return true;
 
-		String versionCheckMode = RedisStoreUtil.getNodeProperty(graphId, nodeObjType, GraphDACParams.versionCheckMode.name());
+		String versionCheckMode = null; // RedisStoreUtil.getNodeProperty(graphId, nodeObjType, GraphDACParams.versionCheckMode.name());
 		TelemetryManager.log(
 				"Version Check Mode in Local Cache: " + versionCheckMode + " for Object Type: " + node.getObjectType());
 
@@ -28,8 +28,7 @@ public class Neo4jBoltValidator extends Neo4JBoltDataVersionKeyValidator {
 			// versionCheckMode is from Local cache, check versionKey in Redis
 			// or graph
 			if (!StringUtils.equalsIgnoreCase(NodeUpdateMode.OFF.name(), versionCheckMode)) {
-				String storedVersionKey = RedisStoreUtil.getNodeProperty(graphId, nodeId,
-						GraphDACParams.versionKey.name());
+				String storedVersionKey = null;//RedisStoreUtil.getNodeProperty(graphId, nodeId, GraphDACParams.versionKey.name());
 				return validateUpdateOperation(graphId, node, versionCheckMode, storedVersionKey);
 			}
 		} else {

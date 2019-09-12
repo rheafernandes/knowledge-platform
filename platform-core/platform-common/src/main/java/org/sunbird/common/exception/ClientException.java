@@ -1,5 +1,7 @@
 package org.sunbird.common.exception;
 
+import java.util.List;
+
 public class ClientException extends MiddlewareException {
 
     private static final long serialVersionUID = 4449645476165051068L;
@@ -18,6 +20,10 @@ public class ClientException extends MiddlewareException {
 
     public ClientException(String errCode, String message, Throwable root, Object... params) {
         super(errCode, message, root, params);
+    }
+
+    public ClientException(String errCode, String commonMessage, List<String> messages) {
+        super(errCode, commonMessage, messages);
     }
 
     public ResponseCode getResponseCode() {

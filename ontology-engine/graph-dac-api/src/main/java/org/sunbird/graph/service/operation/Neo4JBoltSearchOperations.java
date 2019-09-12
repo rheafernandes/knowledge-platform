@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.dto.Property;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.exception.ResourceNotFoundException;
-import org.sunbird.graph.cache.mgr.impl.NodeCacheManager;
+//import org.sunbird.graph.cache.mgr.impl.NodeCacheManager;
 import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.dac.model.Graph;
 import org.sunbird.graph.dac.model.Node;
@@ -120,7 +120,7 @@ public class Neo4JBoltSearchOperations {
 					DACErrorMessageConstants.INVALID_IDENTIFIER + " | ['Get Node By Unique Id' Operation Failed.]");
 
 		
-		Node node = (Node) NodeCacheManager.getDataNode(graphId, nodeId);
+		Node node = null; //(Node) NodeCacheManager.getDataNode(graphId, nodeId);
 		if (null != node) {
 			TelemetryManager.info("Fetched node from in-memory cache: "+node.getIdentifier());
 			return node;
@@ -157,7 +157,7 @@ public class Neo4JBoltSearchOperations {
 				}
 				if (StringUtils.equalsIgnoreCase("Concept", node.getObjectType())) {
 					TelemetryManager.info("Saving concept to in-memory cache: "+node.getIdentifier());
-					NodeCacheManager.saveDataNode(graphId, node.getIdentifier(), node);
+//					NodeCacheManager.saveDataNode(graphId, node.getIdentifier(), node);
 				}
 			}
 			return node;
@@ -229,11 +229,9 @@ public class Neo4JBoltSearchOperations {
 	 *            the graph id
 	 * @param searchCriteria
 	 *            the search criteria
-	 * @param request
-	 *            the request
 	 * @return the node by unique ids
 	 */
-	public static List<Node> getNodeByUniqueIds(String graphId, SearchCriteria searchCriteria, Request request) {
+	public static List<Node> getNodeByUniqueIds(String graphId, SearchCriteria searchCriteria) {
 
 		if (StringUtils.isBlank(graphId))
 			throw new ClientException(DACErrorCodeConstants.INVALID_GRAPH.name(),
@@ -252,7 +250,6 @@ public class Neo4JBoltSearchOperations {
 			Map<String, Object> parameterMap = new HashMap<String, Object>();
 			parameterMap.put(GraphDACParams.graphId.name(), graphId);
 			parameterMap.put(GraphDACParams.searchCriteria.name(), searchCriteria);
-			parameterMap.put(GraphDACParams.request.name(), request);
 
 			String query = SearchQueryGenerationUtil.generateGetNodeByUniqueIdsCypherQuery(parameterMap);
 			Map<String, Object> params = searchCriteria.getParams();
