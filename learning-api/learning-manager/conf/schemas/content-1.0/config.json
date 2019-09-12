@@ -35,5 +35,6 @@
             "direction": "out",
             "objects": ["Content"]
         }
-    }
+    },
+    "frameworkCategories": ["board","medium","subject","gradeLevel"]
 }

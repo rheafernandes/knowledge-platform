@@ -94,11 +94,11 @@ public class RedisCacheUtil {
      * @param key
      * @return List
      */
-    public static List<Object> getList(String key) {
+    public static List<String> getList(String key) {
         Jedis jedis = getConnection();
         try {
             Set<String> set = jedis.smembers(key);
-            List<Object> list = new ArrayList<>(set);
+            List<String> list = new ArrayList<>(set);
             return list;
         } catch (Exception e) {
             TelemetryManager.error("Exception Occurred While Fetching List Data from Redis Cache for Key : " + key + "| Exception is:", e);
