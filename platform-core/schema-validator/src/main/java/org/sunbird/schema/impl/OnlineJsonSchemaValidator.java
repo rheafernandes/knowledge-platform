@@ -2,16 +2,15 @@ package org.sunbird.schema.impl;
 
 import com.typesafe.config.ConfigFactory;
 import org.leadpony.justify.api.JsonSchema;
+import org.sunbird.common.Platform;
 
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
     public class OnlineJsonSchemaValidator extends BaseSchemaValidator {
-        private static String basePath = "https://ekstep-public-qa.s3-ap-south-1.amazonaws.com/knowledge-platform/schemas/";
+        private static String basePath = Platform.config.getString("schema.location.url");
 
     public OnlineJsonSchemaValidator(String name, String version) throws Exception {
         super(name, version);
@@ -34,13 +33,6 @@ import java.nio.file.Paths;
 
     }
 
-//        private void loadConfig() throws Exception {
-//            URI uri = getClass().getClassLoader().getResource( "schemas/content-1.0/" + "config.json").toURI();
-//            Path configPath = Paths.get(uri);
-//            this.config = ConfigFactory.parseFile(configPath.toFile());
-//
-//        }
-
     /**
      * Resolves the referenced JSON schema.
      *
@@ -48,7 +40,7 @@ import java.nio.file.Paths;
      * @return referenced JSON schema.
      */
     public JsonSchema resolveSchema(URI id) {
-        // The schema is available in the local filesystem.
+        // The schema is available Online.
         try {
             URLConnection connection;
             connection = id.toURL().openConnection();
