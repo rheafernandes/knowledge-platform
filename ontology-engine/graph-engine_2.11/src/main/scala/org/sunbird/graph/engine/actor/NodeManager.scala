@@ -3,7 +3,7 @@ package org.sunbird.graph.engine.actor
 import org.sunbird.actor.router.ActorConfig
 import org.sunbird.common.dto.{Request, Response}
 import org.sunbird.graph.mgr.BaseGraphManager
-import org.sunbird.graph.model.nodes.DataNode
+import org.sunbird.graph.nodes.DataNode
 
 @ActorConfig(tasks = Array("createDataNode", "saveExternalProperties"))
 class NodeManager extends BaseGraphManager {
