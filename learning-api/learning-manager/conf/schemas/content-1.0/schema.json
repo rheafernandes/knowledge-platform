@@ -101,12 +101,15 @@
     },
     "os": {
       "type": "array",
-      "enum": [
-        "All",
-        "Android",
-        "iOS",
-        "Windows"
-      ],
+      "items": {
+        "type" : "string",
+        "enum": [
+          "All",
+          "Android",
+          "iOS",
+          "Windows"
+        ]
+      },
       "default": "All"
     },
     "minOsVersion": {
@@ -141,10 +144,13 @@
     },
     "audience": {
       "type": "array",
-      "enum": [
-        "Learner",
-        "Instructor"
-      ],
+      "items": {
+        "type": "string",
+        "enum": [
+          "Learner",
+          "Instructor"
+        ]
+      },
       "default": "Learner"
     },
     "posterImage": {
@@ -328,29 +334,32 @@
     },
     "language": {
       "type": "array",
-      "enum": [
-        "English",
-        "Hindi",
-        "Assamese",
-        "Bengali",
-        "Gujarati",
-        "Kannada",
-        "Malayalam",
-        "Marathi",
-        "Nepali",
-        "Odia",
-        "Punjabi",
-        "Tamil",
-        "Telugu",
-        "Urdu",
-        "Sanskrit",
-        "Maithili",
-        "Munda",
-        "Santali",
-        "Juang",
-        "Ho",
-        "Other"
-      ],
+      "items": {
+        "type": "string",
+        "enum": [
+          "English",
+          "Hindi",
+          "Assamese",
+          "Bengali",
+          "Gujarati",
+          "Kannada",
+          "Malayalam",
+          "Marathi",
+          "Nepali",
+          "Odia",
+          "Punjabi",
+          "Tamil",
+          "Telugu",
+          "Urdu",
+          "Sanskrit",
+          "Maithili",
+          "Munda",
+          "Santali",
+          "Juang",
+          "Ho",
+          "Other"
+        ]
+      },
       "default": "English"
     },
     "words": {
@@ -794,10 +803,13 @@
     },
     "ownershipType": {
       "type": "array",
-      "enum": [
-        "createdBy",
-        "createdFor"
-      ],
+      "items": {
+        "type": "string",
+        "enum": [
+          "createdBy",
+          "createdFor"
+        ]
+      },
       "default": "createdBy"
     },
     "reservedDialcodes": {
