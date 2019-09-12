@@ -13,18 +13,19 @@ public class NodeExternalStoreFactory {
     private static Map<String, NodeExternalStore> externalStores = new HashMap<>();
 
     public static NodeExternalStore getStoreInstance(String keyspace, String table) {
-        if (!externalStores.containsKey(getKey(keyspace, table)))
-            constructExternalStoresMap(keyspace, table);
+        String key = getKey(keyspace, table);
+        if (!externalStores.containsKey(key))
+            constructExternalStoresMap(keyspace, table, key);
         return externalStores.get(getKey(keyspace, table));
     }
 
-    private static Map<String, NodeExternalStore> constructExternalStoresMap(String keyspace, String table) {
-        if(!externalStores.containsKey(getKey(keyspace,table)))
-            externalStores.put(getKey(keyspace,table), new NodeExternalStore(keyspace,table, PRIMARY_KEY));
+    private static Map<String, NodeExternalStore> constructExternalStoresMap(String keyspace, String table, String key) {
+        if (!externalStores.containsKey(key))
+            externalStores.put(key, new NodeExternalStore(keyspace, table, PRIMARY_KEY));
         return externalStores;
     }
 
     private static String getKey(String keyspace, String table) {
-        return "store-" + keyspace +"-"+ table;
+        return "store-" + keyspace + "-" + table;
     }
 }
