@@ -110,7 +110,7 @@
           "Windows"
         ]
       },
-      "default": "All"
+      "default": ["All"]
     },
     "minOsVersion": {
       "type": "string"
@@ -151,7 +151,7 @@
           "Instructor"
         ]
       },
-      "default": "Learner"
+      "default": ["Learner"]
     },
     "posterImage": {
       "type": "string",
@@ -360,7 +360,7 @@
           "Other"
         ]
       },
-      "default": "English"
+      "default": ["English"]
     },
     "words": {
       "type": "array"
@@ -810,7 +810,7 @@
           "createdFor"
         ]
       },
-      "default": "createdBy"
+      "default": ["createdBy"]
     },
     "reservedDialcodes": {
       "type": "object"
