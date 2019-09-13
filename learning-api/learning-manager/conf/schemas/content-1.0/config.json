@@ -36,5 +36,6 @@
             "objects": ["Content"]
         }
     },
+    "version": "enable"
     "frameworkCategories": ["board","medium","subject","gradeLevel"]
 }

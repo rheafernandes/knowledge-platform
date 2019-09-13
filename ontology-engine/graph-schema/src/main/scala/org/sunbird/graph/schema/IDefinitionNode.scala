@@ -1,5 +1,6 @@
 package org.sunbird.graph.schema
 
+import org.sunbird.graph.dac.model.Node
 import org.sunbird.graph.engine.dto.ProcessingNode
 import org.sunbird.schema.{ISchemaValidator, SchemaValidatorFactory}
 
@@ -10,4 +11,6 @@ abstract class IDefinitionNode(graphId: String, objectType: String, version: Str
 
     @throws[Exception]
     def validate(node: ProcessingNode): ProcessingNode
+
+    def getNode(identifier: String, operation: String = "read", mode: String): Node
 }
