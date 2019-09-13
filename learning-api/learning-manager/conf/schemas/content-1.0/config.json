@@ -37,4 +37,5 @@
         }
     },
     "version": "enable"
+    "frameworkCategories": ["board","medium","subject","gradeLevel"]
 }
