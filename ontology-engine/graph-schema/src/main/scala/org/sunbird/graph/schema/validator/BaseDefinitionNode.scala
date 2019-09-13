@@ -4,11 +4,13 @@ import java.util
 
 import org.apache.commons.collections4.MapUtils
 import org.apache.commons.lang3.StringUtils
+import org.sunbird.common.dto.Request
 import org.sunbird.graph.common.Identifier
 import org.sunbird.graph.dac.enums.SystemNodeTypes
 import org.sunbird.graph.dac.model.{Node, Relation}
 import org.sunbird.graph.engine.dto.ProcessingNode
 import org.sunbird.graph.schema.IDefinitionNode
+import org.sunbird.graph.service.operation.Neo4JBoltSearchOperations
 
 import scala.collection.JavaConverters._
 
@@ -24,6 +26,7 @@ class BaseDefinitionNode(graphId: String, objectType: String, version: String = 
                     objects.map(obj => relType + ":" + obj)
                 }).toList.distinct
     }
+
     private def relationsSchema(direction: String): Map[String, AnyRef] = {
         if (schemaValidator.getConfig.hasPath("relations")) {
             schemaValidator.getConfig.getObject("relations").unwrapped().asScala.filter(entry => {
@@ -34,7 +37,6 @@ class BaseDefinitionNode(graphId: String, objectType: String, version: String = 
             Map()
         }
     }
-
 
     override def getNode(input: java.util.Map[String, Object]): ProcessingNode = {
         val result = schemaValidator.getStructuredData(input)
@@ -50,6 +52,12 @@ class BaseDefinitionNode(graphId: String, objectType: String, version: String = 
     @throws[Exception]
     override def validate(node: ProcessingNode): ProcessingNode = {
         println("org.sunbird.preprocess.BasePreProcessor : validate called for " + node.getIdentifier)
+        node
+    }
+
+    override def getNode(identifier: String, operation: String, mode: String): Node = {
+        val request: Request = new Request()
+        val node: Node =Neo4JBoltSearchOperations.getNodeByUniqueId(graphId, identifier, false, request)
         node
     }
 

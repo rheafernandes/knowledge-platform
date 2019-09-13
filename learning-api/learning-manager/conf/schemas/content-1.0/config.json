@@ -35,5 +35,6 @@
             "direction": "out",
             "objects": ["Content"]
         }
-    }
+    },
+    "version": "enable"
 }
