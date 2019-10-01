@@ -1,4 +1,4 @@
-package org.sunbird.graph.validator
+package org.sunbird.graph.schema.validator
 
 import java.util
 

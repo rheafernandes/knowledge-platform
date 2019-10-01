@@ -1,4 +1,4 @@
-package org.sunbird.graph.validator
+package org.sunbird.graph.schema.validator
 
 import org.sunbird.common.dto.Request
 import org.sunbird.common.exception.ResourceNotFoundException
