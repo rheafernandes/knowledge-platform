@@ -54,7 +54,6 @@ public class NodeAsyncOperations {
         try (Session session = driver.session()) {
             String statementTemplate = StringUtils.removeEnd((String) entry.get(GraphDACParams.query.name()), CypherQueryConfigurationConstants.COMMA);
             Map<String, Object> statementParameters = (Map<String, Object>) entry.get(GraphDACParams.paramValueMap.name());
-            System.out.println("Query: "+ statementTemplate);
             CompletionStage<Node> cs = session.runAsync(statementTemplate, statementParameters)
             .thenCompose(fn -> fn.singleAsync())
             .thenApply(record -> {
@@ -62,7 +61,6 @@ public class NodeAsyncOperations {
                 String versionKey = (String) neo4JNode.get(GraphDACParams.versionKey.name()).asString();
                 String identifier = (String) neo4JNode.get(SystemProperties.IL_UNIQUE_ID.name()).asString();
                 node.setGraphId(graphId);
-                System.out.println("Identifier: " + identifier);
                 node.setIdentifier(identifier);
                 if (StringUtils.isNotBlank(versionKey))
                     node.getMetadata().put(GraphDACParams.versionKey.name(), versionKey);

@@ -5,7 +5,7 @@ import org.sunbird.actor.router.ActorConfig;
 import org.sunbird.common.Platform;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
-import org.sunbird.graph.engine.actor.NodeManager;
+import org.sunbird.graph.engine.NodeManager;
 import org.sunbird.graph.mgr.BaseGraphManager;
 import scala.concurrent.Future;
 
@@ -34,7 +34,7 @@ public class ContentActor extends BaseGraphManager {
     }
 
     private void create(Request request) throws Exception {
-        Request createRequest = new Request(request,"createDataNode", objectType);
+        Request createRequest = new Request(request, objectType);
         createRequest.setRequest(request.getRequest());
         createRequest.getContext().put("keyspace",CONTENT_KEYSPACE_NAME);
         createRequest.getContext().put("table",CONTENT_TABLE_NAME);
@@ -43,8 +43,8 @@ public class ContentActor extends BaseGraphManager {
     }
 
     private void update(Request request) {
-        Request createRequest = new Request(request,"updateDataNode", objectType);
-        Patterns.pipe(getResult(createRequest), getContext().getDispatcher()).to(sender());
+        Request createRequest = new Request(request, objectType);
+//        Patterns.pipe(getResult(createRequest), getContext().getDispatcher()).to(sender());
     }
 
 }

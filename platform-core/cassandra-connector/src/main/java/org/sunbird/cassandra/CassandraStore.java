@@ -42,25 +42,6 @@ public abstract class CassandraStore {
 		this.primaryKey = primaryKey;
 	}
 
-	public void insert(Map<String, Object> request) {
-		try {
-			if (MapUtils.isEmpty(request)) {
-				throw new ClientException(CassandraParams.ERR_INVALID_REQUEST.name(),
-						"Invalid record to insert.");
-			}
-			Set<String> keySet = request.keySet();
-			if (!keySet.containsAll(primaryKey))
-				throw new ClientException(CassandraParams.ERR_INVALID_PRIMARY_KEY.name(), "All primary keys not available in the request.");
-			String query = getPreparedStatement(keySet);
-			Object[] objects = getBindObjects(request);
-			executeQuery(query, objects);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new ServerException(CassandraParams.ERR_SERVER_ERROR.name(),
-					"Error while inserting record", e);
-		}
-	}
-
 	public void update(String identifier, Object idValue, Map<String, Object> request) {
 		try {
 			if (null == request || request.isEmpty()) {

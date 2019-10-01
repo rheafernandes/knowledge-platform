@@ -1,4 +1,4 @@
-package org.sunbird.graph.engine.actor
+package org.sunbird.graph.engine
 
 import org.apache.commons.collections4.MapUtils
 import org.apache.commons.lang3.StringUtils

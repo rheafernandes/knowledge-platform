@@ -1,4 +1,4 @@
-package org.sunbird.graph.engine.actor
+package org.sunbird.graph.engine
 
 import org.sunbird.common.dto.{Request, Response}
 import org.sunbird.graph.nodes.DataNode
