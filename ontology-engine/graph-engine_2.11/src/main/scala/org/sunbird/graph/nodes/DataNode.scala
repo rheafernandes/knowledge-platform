@@ -31,7 +31,7 @@ class DataNode(graphId: String, objectType: String, version: String)(implicit ec
             if (StringUtils.equals(ResponseCode.OK.name(), result.getResponseCode.name())) {
                 val extPropsResponse = saveExternalProperties(validationResult.getIdentifier, validationResult.getExternalData, request.getContext)
                 val updateRelResponse = updateRelations(validationResult, request.getContext)
-                val futureList = List(extPropsResponse)
+                val futureList = List(extPropsResponse, updateRelResponse)
                 Future.sequence(futureList).map(list => {
                     val errList = list.filter(res => !StringUtils.equals(res.getResponseCode.name(), ResponseCode.OK.name()))
                     if (errList.isEmpty) {
