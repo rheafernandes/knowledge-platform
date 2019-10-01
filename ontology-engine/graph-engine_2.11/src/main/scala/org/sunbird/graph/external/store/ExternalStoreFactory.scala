@@ -10,7 +10,6 @@ object ExternalStoreFactory {
 
     def getExternalStore(keySpace: String, table: String): ExternalStore = {
         val key = getKey(keySpace,table)
-        println("Size of externalStores: " + externalStores)
         val store = externalStores.getOrElse(key, new ExternalStore(keySpace, table, PRIMARY_KEY))
         if(!externalStores.contains(key))
             externalStores += (key -> store)

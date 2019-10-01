@@ -26,8 +26,6 @@ class ExternalStore(keySpace: String , table: String , primaryKey: java.util.Lis
         for ((key, value) <- request.asScala) {
             insertQuery.value(key, "textAsBlob(" + value + ")")
         }
-
-        println("Query: " + insertQuery.toString)
         try {
             val session: Session = CassandraConnector.getSession
             session.execute(insertQuery)
