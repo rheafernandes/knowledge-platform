@@ -1,6 +1,7 @@
 package org.sunbird.graph.model;
 
 import org.sunbird.common.dto.Request;
+import org.sunbird.common.dto.Response;
 import org.sunbird.graph.dac.model.Node;
 
 import java.util.List;
@@ -11,9 +12,9 @@ import java.util.Map;
  * @author rayulu
  * 
  */
-public interface IRelation extends IPropertyContainer {
+public interface IRelation {
 
-    void validate(Request request);
+    Response validate(Request request);
 
     String getRelationType();
 

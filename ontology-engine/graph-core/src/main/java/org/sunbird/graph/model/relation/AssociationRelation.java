@@ -18,12 +18,12 @@ import java.util.Map;
 
 public class AssociationRelation extends AbstractRelation {
 
-    public AssociationRelation(BaseGraphManager manager, String graphId, Node startNode, Node endNode, Map<String, Object> metadata) {
-        super(manager, graphId, startNode, endNode, metadata);
+    public AssociationRelation(String graphId, Node startNode, Node endNode, Map<String, Object> metadata) {
+        super(graphId, startNode, endNode, metadata);
     }
     
-    public AssociationRelation(BaseGraphManager manager, String graphId, Node startNode, Node endNode) {
-        super(manager, graphId, startNode, endNode);
+    public AssociationRelation(String graphId, Node startNode, Node endNode) {
+        super(graphId, startNode, endNode);
     }
 
     @Override

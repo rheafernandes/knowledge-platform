@@ -27,15 +27,15 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 	protected Node endNode;
 	protected Map<String, Object> metadata;
 
-	protected AbstractRelation(BaseGraphManager manager, String graphId, Node startNode, Node endNode,
+	protected AbstractRelation(String graphId, Node startNode, Node endNode,
 							   Map<String, Object> metadata) {
-		this(manager, graphId, startNode, endNode);
+		this(graphId, startNode, endNode);
 		this.metadata = metadata;
 	}
 
-	protected AbstractRelation(BaseGraphManager manager, String graphId, Node startNode, Node endNode) {
-		super(manager, graphId);
-		if (null == manager || StringUtils.isBlank(graphId) || StringUtils.isBlank(startNode.getIdentifier())
+	protected AbstractRelation(String graphId, Node startNode, Node endNode) {
+		super(graphId);
+		if (StringUtils.isBlank(graphId) || StringUtils.isBlank(startNode.getIdentifier())
 				|| StringUtils.isBlank(endNode.getIdentifier())) {
 			System.out.println("GraphId: " + graphId + " startNodeId: " + startNode.getIdentifier() + " endNodeId: " +endNode.getIdentifier());
 			throw new ClientException(GraphRelationErrorCodes.ERR_INVALID_RELATION.name(), "Invalid Relation");
@@ -44,7 +44,7 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 		this.endNode = endNode;
 	}
 
-	public void create(final Request req) {
+	public Future<Response> create(final Request req) {
 		try {
 			Boolean skipValidation = (Boolean) req.get(GraphDACParams.skip_validations.name());
 			Map<String, List<String>> messageMap = null;
@@ -57,10 +57,10 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 				request.put(GraphDACParams.relation_type.name(), getRelationType());
 				request.put(GraphDACParams.end_node_id.name(), getEndNode().getIdentifier());
 				request.put(GraphDACParams.metadata.name(), getMetadata());
-				Future<Object> response = Futures.successful(graphMgr.addRelation(request));
-				manager.returnResponse(response, getParent());
+				Future<Response> response = Futures.successful(graphMgr.addRelation(request));
+				return response;
 			} else {
-				manager.OK(GraphDACParams.messages.name(), errMessages, getParent());
+				return Futures.successful(OK(GraphDACParams.messages.name(), errMessages));
 			}
 		} catch (Exception e) {
 			throw new ServerException(GraphRelationErrorCodes.ERR_RELATION_CREATE.name(),
@@ -76,19 +76,17 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 		request.put(GraphDACParams.metadata.name(), getMetadata());
 
 		Response res = graphMgr.addRelation(request);
-		if (manager.checkError(res)) {
-			return manager.getErrorMessage(res);
+		if (checkError(res)) {
+			return getErrorMessage(res);
 		}
 		return null;
 	}
 
-	@Override
-	public void delete(Request req) {
+	public Future<Response> delete(Request req) {
 		try {
 			Request request = new Request(req);
 			request.copyRequestValueObjects(req.getRequest());
-			Future<Object> response = Futures.successful(graphMgr.deleteRelation(request));
-			manager.returnResponse(response, getParent());
+			return Futures.successful(graphMgr.deleteRelation(request));
 		} catch (Exception e) {
 			throw new ServerException(GraphRelationErrorCodes.ERR_RELATION_DELETE.name(),
 					"Error occured while deleting the relation", e);
@@ -103,22 +101,22 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 		request.put(GraphDACParams.end_node_id.name(), getEndNode().getIdentifier());
 
 		Response res = graphMgr.deleteRelation(request);
-		if (manager.checkError(res)) {
-			return manager.getErrorMessage(res);
+		if (checkError(res)) {
+			return getErrorMessage(res);
 		}
 		return null;
 	}
 
 	@Override
-	public void validate(final Request request) {
+	public Response validate(final Request request) {
 		try {
 			Map<String, List<String>> messageMap = validateRelation(request);
 
 			List<String> errMessages = getErrorMessages(messageMap);
 			if (null == errMessages || errMessages.isEmpty()) {
-				manager.OK(getParent());
+				return OK();
 			} else {
-				manager.OK(GraphDACParams.messages.name(), errMessages, getParent());
+				return OK(GraphDACParams.messages.name(), errMessages);
 			}
 		} catch (Exception e) {
 			throw new ServerException(GraphRelationErrorCodes.ERR_RELATION_VALIDATE.name(),
@@ -147,7 +145,7 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 		return StringUtils.equalsIgnoreCase(getRelationType(), relationType);
 	}
 
-	public void getProperty(Request req) {
+	public Future<Response> getProperty(Request req) {
 		try {
 			String key = (String) req.get(GraphDACParams.property_key.name());
 			Request request = new Request(req);
@@ -155,22 +153,11 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 			request.put(GraphDACParams.relation_type.name(), getRelationType());
 			request.put(GraphDACParams.end_node_id.name(), this.endNode.getIdentifier());
 			request.put(GraphDACParams.property_key.name(), key);
-			Future<Object> response = Futures.successful(searchMgr.getRelationProperty(request));
-					manager.returnResponse(response, getParent());
+			return Futures.successful(searchMgr.getRelationProperty(request));
 		} catch (Exception e) {
 			throw new ServerException(GraphRelationErrorCodes.ERR_RELATION_GET_PROPERTY.name(),
 					"Error in fetching the relation properties", e);
 		}
-	}
-
-	public void removeProperty(Request req) {
-		throw new ServerException(GraphRelationErrorCodes.ERR_RELATION_UNSUPPORTED_OPERATION.name(),
-				"Remove Property is not supported on relations");
-	}
-
-	public void setProperty(Request req) {
-		throw new ServerException(GraphRelationErrorCodes.ERR_RELATION_UNSUPPORTED_OPERATION.name(),
-				"Set Property is not supported on relations");
 	}
 
 	protected Map<String, List<String>> getMessageMap(List<String> aggregate) {
@@ -190,8 +177,8 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 			request.put(GraphDACParams.relation_type.name(), getRelationType());
 			request.put(GraphDACParams.end_node_id.name(), this.startNode.getIdentifier());
 			Response res = searchMgr.checkCyclicLoop(request);
-			if (manager.checkError(res)) {
-				return manager.getErrorMessage(res);
+			if (checkError(res)) {
+				return getErrorMessage(res);
 			} else {
 				Boolean loop = (Boolean) res.get(GraphDACParams.loop.name());
 				if (null != loop && loop.booleanValue()) {
@@ -219,22 +206,6 @@ public abstract class AbstractRelation extends AbstractDomainObject implements I
 				return "Node " + node.getIdentifier() + " is not a " + nodeTypes;
 			}
 		}
-
-	protected String getNodeTypeFuture(Node nodeFuture) {
-		if (null != nodeFuture)
-			return nodeFuture.getNodeType();
-		else
-			return null;
-
-	}
-
-	protected String getObjectTypeFuture(Node node) {
-		if (null != node)
-			return node.getObjectType();
-		else
-			return null;
-
-	}
 
 
 	protected String validateObjectTypes(String objectType, final String endNodeObjectType) {
