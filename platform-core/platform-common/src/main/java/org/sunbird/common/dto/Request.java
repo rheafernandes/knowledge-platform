@@ -49,9 +49,8 @@ public class Request implements Serializable {
             this.context.putAll(request.getContext());
     }
 
-    public Request(Request request, String operation, String objectType) {
+    public Request(Request request, String objectType) {
         this(request);
-        this.operation = operation;
         this.objectType = objectType;
     }
 
