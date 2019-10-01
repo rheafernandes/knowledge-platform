@@ -4,7 +4,10 @@ import akka.pattern.Patterns;
 import org.sunbird.actor.router.ActorConfig;
 import org.sunbird.common.Platform;
 import org.sunbird.common.dto.Request;
+import org.sunbird.common.dto.Response;
+import org.sunbird.graph.engine.actor.NodeManager;
 import org.sunbird.graph.mgr.BaseGraphManager;
+import scala.concurrent.Future;
 
 
 @ActorConfig(tasks = {"createContent"})
@@ -30,12 +33,13 @@ public class ContentActor extends BaseGraphManager {
 
     }
 
-    private void create(Request request) {
+    private void create(Request request) throws Exception {
         Request createRequest = new Request(request,"createDataNode", objectType);
         createRequest.setRequest(request.getRequest());
         createRequest.getContext().put("keyspace",CONTENT_KEYSPACE_NAME);
         createRequest.getContext().put("table",CONTENT_TABLE_NAME);
-        Patterns.pipe(getResult(createRequest), getContext().getDispatcher()).to(sender());
+        Future<Response> result = NodeManager.createDataNode(createRequest, getContext().dispatcher());
+        Patterns.pipe(result, getContext().getDispatcher()).to(sender());
     }
 
     private void update(Request request) {
