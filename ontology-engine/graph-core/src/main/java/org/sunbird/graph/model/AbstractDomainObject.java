@@ -1,9 +1,14 @@
 package org.sunbird.graph.model;
 
-import akka.actor.ActorRef;
 import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.dto.Request;
+import org.sunbird.common.dto.Response;
+import org.sunbird.common.dto.ResponseParams;
 import org.sunbird.common.exception.ClientException;
+import org.sunbird.common.exception.MiddlewareException;
+import org.sunbird.common.exception.ResourceNotFoundException;
+import org.sunbird.common.exception.ResponseCode;
+import org.sunbird.common.exception.ServerException;
 import org.sunbird.graph.dac.mgr.IGraphDACGraphMgr;
 import org.sunbird.graph.dac.mgr.IGraphDACNodeMgr;
 import org.sunbird.graph.dac.mgr.IGraphDACSearchMgr;
@@ -22,39 +27,22 @@ import java.util.regex.Pattern;
 
 public abstract class AbstractDomainObject {
 
-    protected BaseGraphManager manager;
     protected String graphId;
-    private ActorRef parent;
+
 
     protected IGraphDACGraphMgr graphMgr = new Neo4JBoltGraphMgrImpl();
     protected IGraphDACSearchMgr searchMgr = new Neo4JBoltSearchMgrImpl();
     protected IGraphDACNodeMgr nodeMgr = new Neo4JBoltNodeMgrImpl();
 
-    public AbstractDomainObject(BaseGraphManager manager, String graphId) {
+    public AbstractDomainObject(String graphId) {
         if (StringUtils.isBlank(graphId)) {
             throw new ClientException(GraphEngineErrorCodes.ERR_GRAPH_INVALID_GRAPH_ID.name(), "GraphId is blank");
         }
         if (checkForWhiteSpace(graphId)) {
             throw new ClientException(GraphEngineErrorCodes.ERR_GRAPH_INVALID_GRAPH_ID.name(), "GraphId should not have white spaces");
         }
-        this.manager = manager;
         this.graphId = graphId;
-        this.parent = manager.getSender();
-    }
 
-    public ActorRef getParent() {
-        if (null == parent) {
-            return manager.getSender();
-        }
-        return parent;
-    }
-
-    public BaseGraphManager getManager() {
-        return manager;
-    }
-
-    public void setManager(BaseGraphManager manager) {
-        this.manager = manager;
     }
 
     public String getGraphId() {
@@ -114,5 +102,75 @@ public abstract class AbstractDomainObject {
             }
         }
         return errMessages;
+    }
+
+    public Response OK() {
+        Response response = new Response();
+        response.setParams(getSucessStatus());
+        return response;
+    }
+
+    public Response OK(String responseIdentifier, Object vo) {
+        Response response = new Response();
+        response.put(responseIdentifier, vo);
+        response.setParams(getSucessStatus());
+        return response;
+    }
+
+    private ResponseParams getSucessStatus() {
+        ResponseParams params = new ResponseParams();
+        params.setErr("0");
+        params.setStatus(ResponseParams.StatusType.successful.name());
+        params.setErrmsg("Operation successful");
+        return params;
+    }
+
+    private ResponseParams getErrorStatus(String errorCode, String errorMessage) {
+        ResponseParams params = new ResponseParams();
+        params.setErr(errorCode);
+        params.setStatus(ResponseParams.StatusType.failed.name());
+        params.setErrmsg(errorMessage);
+        return params;
+    }
+
+    private void setResponseCode(Response res, Throwable e) {
+        if (e instanceof ClientException) {
+            res.setResponseCode(ResponseCode.CLIENT_ERROR);
+        } else if (e instanceof ServerException) {
+            res.setResponseCode(ResponseCode.SERVER_ERROR);
+        } else if (e instanceof ResourceNotFoundException) {
+            res.setResponseCode(ResponseCode.RESOURCE_NOT_FOUND);
+        } else {
+            res.setResponseCode(ResponseCode.SERVER_ERROR);
+        }
+    }
+
+    protected String setErrMessage(Throwable e){
+        if (e instanceof MiddlewareException) {
+            return e.getMessage();
+        } else {
+            return "Something went wrong in server while processing the request";
+        }
+    }
+
+    public String getErrorMessage(Response response) {
+        ResponseParams params = response.getParams();
+        if (null != params) {
+            String msg = params.getErrmsg();
+            if (StringUtils.isNotBlank(msg))
+                return msg;
+            return params.getErr();
+        }
+        return null;
+    }
+
+    public boolean checkError(Response response) {
+        ResponseParams params = response.getParams();
+        if (null != params) {
+            if (StringUtils.equals(ResponseParams.StatusType.failed.name(), params.getStatus())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

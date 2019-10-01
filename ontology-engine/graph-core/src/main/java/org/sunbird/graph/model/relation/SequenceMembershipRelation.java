@@ -14,8 +14,8 @@ import java.util.Map;
 
 public class SequenceMembershipRelation extends AbstractRelation {
 
-    public SequenceMembershipRelation(BaseGraphManager manager, String graphId, Node startNode, Node endNode, Map<String, Object> metadata) {
-        super(manager, graphId, startNode, endNode, metadata);
+    public SequenceMembershipRelation(String graphId, Node startNode, Node endNode, Map<String, Object> metadata) {
+        super(graphId, startNode, endNode, metadata);
     }
 
     @Override

@@ -12,15 +12,15 @@ import java.util.Map;
 
 public class RelationHandler {
 
-    public static IRelation getRelation(BaseGraphManager manager, String graphId, Node startNode,
+    public static IRelation getRelation(String graphId, Node startNode,
                                         String relationType, Node endNode, Map<String, Object> metadata) {
 
         if (StringUtils.isNotBlank(relationType) && RelationTypes.isValidRelationType(relationType)) {
 
             if (StringUtils.equals(RelationTypes.ASSOCIATED_TO.relationName(), relationType)) {
-                return new AssociationRelation(manager, graphId, startNode, endNode, metadata);
+                return new AssociationRelation(graphId, startNode, endNode, metadata);
             } else if (StringUtils.equals(RelationTypes.SEQUENCE_MEMBERSHIP.relationName(), relationType)) {
-                return new SequenceMembershipRelation(manager, graphId, startNode, endNode, metadata);
+                return new SequenceMembershipRelation(graphId, startNode, endNode, metadata);
             }
 
 //            if (StringUtils.equals(RelationTypes.HIERARCHY.relationName(), relationType)) {
