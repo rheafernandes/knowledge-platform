@@ -3,12 +3,12 @@ package controllers
 import org.sunbird.actor.service.SunbirdMWService
 import org.sunbird.common.dto.Response
 import org.sunbird.common.exception.ResponseCode
-import play.api.mvc.{AbstractController, AnyContent, ControllerComponents, Request, Result}
+import play.api.mvc._
 import utils.JavaJsonUtils
 
+import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContext, Future}
-import collection.JavaConverters._
-import collection.JavaConversions._
 
 abstract class BaseController(protected val cc: ControllerComponents)(implicit exec: ExecutionContext) extends AbstractController(cc) {
 

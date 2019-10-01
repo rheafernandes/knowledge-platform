@@ -1,12 +1,6 @@
 package org.sunbird.graph.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import akka.actor.ActorRef;
 import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.exception.ClientException;
@@ -17,9 +11,14 @@ import org.sunbird.graph.dac.mgr.impl.Neo4JBoltGraphMgrImpl;
 import org.sunbird.graph.dac.mgr.impl.Neo4JBoltNodeMgrImpl;
 import org.sunbird.graph.dac.mgr.impl.Neo4JBoltSearchMgrImpl;
 import org.sunbird.graph.exception.GraphEngineErrorCodes;
-
-import akka.actor.ActorRef;
 import org.sunbird.graph.mgr.BaseGraphManager;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class AbstractDomainObject {
 

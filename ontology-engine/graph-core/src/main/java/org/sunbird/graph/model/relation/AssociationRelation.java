@@ -1,11 +1,5 @@
 package org.sunbird.graph.model.relation;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.dto.Request;
@@ -15,6 +9,12 @@ import org.sunbird.graph.dac.enums.SystemNodeTypes;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.exception.GraphRelationErrorCodes;
 import org.sunbird.graph.mgr.BaseGraphManager;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AssociationRelation extends AbstractRelation {
 

@@ -7,7 +7,7 @@ import javax.inject.Inject
 import play.api.mvc.ControllerComponents
 
 import scala.collection.JavaConversions._
-import scala.concurrent.{ExecutionContext}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class ContentController @Inject()(cc: ControllerComponents, actorSystem: ActorSystem)(implicit exec: ExecutionContext) extends BaseController(cc) {

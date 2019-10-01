@@ -1,10 +1,10 @@
 package org.sunbird.graph.dac.model;
 
+import org.neo4j.graphdb.Relationship;
+
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.neo4j.graphdb.Relationship;
 
 public class Path implements Serializable {
 

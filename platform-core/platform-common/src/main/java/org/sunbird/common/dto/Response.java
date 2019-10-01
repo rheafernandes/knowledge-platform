@@ -1,10 +1,10 @@
 package org.sunbird.common.dto;
 
+import org.sunbird.common.exception.ResponseCode;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.sunbird.common.exception.ResponseCode;
 
 /**
  * 

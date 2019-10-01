@@ -4,7 +4,6 @@ import org.sunbird.common.dto.Request
 import org.sunbird.common.exception.ResourceNotFoundException
 import org.sunbird.graph.dac.model.Node
 import org.sunbird.graph.exception.GraphEngineErrorCodes
-import org.sunbird.graph.schema.IDefinitionNode
 import org.sunbird.graph.service.operation.{Neo4JBoltNodeOperations, Neo4JBoltSearchOperations}
 
 trait VersioningNode extends IDefinitionNode {

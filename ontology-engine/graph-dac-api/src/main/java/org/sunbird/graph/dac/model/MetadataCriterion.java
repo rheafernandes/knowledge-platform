@@ -1,12 +1,12 @@
 package org.sunbird.graph.dac.model;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.exception.ServerException;
 import org.sunbird.graph.common.exception.GraphEngineErrorCodes;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MetadataCriterion implements Serializable {
 

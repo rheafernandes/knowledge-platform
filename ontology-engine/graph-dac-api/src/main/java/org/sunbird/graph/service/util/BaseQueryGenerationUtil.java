@@ -1,16 +1,5 @@
 package org.sunbird.graph.service.util;
 
-import static java.lang.Math.floor;
-import static java.lang.Math.log;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.DateUtils;
@@ -21,6 +10,17 @@ import org.sunbird.graph.common.enums.SystemProperties;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.service.common.CypherQueryConfigurationConstants;
 import org.sunbird.telemetry.logger.TelemetryManager;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static java.lang.Math.floor;
+import static java.lang.Math.log;
 
 public class BaseQueryGenerationUtil {
 

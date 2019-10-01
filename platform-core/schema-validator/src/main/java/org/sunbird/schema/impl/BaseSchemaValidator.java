@@ -2,7 +2,12 @@ package org.sunbird.schema.impl;
 
 
 import com.typesafe.config.Config;
-import org.leadpony.justify.api.*;
+import org.leadpony.justify.api.JsonSchema;
+import org.leadpony.justify.api.JsonSchemaReader;
+import org.leadpony.justify.api.JsonSchemaReaderFactory;
+import org.leadpony.justify.api.JsonValidationService;
+import org.leadpony.justify.api.ProblemHandler;
+import org.leadpony.justify.api.ValidationConfig;
 import org.sunbird.common.JsonUtils;
 import org.sunbird.schema.ISchemaValidator;
 import org.sunbird.schema.dto.ValidationResult;
@@ -12,7 +17,11 @@ import javax.json.JsonReaderFactory;
 import java.io.StringReader;
 import java.net.URI;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class BaseSchemaValidator implements ISchemaValidator {

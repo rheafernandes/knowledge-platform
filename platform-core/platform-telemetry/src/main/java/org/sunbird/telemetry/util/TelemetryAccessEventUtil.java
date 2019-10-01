@@ -1,8 +1,6 @@
 package org.sunbird.telemetry.util;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.Platform;
 import org.sunbird.common.dto.Request;
@@ -10,7 +8,8 @@ import org.sunbird.common.dto.Response;
 import org.sunbird.telemetry.TelemetryParams;
 import org.sunbird.telemetry.logger.TelemetryManager;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TelemetryAccessEventUtil {
 

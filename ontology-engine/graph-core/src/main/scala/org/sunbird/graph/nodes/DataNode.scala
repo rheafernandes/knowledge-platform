@@ -12,13 +12,11 @@ import org.sunbird.graph.engine.dto.ProcessingNode
 import org.sunbird.graph.mgr.BaseGraphManager
 import org.sunbird.graph.model.IRelation
 import org.sunbird.graph.model.relation.RelationHandler
-import org.sunbird.graph.schema.{CoreDomainObject, DefinitionFactory, DefinitionNode}
-import org.sunbird.graph.service.operation.{Neo4JBoltNodeOperations, NodeAsyncOperations}
-import org.sunbird.parseq.Task
+import org.sunbird.graph.schema.{CoreDomainObject, DefinitionFactory}
+import org.sunbird.graph.service.operation.NodeAsyncOperations
 
 import scala.collection.JavaConversions._
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 
 
 class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, version: String) extends CoreDomainObject(graphId, objectType, version) {

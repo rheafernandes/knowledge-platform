@@ -1,8 +1,8 @@
 package org.sunbird.graph.dac.model;
 
-import java.io.Serializable;
-
 import org.sunbird.graph.dac.model.RelationCriterion.DIRECTION;
+
+import java.io.Serializable;
 
 public class RelationFilter implements Serializable {
 

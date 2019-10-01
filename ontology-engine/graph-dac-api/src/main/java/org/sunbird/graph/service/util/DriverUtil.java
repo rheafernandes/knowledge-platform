@@ -1,17 +1,16 @@
 package org.sunbird.graph.service.util;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.neo4j.driver.v1.Config;
-import org.sunbird.common.Platform;
+import org.neo4j.driver.v1.Driver;
+import org.neo4j.driver.v1.GraphDatabase;
 import org.sunbird.graph.service.common.DACConfigurationConstants;
 import org.sunbird.graph.service.common.GraphOperation;
 import org.sunbird.telemetry.logger.TelemetryManager;
-import org.neo4j.driver.v1.Driver;
-import org.neo4j.driver.v1.GraphDatabase;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class DriverUtil {
 

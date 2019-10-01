@@ -1,11 +1,11 @@
 package org.sunbird.graph.importer;
 
+import org.sunbird.graph.dac.model.Node;
+import org.sunbird.graph.dac.model.Relation;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-
-import org.sunbird.graph.dac.model.Node;
-import org.sunbird.graph.dac.model.Relation;
 
 public class ImportData implements Serializable {
 
