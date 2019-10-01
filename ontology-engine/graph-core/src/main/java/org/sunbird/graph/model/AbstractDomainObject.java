@@ -32,6 +32,7 @@ public abstract class AbstractDomainObject {
 
     protected IGraphDACGraphMgr graphMgr = new Neo4JBoltGraphMgrImpl();
     protected IGraphDACSearchMgr searchMgr = new Neo4JBoltSearchMgrImpl();
+    protected IGraphDACNodeMgr nodeMgr = new Neo4JBoltNodeMgrImpl();
 
     public AbstractDomainObject(String graphId) {
         if (StringUtils.isBlank(graphId)) {

@@ -1,7 +1,11 @@
 package org.sunbird.graph.mgr;
 
 import akka.actor.ActorRef;
+import akka.dispatch.Mapper;
+import akka.dispatch.OnFailure;
+import akka.dispatch.OnSuccess;
 import org.apache.commons.lang3.StringUtils;
+import org.sunbird.actor.core.BaseActor;
 import org.sunbird.actor.service.SunbirdMWService;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
@@ -14,37 +18,39 @@ import org.sunbird.common.exception.ResponseCode;
 import org.sunbird.common.exception.ServerException;
 import scala.concurrent.Future;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-public abstract class BaseGraphManager {
+public abstract class BaseGraphManager extends BaseActor {
 
     public Future<Object> getResult(Request request) {
         return SunbirdMWService.execute(request);
     }
 
     // TODO: remove errorMessage - message is derived from code.
-    public Response ERROR(String errorCode, String errorMessage, ResponseCode code, String responseIdentifier, Object vo) {
+    public void ERROR(String errorCode, String errorMessage, ResponseCode code, String responseIdentifier, Object vo) {
         Response response = new Response();
         response.put(responseIdentifier, vo);
         response.setParams(getErrorStatus(errorCode, errorMessage));
         response.setResponseCode(code);
-        return response;
+        sender().tell(response, getSelf());
     }
 
-    public Response OK() {
+    public void OK(ActorRef parent) {
         Response response = new Response();
         response.setParams(getSucessStatus());
-        return response;
+        parent.tell(response, getSelf());
     }
 
-    public Response OK(String responseIdentifier, Object vo) {
+    public void OK(String responseIdentifier, Object vo, ActorRef parent) {
         Response response = new Response();
         response.put(responseIdentifier, vo);
         response.setParams(getSucessStatus());
-        return response;
+        parent.tell(response, getSelf());
     }
 
-    public Response OK(Map<String, Object> responseObjects, ActorRef parent) {
+    public void OK(Map<String, Object> responseObjects, ActorRef parent) {
         Response response = new Response();
         if (null != responseObjects && responseObjects.size() > 0) {
             for (Map.Entry<String, Object> entry : responseObjects.entrySet()) {
@@ -52,14 +58,26 @@ public abstract class BaseGraphManager {
             }
         }
         response.setParams(getSucessStatus());
-        return response;
+        parent.tell(response, getSelf());
     }
 
-    public Response ERROR(Throwable e) {
-        return handleException(e);
+    public void sendResponse(Response response, ActorRef parent) {
+        parent.tell(response, getSelf());
     }
 
-    public Response ERROR(Throwable e, String responseIdentifier, Object vo) {
+    public void ERROR(String errorCode, String errorMessage, ResponseCode code, String responseIdentifier, Object vo, ActorRef parent) {
+        Response response = new Response();
+        response.put(responseIdentifier, vo);
+        response.setParams(getErrorStatus(errorCode, errorMessage));
+        response.setResponseCode(code);
+        parent.tell(response, getSelf());
+    }
+
+    public void ERROR(Throwable e, ActorRef parent) {
+        handleException(e, parent);
+    }
+
+    public void ERROR(Throwable e, String responseIdentifier, Object vo, ActorRef parent) {
         Response response = new Response();
         response.put(responseIdentifier, vo);
         ResponseParams params = new ResponseParams();
@@ -73,7 +91,7 @@ public abstract class BaseGraphManager {
         params.setErrmsg(setErrMessage(e));
         response.setParams(params);
         setResponseCode(response, e);
-        return response;
+        parent.tell(response, getSelf());
     }
 
     public Response getErrorResponse(String errorCode, String errorMessage, ResponseCode code) {
@@ -83,8 +101,8 @@ public abstract class BaseGraphManager {
         return response;
     }
 
-    public Response ERROR(String errorCode, String errorMessage, ResponseCode code) {
-        return getErrorResponse(errorCode, errorMessage, code);
+    public void ERROR(String errorCode, String errorMessage, ResponseCode code, ActorRef parent) {
+        parent.tell(getErrorResponse(errorCode, errorMessage, code), getSelf());
     }
 
     public boolean checkError(Response response) {
@@ -108,8 +126,73 @@ public abstract class BaseGraphManager {
         return null;
     }
 
+    public void returnResponse(Future<Object> response, final ActorRef parent) {
+        onSuccessResponse(response, parent);
+        onFailureResponse(response, parent);
+    }
 
-    public Response handleException(Throwable e) {
+    public void returnResponseOnFailure(Future<Object> response, final ActorRef parent) {
+        onFailureResponse(response, parent);
+    }
+
+    public void onSuccessResponse(Future<Object> response, final ActorRef parent) {
+        response.onSuccess(new OnSuccess<Object>() {
+            @Override
+            public void onSuccess(Object arg0) throws Throwable {
+                parent.tell(arg0, getSelf());
+            }
+        }, getContext().dispatcher());
+    }
+
+    public void onFailureResponse(Future<Object> response, final ActorRef parent) {
+        response.onFailure(new OnFailure() {
+            @Override
+            public void onFailure(Throwable e) throws Throwable {
+                handleException(e, parent);
+            }
+        }, getContext().dispatcher());
+    }
+
+    public boolean validateRequired(Object... objects) {
+        boolean valid = true;
+        for (Object baseValueObject : objects) {
+            if (null == baseValueObject) {
+                valid = false;
+                break;
+            }
+            if (baseValueObject instanceof String) {
+                if (StringUtils.isBlank((String) baseValueObject)) {
+                    valid = false;
+                    break;
+                }
+            }
+            if (baseValueObject instanceof List<?>) {
+                List<?> list = (List<?>) baseValueObject;
+                if (null == list || list.isEmpty()) {
+                    valid = false;
+                    break;
+                }
+            }
+            if (baseValueObject instanceof Map<?, ?>) {
+                Map<?, ?> map = (Map<?, ?>) baseValueObject;
+                if (null == map || map.isEmpty()) {
+                    valid = false;
+                    break;
+                }
+            }
+//            if (baseValueObject instanceof Property) {
+//                Property property = (Property) baseValueObject;
+//                if (StringUtils.isBlank(property.getPropertyName())
+//                        || (null == property.getPropertyValue() && null == property.getDateValue())) {
+//                    valid = false;
+//                    break;
+//                }
+//            }
+        }
+        return valid;
+    }
+
+    public void handleException(Throwable e, ActorRef parent) {
         Response response = new Response();
         ResponseParams params = new ResponseParams();
         params.setStatus(ResponseParams.StatusType.failed.name());
@@ -122,9 +205,47 @@ public abstract class BaseGraphManager {
         params.setErrmsg(setErrMessage(e));
         response.setParams(params);
         setResponseCode(response, e);
-        return response;
+        parent.tell(response, getSelf());
     }
 
+    public boolean checkResponseObject(Throwable arg0, Object arg1, ActorRef parent, String errorCode, String errorMsg) {
+        if (null != arg0) {
+            ERROR(arg0, parent);
+        } else {
+            if (arg1 instanceof Response) {
+                Response res = (Response) arg1;
+                if (checkError(res)) {
+                    ERROR(errorCode, getErrorMessage(res), res.getResponseCode(), parent);
+                } else {
+                    return true;
+                }
+            } else {
+                ERROR(errorCode, errorMsg, ResponseCode.SERVER_ERROR, parent);
+            }
+        }
+        return false;
+    }
+
+    public Future<List<String>> convertFuture(Future<Map<String, List<String>>> future) {
+        Future<List<String>> listFuture = future.map(new Mapper<Map<String, List<String>>, List<String>>() {
+            @Override
+            public List<String> apply(Map<String, List<String>> parameter) {
+                List<String> messages = new ArrayList<String>();
+                if (null != parameter && !parameter.isEmpty()) {
+                    for (List<String> list : parameter.values()) {
+                        if (null != list && !list.isEmpty()) {
+                            for (String msg : list) {
+                                if (StringUtils.isNotBlank(msg))
+                                    messages.add(new String(msg));
+                            }
+                        }
+                    }
+                }
+                return messages;
+            }
+        }, getContext().dispatcher());
+        return listFuture;
+    }
 
     private ResponseParams getSucessStatus() {
         ResponseParams params = new ResponseParams();
