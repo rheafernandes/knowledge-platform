@@ -2,8 +2,10 @@ package org.sunbird.graph.schema.validator
 
 import java.util
 
+import org.sunbird.cache.impl.CategoryCache
 import org.sunbird.common.exception.ClientException
 import org.sunbird.graph.engine.dto.ProcessingNode
+import org.sunbird.graph.schema.IDefinitionNode
 
 import scala.collection.JavaConverters._
 import scala.collection.Map
