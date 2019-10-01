@@ -5,9 +5,7 @@ import java.util
 import akka.pattern.Patterns
 import org.apache.commons.collections4.{CollectionUtils, MapUtils}
 import org.apache.commons.lang3.StringUtils
-import org.sunbird.actor.router.RequestRouter
 import org.sunbird.common.dto.{Request, Response, ResponseHandler}
-
 import org.sunbird.common.exception.ResponseCode
 import org.sunbird.graph.dac.model.{Node, Relation}
 import org.sunbird.graph.engine.dto.ProcessingNode
@@ -15,10 +13,12 @@ import org.sunbird.graph.mgr.BaseGraphManager
 import org.sunbird.graph.model.IRelation
 import org.sunbird.graph.model.relation.RelationHandler
 import org.sunbird.graph.schema.{CoreDomainObject, DefinitionFactory, DefinitionNode}
-import org.sunbird.graph.service.operation.Neo4JBoltNodeOperations
+import org.sunbird.graph.service.operation.{Neo4JBoltNodeOperations, NodeAsyncOperations}
+import org.sunbird.parseq.Task
 
 import scala.collection.JavaConversions._
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 
 class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, version: String) extends CoreDomainObject(graphId, objectType, version) {
@@ -30,17 +30,23 @@ class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, v
     def create(request: Request): Unit = {
         val validationResult = validate(request.getRequest)
         val response = createNode(validationResult.getNode)
-        val extPropsResponse = saveExternalProperties(validationResult.getIdentifier, validationResult.getExternalData, request.getContext)
-        val updateRelResponse = updateRelations(validationResult, request.getContext)
-        val futureList = List(extPropsResponse, updateRelResponse)
-        val future = Future.sequence(futureList).map(list => {
-            val errList = list.map(f => f.asInstanceOf[Response]).filter(res => !StringUtils.equals(res.getResponseCode.name(), ResponseCode.OK.name()))
-            if (errList.isEmpty) {
-                response
+        val future = response.map(result => {
+            if (StringUtils.equals(ResponseCode.OK.name(), result.getResponseCode.name())) {
+                val extPropsResponse = saveExternalProperties(validationResult.getIdentifier, validationResult.getExternalData, request.getContext)
+                val updateRelResponse = updateRelations(validationResult, request.getContext)
+                val futureList = List(extPropsResponse, updateRelResponse)
+                Future.sequence(futureList).map(list => {
+                    val errList = list.map(f => f.asInstanceOf[Response]).filter(res => !StringUtils.equals(res.getResponseCode.name(), ResponseCode.OK.name()))
+                    if (errList.isEmpty) {
+                        result
+                    } else {
+                        ResponseHandler.handleResponses(errList)
+                    }
+                })
             } else {
-                ResponseHandler.handleResponses(errList)
+                Future { result }
             }
-        })
+        }).flatMap(f => f)
         Patterns.pipe(future, ec).to(manager.sender())
     }
 
@@ -51,19 +57,21 @@ class DataNode(manager: BaseGraphManager, graphId: String, objectType: String, v
         node
     }
 
-    private def createNode(node: Node): Response = {
-        val addedNode = Neo4JBoltNodeOperations.addNode(graphId, node)
-        val response = new Response
-        response.put("node_id", addedNode.getIdentifier)
-        response.put("versionKey", addedNode.getMetadata.get("versionKey"))
-        response
+    private def createNode(node: Node)(implicit ec: ExecutionContext): Future[Response] = {
+        val addedNode =  NodeAsyncOperations.addNode(graphId, node);
+        addedNode.map(updatedNode => {
+            val response = new Response
+            response.put("node_id", updatedNode.getIdentifier)
+            response.put("versionKey", updatedNode.getMetadata.get("versionKey"))
+            response
+        })
     }
 
-    private def saveExternalProperties(identifier: String, externalProps: util.Map[String, AnyRef], context: util.Map[String, AnyRef]): Future[AnyRef] = {
+    private def saveExternalProperties(identifier: String, externalProps: util.Map[String, AnyRef], context: util.Map[String, AnyRef]): Future[Response] = {
         if (MapUtils.isNotEmpty(externalProps)) {
             externalProps.put("identifier", identifier)
             val request = new Request(context, externalProps, "updateExternalProps", objectType)
-            manager.getResult(request)
+            manager.getResult(request).asInstanceOf[Future[Response]]
         } else {
             Future(new Response())
         }

@@ -20,7 +20,8 @@
         <module>graph-engine_2.11</module>
         <module>graph-schema</module>
         <module>graph-nodes</module>
-        <module>graph-relations</module>
+        <module>parseq</module>
+        <module>graph-dac-api_2.11</module>
     </modules>
     <build>
         <pluginManagement>

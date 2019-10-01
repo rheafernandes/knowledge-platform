@@ -15,7 +15,7 @@ trait VersioningNode extends IDefinitionNode {
 
 
     abstract override def getNode(identifier: String, operation: String, mode: String): Node = {
-        operation match{
+        operation match {
             case "update" => getNodeToUpdate(identifier);
             case "read" => getNodeToRead(identifier, mode)
             case _ => getNodeToRead(identifier, mode)
@@ -28,10 +28,9 @@ trait VersioningNode extends IDefinitionNode {
             throw new ResourceNotFoundException(GraphEngineErrorCodes.ERR_INVALID_NODE.name, "Node Not Found With Identifier : " + identifier)
         if(schemaValidator.getConfig.hasPath("version") && "enable".equalsIgnoreCase(schemaValidator.getConfig.getString("version"))){
             getEditableNode(identifier, node)
-        }else{
+        } else {
             node
         }
-
     }
 
     private def getNodeToRead(identifier: String, mode: String) = {
