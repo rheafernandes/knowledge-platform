@@ -1,4 +1,4 @@
-package org.sunbird.graph.schema.validator
+package org.sunbird.graph.validator
 
 import org.sunbird.graph.engine.dto.ProcessingNode
 import org.sunbird.graph.schema.IDefinitionNode

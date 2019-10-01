@@ -1,4 +1,4 @@
-package org.sunbird.graph.schema.validator
+package org.sunbird.graph.validator
 
 import java.util
 
@@ -9,6 +9,7 @@ import org.sunbird.graph.common.Identifier
 import org.sunbird.graph.dac.enums.SystemNodeTypes
 import org.sunbird.graph.dac.model.{Node, Relation}
 import org.sunbird.graph.engine.dto.ProcessingNode
+import org.sunbird.graph.schema.IDefinitionNode
 import org.sunbird.graph.service.operation.Neo4JBoltSearchOperations
 
 import scala.collection.JavaConverters._
