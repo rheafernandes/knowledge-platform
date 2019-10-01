@@ -3,14 +3,12 @@ package org.sunbird.actor.core;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.routing.FromConfig;
-
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 import org.sunbird.actor.router.ActorConfig;
 import org.sunbird.common.dto.Request;
+
+import java.util.Set;
 
 /**
  * @author Mahesh Kumar Gangula

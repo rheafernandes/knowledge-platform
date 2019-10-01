@@ -1,8 +1,7 @@
 package org.sunbird.graph.service.util;
 
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
+import org.neo4j.driver.v1.exceptions.ClientException;
 import org.sunbird.common.dto.Property;
 import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.common.enums.SystemProperties;
@@ -11,7 +10,8 @@ import org.sunbird.graph.dac.model.Traverser;
 import org.sunbird.graph.service.common.DACErrorCodeConstants;
 import org.sunbird.graph.service.common.DACErrorMessageConstants;
 import org.sunbird.telemetry.logger.TelemetryManager;
-import org.neo4j.driver.v1.exceptions.ClientException;
+
+import java.util.Map;
 
 public class SearchQueryGenerationUtil {
 

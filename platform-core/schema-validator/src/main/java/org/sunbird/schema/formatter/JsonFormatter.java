@@ -1,14 +1,11 @@
 package org.sunbird.schema.formatter;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.leadpony.justify.api.InstanceType;
 import org.leadpony.justify.spi.FormatAttribute;
 
 import javax.json.JsonString;
 import javax.json.JsonValue;
-import java.util.List;
-import java.util.Map;
 
 public class JsonFormatter implements FormatAttribute {
 

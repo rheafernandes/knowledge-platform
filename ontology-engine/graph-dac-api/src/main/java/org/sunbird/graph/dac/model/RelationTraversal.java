@@ -1,10 +1,10 @@
 package org.sunbird.graph.dac.model;
 
-import java.io.Serializable;
-
-import org.sunbird.graph.dac.util.RelationType;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.traversal.TraversalDescription;
+import org.sunbird.graph.dac.util.RelationType;
+
+import java.io.Serializable;
 
 public class RelationTraversal implements Serializable {
 

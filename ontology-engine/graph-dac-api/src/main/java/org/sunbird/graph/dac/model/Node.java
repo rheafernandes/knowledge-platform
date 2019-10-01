@@ -1,20 +1,20 @@
 package org.sunbird.graph.dac.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.lang3.StringUtils;
+import org.neo4j.driver.v1.Value;
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.Relationship;
+import org.sunbird.common.exception.ServerException;
+import org.sunbird.graph.common.enums.SystemProperties;
+import org.sunbird.graph.dac.exception.GraphDACErrorCodes;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.commons.lang3.StringUtils;
-import org.sunbird.common.exception.ServerException;
-import org.sunbird.graph.common.enums.SystemProperties;
-import org.sunbird.graph.dac.exception.GraphDACErrorCodes;
-import org.neo4j.driver.v1.Value;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Relationship;
 
 public class Node implements Serializable {
 

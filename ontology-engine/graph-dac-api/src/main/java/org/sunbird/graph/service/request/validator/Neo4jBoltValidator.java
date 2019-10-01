@@ -1,12 +1,12 @@
 package org.sunbird.graph.service.request.validator;
 
 import org.apache.commons.lang3.StringUtils;
-//import org.sunbird.graph.cache.util.RedisStoreUtil;
-import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.dac.enums.SystemNodeTypes;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.service.common.NodeUpdateMode;
 import org.sunbird.telemetry.logger.TelemetryManager;
+
+//import org.sunbird.graph.cache.util.RedisStoreUtil;
 
 public class Neo4jBoltValidator extends Neo4JBoltDataVersionKeyValidator {
 

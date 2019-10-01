@@ -1,12 +1,9 @@
 package org.sunbird.graph.service.request.validator;
 
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.DateUtils;
 import org.sunbird.common.Platform;
 import org.sunbird.common.exception.ClientException;
-//import org.sunbird.graph.cache.util.RedisStoreUtil;
 import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.service.common.DACConfigurationConstants;
@@ -14,6 +11,10 @@ import org.sunbird.graph.service.common.DACErrorCodeConstants;
 import org.sunbird.graph.service.common.DACErrorMessageConstants;
 import org.sunbird.graph.service.common.NodeUpdateMode;
 import org.sunbird.graph.service.util.DefinitionNodeUtil;
+
+import java.util.Map;
+
+//import org.sunbird.graph.cache.util.RedisStoreUtil;
 
 public class Neo4JBoltDataVersionKeyValidator extends Neo4JBoltBaseValidator {
 

@@ -1,11 +1,11 @@
 package org.sunbird.graph.dac.model;
 
+import org.apache.commons.lang3.StringUtils;
+import org.sunbird.graph.common.enums.SystemProperties;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-import org.sunbird.graph.common.enums.SystemProperties;
 
 public class RelationCriterion implements Serializable {
 

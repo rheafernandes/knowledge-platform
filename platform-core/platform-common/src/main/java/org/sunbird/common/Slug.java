@@ -1,16 +1,15 @@
 package org.sunbird.common;
 
+import net.sf.junidecode.Junidecode;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.File;
 import java.net.URLDecoder;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.util.Locale;
 import java.util.regex.Pattern;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import net.sf.junidecode.Junidecode;
 
 public class Slug {
 

@@ -2,9 +2,8 @@ package utils
 
 import java.lang.reflect.{ParameterizedType, Type}
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include
 import com.fasterxml.jackson.core.`type`.TypeReference
-import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper, SerializationFeature}
+import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
 
 object JavaJsonUtils {
 

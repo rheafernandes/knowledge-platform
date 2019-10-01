@@ -1,10 +1,9 @@
 package org.sunbird.cassandra;
 
+import com.datastax.driver.core.Session;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-
-import com.datastax.driver.core.Session;
 
 public class CassandraTestSetup {
 

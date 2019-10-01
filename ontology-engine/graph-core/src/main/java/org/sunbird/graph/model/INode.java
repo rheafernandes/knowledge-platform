@@ -1,10 +1,10 @@
 package org.sunbird.graph.model;
 
-import java.util.List;
-import java.util.Map;
-
 import org.sunbird.common.dto.Request;
 import org.sunbird.graph.dac.model.Node;
+
+import java.util.List;
+import java.util.Map;
 
 public interface INode extends IPropertyContainer {
 

@@ -1,12 +1,12 @@
 package org.sunbird.graph.service.util;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
+import org.neo4j.driver.v1.Driver;
+import org.neo4j.driver.v1.Record;
+import org.neo4j.driver.v1.Session;
+import org.neo4j.driver.v1.StatementResult;
+import org.neo4j.driver.v1.exceptions.ClientException;
+import org.neo4j.driver.v1.types.Relationship;
 import org.sunbird.common.DateUtils;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.exception.ServerException;
@@ -20,12 +20,12 @@ import org.sunbird.graph.service.common.DACErrorMessageConstants;
 import org.sunbird.graph.service.common.GraphOperation;
 import org.sunbird.graph.service.common.RelationshipDirection;
 import org.sunbird.telemetry.logger.TelemetryManager;
-import org.neo4j.driver.v1.Driver;
-import org.neo4j.driver.v1.Record;
-import org.neo4j.driver.v1.Session;
-import org.neo4j.driver.v1.StatementResult;
-import org.neo4j.driver.v1.exceptions.ClientException;
-import org.neo4j.driver.v1.types.Relationship;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class GraphQueryGenerationUtil extends BaseQueryGenerationUtil {
 

@@ -1,9 +1,6 @@
 package org.sunbird.telemetry.util;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Map;
-import java.util.UUID;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +9,10 @@ import org.sunbird.telemetry.dto.TelemetryBEEvent;
 import org.sunbird.telemetry.dto.TelemetryBJREvent;
 import org.sunbird.telemetry.logger.TelemetryManager;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Map;
+import java.util.UUID;
 
 public class LogTelemetryEventUtil {
 

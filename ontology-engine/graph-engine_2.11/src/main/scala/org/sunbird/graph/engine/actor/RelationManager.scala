@@ -3,7 +3,7 @@ package org.sunbird.graph.engine.actor
 import org.apache.commons.collections4.MapUtils
 import org.apache.commons.lang3.StringUtils
 import org.sunbird.actor.router.ActorConfig
-import org.sunbird.common.dto.{Request, Response}
+import org.sunbird.common.dto.Request
 import org.sunbird.common.exception.{ClientException, ResponseCode, ServerException}
 import org.sunbird.graph.mgr.BaseGraphManager
 import org.sunbird.graph.model.IRelation

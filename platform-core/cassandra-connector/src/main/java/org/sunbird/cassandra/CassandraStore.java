@@ -1,6 +1,10 @@
 package org.sunbird.cassandra;
 
-import com.datastax.driver.core.*;
+import com.datastax.driver.core.BoundStatement;
+import com.datastax.driver.core.PreparedStatement;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Session;
 import com.datastax.driver.core.querybuilder.Clause;
 import com.datastax.driver.core.querybuilder.Delete;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
@@ -13,8 +17,12 @@ import org.sunbird.cassandra.store.Constants;
 import org.sunbird.common.exception.ClientException;
 import org.sunbird.common.exception.ServerException;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 

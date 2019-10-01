@@ -1,13 +1,11 @@
 package org.sunbird.common.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.apache.commons.collections4.MapUtils;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * This contains data (value objects) to be passed to middleware command

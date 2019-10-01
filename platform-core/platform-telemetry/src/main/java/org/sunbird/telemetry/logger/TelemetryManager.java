@@ -1,9 +1,5 @@
 package org.sunbird.telemetry.logger;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.sunbird.common.Platform;
@@ -14,6 +10,10 @@ import org.sunbird.telemetry.TelemetryParams;
 import org.sunbird.telemetry.handler.Level;
 import org.sunbird.telemetry.handler.TelemetryHandler;
 import org.sunbird.telemetry.handler.TelemetryLoggingHandler;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class is used to generate and handle telemetry. 

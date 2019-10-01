@@ -4,7 +4,6 @@ import org.apache.commons.collections4.CollectionUtils
 import org.apache.commons.lang3.StringUtils
 import org.sunbird.graph.dac.enums.SystemNodeTypes
 import org.sunbird.graph.engine.dto.ProcessingNode
-import org.sunbird.graph.schema.IDefinitionNode
 import org.sunbird.graph.validator.NodeValidator
 
 import scala.collection.JavaConverters._

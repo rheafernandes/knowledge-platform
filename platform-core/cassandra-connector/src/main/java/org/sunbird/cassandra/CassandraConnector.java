@@ -1,9 +1,8 @@
 package org.sunbird.cassandra;
 
+import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.QueryOptions;
-
-import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import org.apache.commons.lang3.StringUtils;
 import org.sunbird.common.Platform;
@@ -11,7 +10,11 @@ import org.sunbird.common.exception.ServerException;
 import org.sunbird.telemetry.logger.TelemetryManager;
 
 import java.net.InetSocketAddress;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CassandraConnector {
 
