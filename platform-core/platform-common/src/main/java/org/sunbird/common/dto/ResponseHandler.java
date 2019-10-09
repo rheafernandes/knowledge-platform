@@ -91,4 +91,18 @@ public class ResponseHandler {
                         })));
         return finalResponse;
     }
+
+    public static Response OK() {
+        Response response = new Response();
+        response.setParams(getSucessStatus());
+        return response;
+    }
+
+    private static ResponseParams getSucessStatus() {
+        ResponseParams params = new ResponseParams();
+        params.setErr("0");
+        params.setStatus(ResponseParams.StatusType.successful.name());
+        params.setErrmsg("Operation successful");
+        return params;
+    }
 }
