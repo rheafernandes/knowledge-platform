@@ -12,59 +12,55 @@ import org.sunbird.graph.engine.dto.ProcessingNode
 import org.sunbird.graph.external.ExternalPropsManager
 import org.sunbird.graph.model.IRelation
 import org.sunbird.graph.model.relation.RelationHandler
-import org.sunbird.graph.schema.{CoreDomainObject, DefinitionFactory}
+import org.sunbird.graph.schema.{DefinitionFactory, DefinitionNode}
 import org.sunbird.graph.service.operation.NodeAsyncOperations
 
 import scala.collection.JavaConversions._
 import scala.concurrent.{ExecutionContext, Future}
 
 
-class DataNode(graphId: String, objectType: String, version: String)(implicit ec: ExecutionContext) extends CoreDomainObject(graphId, objectType, version) {
-
-    val definition = DefinitionFactory.getDefinition(graphId, objectType, version)
-
+object DataNode {
     @throws[Exception]
-    def create(request: Request): Future[Response] = {
-        val validationResult = validate(request.getRequest)
-        val response = createNode(validationResult.getNode)
+    def create(request: Request)(implicit ec: ExecutionContext): Future[Response] = {
+        val graphId:String = request.getContext.get("graph_id").asInstanceOf[String]
+        val version:String = request.getContext.get("version").asInstanceOf[String]
+        val definition = DefinitionFactory.getDefinition(graphId, request.getObjectType, version)
+        val validationResult = validate(request.getRequest, definition)
+        val response = createNode(graphId, validationResult.getNode)
         val future = response.map(result => {
-            if (StringUtils.equals(ResponseCode.OK.name(), result.getResponseCode.name())) {
-                val extPropsResponse = saveExternalProperties(validationResult.getIdentifier, validationResult.getExternalData, request.getContext)
-                val updateRelResponse = updateRelations(validationResult, request.getContext)
-                val futureList = List(extPropsResponse, updateRelResponse)
-                Future.sequence(futureList).map(list => {
-                    val errList = list.filter(res => !StringUtils.equals(res.getResponseCode.name(), ResponseCode.OK.name()))
-                    if (errList.isEmpty) {
-                        result
-                    } else {
-                        ResponseHandler.handleResponses(errList)
-                    }
-                })
-            } else {
-                Future { result }
-            }
+            val extPropsResponse = saveExternalProperties(validationResult.getIdentifier, validationResult.getExternalData, request.getContext, request.getObjectType)
+            val updateRelResponse = updateRelations(graphId, validationResult, request.getContext)
+            val futureList = List(extPropsResponse, updateRelResponse)
+            Future.sequence(futureList).map(list => {
+                val errList = list.filter(res => !StringUtils.equals(res.getResponseCode.name(), ResponseCode.OK.name()))
+                if (errList.isEmpty) {
+                    result
+                } else {
+                    ResponseHandler.handleResponses(errList)
+                }
+            })
         }).flatMap(f => f)
         future
     }
 
     @throws[Exception]
-    private def validate(input: util.Map[String, AnyRef]): ProcessingNode = {
+    private def validate(input: util.Map[String, AnyRef], definition: DefinitionNode): ProcessingNode = {
         val node = definition.getNode(input)
         definition.validate(node)
         node
     }
 
-    private def createNode(node: Node): Future[Response] = {
-        val addedNode =  NodeAsyncOperations.addNode(graphId, node);
+    private def createNode(graphId: String, node: Node)(implicit ec: ExecutionContext): Future[Response] = {
+        val addedNode =  NodeAsyncOperations.addNode(graphId, node)
         addedNode.map(updatedNode => {
-            val response = new Response
+            val response = ResponseHandler.OK()
             response.put("node_id", updatedNode.getIdentifier)
             response.put("versionKey", updatedNode.getMetadata.get("versionKey"))
             response
         })
     }
 
-    private def saveExternalProperties(identifier: String, externalProps: util.Map[String, AnyRef], context: util.Map[String, AnyRef]): Future[Response] = {
+    private def saveExternalProperties(identifier: String, externalProps: util.Map[String, AnyRef], context: util.Map[String, AnyRef], objectType: String)(implicit ec: ExecutionContext): Future[Response] = {
         if (MapUtils.isNotEmpty(externalProps)) {
             externalProps.put("identifier", identifier)
             val request = new Request(context, externalProps, "", objectType)
@@ -74,7 +70,7 @@ class DataNode(graphId: String, objectType: String, version: String)(implicit ec
         }
     }
     
-    private def updateRelations(node: ProcessingNode, context: util.Map[String, AnyRef]) : Future[Response] = {
+    private def updateRelations(graphId: String, node: ProcessingNode, context: util.Map[String, AnyRef])(implicit ec: ExecutionContext) : Future[Response] = {
         val relations: util.List[Relation] = node.getNewRelations
         if (CollectionUtils.isNotEmpty(relations)) {
             val relationList: List[IRelation] = relations.toList.map(relation =>
