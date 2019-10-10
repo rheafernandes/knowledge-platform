@@ -14,6 +14,7 @@ import org.sunbird.graph.model.IRelation
 import org.sunbird.graph.model.relation.RelationHandler
 import org.sunbird.graph.schema.{DefinitionFactory, DefinitionNode}
 import org.sunbird.graph.service.operation.NodeAsyncOperations
+import org.sunbird.parseq.Task
 
 import scala.collection.JavaConversions._
 import scala.concurrent.{ExecutionContext, Future}
@@ -21,26 +22,19 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object DataNode {
     @throws[Exception]
-    def create(request: Request)(implicit ec: ExecutionContext): Future[Response] = {
+    def create(request: Request)(implicit ec: ExecutionContext): Future[Node] = {
         val graphId:String = request.getContext.get("graph_id").asInstanceOf[String]
         val version:String = request.getContext.get("version").asInstanceOf[String]
         val definition = DefinitionFactory.getDefinition(graphId, request.getObjectType, version)
         val validationResult = validate(request.getRequest, definition)
-        val response = createNode(graphId, validationResult.getNode)
-        val future = response.map(result => {
-            val extPropsResponse = saveExternalProperties(validationResult.getIdentifier, validationResult.getExternalData, request.getContext, request.getObjectType)
-            val updateRelResponse = updateRelations(graphId, validationResult, request.getContext)
-            val futureList = List(extPropsResponse, updateRelResponse)
-            Future.sequence(futureList).map(list => {
-                val errList = list.filter(res => !StringUtils.equals(res.getResponseCode.name(), ResponseCode.OK.name()))
-                if (errList.isEmpty) {
-                    result
-                } else {
-                    ResponseHandler.handleResponses(errList)
-                }
-            })
+        val response = NodeAsyncOperations.addNode(graphId, validationResult.getNode)
+        response.map(result => {
+            val futureList = Task.parallel[Response](
+                saveExternalProperties(validationResult.getIdentifier, validationResult.getExternalData, request.getContext, request.getObjectType),
+                updateRelations(graphId, validationResult, request.getContext))
+            futureList.map(list => result)
         }).flatMap(f => f)
-        future
+
     }
 
     @throws[Exception]
@@ -50,23 +44,13 @@ object DataNode {
         node
     }
 
-    private def createNode(graphId: String, node: Node)(implicit ec: ExecutionContext): Future[Response] = {
-        val addedNode =  NodeAsyncOperations.addNode(graphId, node)
-        addedNode.map(updatedNode => {
-            val response = ResponseHandler.OK()
-            response.put("node_id", updatedNode.getIdentifier)
-            response.put("versionKey", updatedNode.getMetadata.get("versionKey"))
-            response
-        })
-    }
-
     private def saveExternalProperties(identifier: String, externalProps: util.Map[String, AnyRef], context: util.Map[String, AnyRef], objectType: String)(implicit ec: ExecutionContext): Future[Response] = {
         if (MapUtils.isNotEmpty(externalProps)) {
             externalProps.put("identifier", identifier)
             val request = new Request(context, externalProps, "", objectType)
             ExternalPropsManager.saveProps(request)
         } else {
-            Future(new Response())
+            Future(new Response)
         }
     }
     

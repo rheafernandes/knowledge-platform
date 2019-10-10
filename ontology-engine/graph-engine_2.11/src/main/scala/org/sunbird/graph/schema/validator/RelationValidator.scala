@@ -13,7 +13,6 @@ trait RelationValidator extends IDefinitionNode {
 
     @throws[Exception]
     abstract override def validate(node: ProcessingNode): ProcessingNode = {
-        println("org.sunbird.preprocess.RelationValidator : validate called for " + node.getIdentifier)
         val relations = node.getNewRelations
         if (CollectionUtils.isNotEmpty(relations)) {
             val ids = relations.asScala.map(r => List(r.getStartNodeId, r.getEndNodeId)).flatten

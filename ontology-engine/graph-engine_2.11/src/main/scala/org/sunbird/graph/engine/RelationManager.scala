@@ -15,17 +15,14 @@ object RelationManager {
     def createNewRelations(request: Request)(implicit ec: ExecutionContext): Future[Response] = {
         val relations: List[IRelation] = request.get("relations").asInstanceOf[List[IRelation]]
 
-        relations.foreach( relation => {
+        relations.foreach(relation => {
             val req = new Request()
             req.setContext(request.getContext)
             val errorMap =  relation.validateRelation(req)
             if(MapUtils.isNotEmpty(errorMap)){
-                println(errorMap)
                 throw new ClientException(ResponseCode.CLIENT_ERROR.name, "Error while validating relations :: " + errorMap)
             }
-
-            }
-        )
+        })
         relations.foreach(relation => {
             val req = new Request()
             req.setContext(request.getContext)
@@ -33,12 +30,6 @@ object RelationManager {
             if(StringUtils.isNotBlank(msg))
                 throw new ServerException(ResponseCode.SERVER_ERROR.name(), "Error while creating relation :: " +  msg)
         })
-        val response = new Response
-        val params = new ResponseParams
-        params.setErr("0")
-        params.setStatus(ResponseParams.StatusType.successful.name)
-        params.setErrmsg("Operation successful")
-        response.setParams(params)
-        Future(response)
+        Future(new Response)
     }
 }

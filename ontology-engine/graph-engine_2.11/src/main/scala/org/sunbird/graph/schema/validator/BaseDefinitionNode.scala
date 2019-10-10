@@ -51,7 +51,6 @@ class BaseDefinitionNode(graphId: String, objectType: String, version: String = 
 
     @throws[Exception]
     override def validate(node: ProcessingNode): ProcessingNode = {
-        println("org.sunbird.preprocess.BasePreProcessor : validate called for " + node.getIdentifier)
         node
     }
 

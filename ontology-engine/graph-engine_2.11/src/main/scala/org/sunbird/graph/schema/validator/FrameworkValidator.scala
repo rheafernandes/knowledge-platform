@@ -14,7 +14,6 @@ trait FrameworkValidator extends IDefinitionNode {
   val categoryCache: CategoryCache = new CategoryCache()
   @throws[Exception]
   abstract override def validate(node: ProcessingNode): ProcessingNode = {
-    println("org.sunbird.graph.schema.FrameworkValidator : validate called for " + node.getIdentifier)
     val fwCategories: List[String] = schemaValidator.getConfig.getStringList("frameworkCategories").asScala.toList
     val framework: String = node.getMetadata.getOrDefault("framework", "").asInstanceOf[String]
     if (null != fwCategories && fwCategories.nonEmpty && framework.nonEmpty) {
