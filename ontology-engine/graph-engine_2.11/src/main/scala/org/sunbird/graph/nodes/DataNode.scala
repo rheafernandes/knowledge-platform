@@ -3,9 +3,7 @@ package org.sunbird.graph.nodes
 import java.util
 
 import org.apache.commons.collections4.{CollectionUtils, MapUtils}
-import org.apache.commons.lang3.StringUtils
 import org.sunbird.common.dto.{Request, Response, ResponseHandler}
-import org.sunbird.common.exception.ResponseCode
 import org.sunbird.graph.dac.model.{Node, Relation}
 import org.sunbird.graph.engine.RelationManager
 import org.sunbird.graph.engine.dto.ProcessingNode

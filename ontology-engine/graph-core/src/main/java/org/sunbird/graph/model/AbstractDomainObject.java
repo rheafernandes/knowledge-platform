@@ -16,7 +16,6 @@ import org.sunbird.graph.dac.mgr.impl.Neo4JBoltGraphMgrImpl;
 import org.sunbird.graph.dac.mgr.impl.Neo4JBoltNodeMgrImpl;
 import org.sunbird.graph.dac.mgr.impl.Neo4JBoltSearchMgrImpl;
 import org.sunbird.graph.exception.GraphEngineErrorCodes;
-import org.sunbird.graph.mgr.BaseGraphManager;
 
 import java.util.ArrayList;
 import java.util.List;

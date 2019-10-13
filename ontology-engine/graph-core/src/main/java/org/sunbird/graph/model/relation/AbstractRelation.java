@@ -11,7 +11,6 @@ import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.dac.model.Relation;
 import org.sunbird.graph.exception.GraphRelationErrorCodes;
-import org.sunbird.graph.mgr.BaseGraphManager;
 import org.sunbird.graph.model.AbstractDomainObject;
 import org.sunbird.graph.model.IRelation;
 import scala.concurrent.Future;

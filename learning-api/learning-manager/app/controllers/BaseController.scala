@@ -1,5 +1,8 @@
 package controllers
 
+import akka.actor.ActorRef
+import akka.pattern.Patterns
+import javax.inject.{Inject, Named}
 import org.sunbird.actor.service.SunbirdMWService
 import org.sunbird.common.dto.Response
 import org.sunbird.common.exception.ResponseCode
@@ -10,7 +13,9 @@ import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class BaseController(protected val cc: ControllerComponents)(implicit exec: ExecutionContext) extends AbstractController(cc) {
+abstract class BaseController(val contentActor: ActorRef, protected val cc: ControllerComponents)(implicit exec: ExecutionContext) extends AbstractController(cc) {
+
+
 
     def requestBody()(implicit request: Request[AnyContent]) = {
         val body = request.body.asJson.getOrElse("{}").toString
@@ -34,7 +39,8 @@ abstract class BaseController(protected val cc: ControllerComponents)(implicit e
     }
 
     def getResult(apiId: String, request: org.sunbird.common.dto.Request) : Future[Result] = {
-        val future = SunbirdMWService.execute(request)
+        val future = Patterns.ask(contentActor, request, 30000)
+//        SunbirdMWService.execute(request)
         future.map(f => {
             val result = f.asInstanceOf[Response]
             result.setId(apiId)

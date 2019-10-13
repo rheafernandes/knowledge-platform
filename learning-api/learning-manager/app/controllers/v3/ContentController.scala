@@ -1,16 +1,16 @@
 package controllers.v3
 
-import akka.actor.ActorSystem
+import akka.actor.{ActorRef, ActorSystem}
 import com.google.inject.Singleton
 import controllers.BaseController
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import play.api.mvc.ControllerComponents
 
 import scala.collection.JavaConversions._
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ContentController @Inject()(cc: ControllerComponents, actorSystem: ActorSystem)(implicit exec: ExecutionContext) extends BaseController(cc) {
+class ContentController @Inject()(@Named("contentActor") contentActor: ActorRef, cc: ControllerComponents, actorSystem: ActorSystem)(implicit exec: ExecutionContext) extends BaseController(contentActor, cc) {
 
     val objectType = "content"
 

@@ -5,7 +5,6 @@ import org.sunbird.common.exception.ClientException;
 import org.sunbird.graph.dac.enums.RelationTypes;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.exception.GraphRelationErrorCodes;
-import org.sunbird.graph.mgr.BaseGraphManager;
 import org.sunbird.graph.model.IRelation;
 
 import java.util.Map;
