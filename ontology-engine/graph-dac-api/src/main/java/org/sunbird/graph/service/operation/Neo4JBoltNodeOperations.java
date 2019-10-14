@@ -27,7 +27,6 @@ import org.sunbird.graph.service.common.DACConfigurationConstants;
 import org.sunbird.graph.service.common.DACErrorCodeConstants;
 import org.sunbird.graph.service.common.DACErrorMessageConstants;
 import org.sunbird.graph.service.common.GraphOperation;
-import org.sunbird.graph.service.request.validator.Neo4jBoltValidator;
 import org.sunbird.graph.service.util.DriverUtil;
 import org.sunbird.graph.service.util.NodeQueryGenerationUtil;
 import org.sunbird.telemetry.logger.TelemetryManager;
@@ -43,7 +42,6 @@ import java.util.Map.Entry;
 public class Neo4JBoltNodeOperations {
 
 	private final static String DEFAULT_CYPHER_NODE_OBJECT = "ee";
-	private static Neo4jBoltValidator versionValidator = new Neo4jBoltValidator();
 
 	@SuppressWarnings("unchecked")
 	public static Node upsertNode(String graphId, Node node, Request request) {
@@ -62,7 +60,6 @@ public class Neo4JBoltNodeOperations {
 		TelemetryManager.log("Consumer is Authorized for Node Id: " + node.getIdentifier());
 
 		TelemetryManager.log("Validating the Update Operation for Node Id: " + node.getIdentifier());
-		versionValidator.validateUpdateOperation(graphId, node);
 		node.getMetadata().remove(GraphDACParams.versionKey.name());
 		TelemetryManager.log("Node Update Operation has been Validated for Node Id: " + node.getIdentifier());
 
@@ -217,7 +214,6 @@ public class Neo4JBoltNodeOperations {
 		TelemetryManager.log("Consumer is Authorized for Node Id: " + node.getIdentifier());
 
 		TelemetryManager.log("Validating the Update Operation for Node Id: " + node.getIdentifier());
-		versionValidator.validateUpdateOperation(graphId, node);
 		String version = (String) node.getMetadata().get(GraphDACParams.versionKey.name());
 		if (!StringUtils.equalsIgnoreCase(
 				Platform.config.getString(DACConfigurationConstants.PASSPORT_KEY_BASE_PROPERTY), version)) {
