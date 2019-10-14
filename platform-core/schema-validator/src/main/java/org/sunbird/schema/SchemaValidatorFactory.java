@@ -18,9 +18,9 @@ public class SchemaValidatorFactory {
         }
     }
 
-    public static String getExternalStore(String name, String version) throws Exception {
+    public static String getExternalStoreName(String name, String version) throws Exception {
         ISchemaValidator schemaValidator = SchemaValidatorFactory.getInstance(name, version);
-        return schemaValidator.getConfig().getString(name.toLowerCase() + "ExternalStore");
+        return schemaValidator.getConfig().getString("externalStoreName");
     }
 
     private static ISchemaValidator initSchema(String name, String version) throws Exception {

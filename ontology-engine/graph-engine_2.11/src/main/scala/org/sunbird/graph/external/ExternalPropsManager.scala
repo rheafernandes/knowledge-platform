@@ -10,7 +10,7 @@ object ExternalPropsManager {
     def saveProps(request: Request)(implicit ec: ExecutionContext): Future[Response] = {
         val objectType: String = request.getObjectType
         val version: String = request.getContext.get("version").asInstanceOf[String]
-        val store = ExternalStoreFactory.getExternalStore(SchemaValidatorFactory.getExternalStore(objectType, version))
+        val store = ExternalStoreFactory.getExternalStore(SchemaValidatorFactory.getExternalStoreName(objectType, version))
         store.insert(request.getRequest)
         Future(new Response)
     }
