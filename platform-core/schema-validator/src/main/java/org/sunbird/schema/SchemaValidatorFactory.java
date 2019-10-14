@@ -18,6 +18,11 @@ public class SchemaValidatorFactory {
         }
     }
 
+    public static String getExternalStore(String name, String version) throws Exception {
+        ISchemaValidator schemaValidator = SchemaValidatorFactory.getInstance(name, version);
+        return schemaValidator.getConfig().getString(name.toLowerCase() + "ExternalStore");
+    }
+
     private static ISchemaValidator initSchema(String name, String version) throws Exception {
         ISchemaValidator schema = new JsonSchemaValidator(name, version);
         schemaMap.put(getKey(name, version), schema);

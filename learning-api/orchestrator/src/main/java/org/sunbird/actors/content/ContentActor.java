@@ -19,10 +19,6 @@ public class ContentActor extends AbstractActor {
     public static String objectType = "Content";
     public static String version = "1.0";
 
-    private static final String CONTENT_KEYSPACE_NAME = Platform.config.hasPath("content.keyspace.name") ? Platform.config.getString("content.keyspace.name") : "content_store";
-    private static final String CONTENT_TABLE_NAME = Platform.config.hasPath("content.keyspace.table") ? Platform.config.getString("content.keyspace.table") : "content_data";
-
-
     public Future<Response> onReceive(Request request) {
         String operation = request.getOperation();
         try {
