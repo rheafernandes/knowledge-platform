@@ -9,7 +9,6 @@ import org.sunbird.graph.exception.GraphRelationErrorCodes
 object RelationHandler {
 
     def getRelation(graphId: String, startNode: Node, relationType: String, endNode: Node, metadata: Map[String, AnyRef]): IRelation = {
-        println("RelationType : :" + relationType)
         if (StringUtils.isNotBlank(relationType) && RelationTypes.isValidRelationType(relationType)) {
             if (StringUtils.equals(RelationTypes.ASSOCIATED_TO.relationName, relationType))
                 new AssociationRelation(graphId, startNode, endNode, metadata)

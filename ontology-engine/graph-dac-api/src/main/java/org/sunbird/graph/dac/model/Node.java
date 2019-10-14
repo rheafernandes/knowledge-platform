@@ -3,6 +3,7 @@ package org.sunbird.graph.dac.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
 import org.sunbird.graph.common.enums.SystemProperties;
+import org.sunbird.graph.dac.enums.GraphDACErrorCodes;
 
 import java.io.Serializable;
 import java.util.ArrayList;

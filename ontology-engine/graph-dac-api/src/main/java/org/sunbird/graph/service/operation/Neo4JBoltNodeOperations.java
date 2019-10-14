@@ -19,8 +19,8 @@ import org.sunbird.graph.common.Identifier;
 import org.sunbird.graph.common.enums.AuditProperties;
 import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.common.enums.SystemProperties;
-import org.sunbird.graph.dac.enums.GraphDacErrorParams;
 import org.sunbird.graph.dac.enums.SystemNodeTypes;
+import org.sunbird.graph.dac.enums.GraphDACErrorCodes;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.service.common.CypherQueryConfigurationConstants;
 import org.sunbird.graph.service.common.DACConfigurationConstants;
@@ -181,7 +181,7 @@ public class Neo4JBoltNodeOperations {
 					if (e instanceof org.neo4j.driver.v1.exceptions.ClientException) {
 						org.neo4j.driver.v1.exceptions.ClientException ex = (org.neo4j.driver.v1.exceptions.ClientException) e;
 						if (StringUtils.equalsIgnoreCase("Neo.ClientError.Schema.ConstraintValidationFailed", ex.code()))
-							throw new ClientException(GraphDacErrorParams.CONSTRAINT_VALIDATION_FAILED.name(),
+							throw new ClientException(GraphDACErrorCodes.CONSTRAINT_VALIDATION_FAILED.name(),
 								"Object already exists with identifier: " + node.getIdentifier());
 						else
 							throw new ServerException(ex.code(), e.getMessage());

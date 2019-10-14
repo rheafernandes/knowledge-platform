@@ -7,7 +7,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.sunbird.common.exception.ServerException;
 import org.sunbird.graph.common.enums.SystemProperties;
-import org.sunbird.graph.dac.exception.GraphDACErrorCodes;
+import org.sunbird.graph.dac.enums.GraphDACErrorCodes;
 
 import java.io.Serializable;
 import java.util.HashMap;
