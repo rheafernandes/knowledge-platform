@@ -5,12 +5,13 @@ import com.google.inject.Singleton
 import controllers.BaseController
 import javax.inject.{Inject, Named}
 import play.api.mvc.ControllerComponents
+import utils.ActorNames
 
 import scala.collection.JavaConversions._
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ContentController @Inject()(@Named("contentActor") contentActor: ActorRef, cc: ControllerComponents, actorSystem: ActorSystem)(implicit exec: ExecutionContext) extends BaseController(contentActor, cc) {
+class ContentController @Inject()(@Named(ActorNames.CONTENT_ACTOR) contentActor: ActorRef, cc: ControllerComponents, actorSystem: ActorSystem)(implicit exec: ExecutionContext) extends BaseController(cc) {
 
     val objectType = "content"
 
@@ -19,6 +20,7 @@ class ContentController @Inject()(@Named("contentActor") contentActor: ActorRef,
         val body = requestBody()
         val content = body.getOrElse(objectType, new java.util.HashMap()).asInstanceOf[java.util.Map[String, Object]];
         content.putAll(headers)
-        getResult("org.sunbird.content.create", getRequest(content, headers, "createContent"))
+        val contentRequest = getRequest(content, headers, "createContent")
+        getResult("org.sunbird.content.create", contentActor, contentRequest)
     }
 }
