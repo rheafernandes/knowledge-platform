@@ -3,7 +3,7 @@ package org.sunbird.actors.content;
 import akka.actor.AbstractActor;
 import akka.dispatch.Futures;
 import akka.pattern.Patterns;
-import org.sunbird.actor.router.ActorConfig;
+import org.sunbird.actor.core.BaseActor;
 import org.sunbird.common.Platform;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
@@ -13,8 +13,7 @@ import org.sunbird.graph.engine.NodeManager;
 import scala.concurrent.Future;
 
 
-@ActorConfig(tasks = {"createContent"})
-public class ContentActor extends AbstractActor {
+public class ContentActor extends BaseActor {
 
     public static String objectType = "Content";
     public static String version = "1.0";
@@ -52,10 +51,7 @@ public class ContentActor extends AbstractActor {
         Request updateRequest = new Request(request, objectType);
     }
 
-    public Future<Response> ERROR(String operation) {
-        Response response = getErrorResponse(new ClientException(ResponseCode.CLIENT_ERROR.name(), "Invalid operation provided in request to process: " + operation));
-        return Futures.successful(response);
-    }
+
 
     private Response getErrorResponse(Throwable e) {
         e.printStackTrace();
@@ -94,12 +90,5 @@ public class ContentActor extends AbstractActor {
         } else {
             res.setResponseCode(ResponseCode.SERVER_ERROR);
         }
-    }
-
-    @Override
-    public Receive createReceive() {
-        return receiveBuilder().match(Request.class, message -> {
-            Patterns.pipe(onReceive(message), getContext().dispatcher()).to(sender());
-        }).build();
     }
 }
