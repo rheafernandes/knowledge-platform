@@ -37,5 +37,6 @@
         }
     },
     "version": "enable",
-    "frameworkCategories": ["board","medium","subject","gradeLevel"]
+    "frameworkCategories": ["board","medium","subject","gradeLevel"],
+    "externalStoreName": "content_store.content_data"
 }
