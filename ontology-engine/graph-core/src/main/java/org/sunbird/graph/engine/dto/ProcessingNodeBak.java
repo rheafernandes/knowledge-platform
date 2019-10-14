@@ -10,14 +10,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ProcessingNode extends Node {
+public class ProcessingNodeBak extends Node {
 
     private List<Relation> newRelations = new ArrayList<>();
     private List<Relation> deletedRelations = new ArrayList<>();
     private Map<String, Object> externalData;
     private Map<String, Node> relationNodes = new HashMap<>();
 
-    public ProcessingNode(Node node, Map<String, Object> externalData) {
+    public ProcessingNodeBak(Node node, Map<String, Object> externalData) {
         setId(node.getId());
         setGraphId(node.getGraphId());
         setIdentifier(node.getIdentifier());
@@ -33,7 +33,7 @@ public class ProcessingNode extends Node {
         this.externalData = externalData;
     }
 
-    public ProcessingNode(String identifier, Node node, Map<String, Object> externalData) {
+    public ProcessingNodeBak(String identifier, Node node, Map<String, Object> externalData) {
         setId(node.getId());
         setGraphId(node.getGraphId());
         setIdentifier(identifier);
