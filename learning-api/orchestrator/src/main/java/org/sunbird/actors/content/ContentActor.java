@@ -41,8 +41,6 @@ public class ContentActor extends AbstractActor {
     private Future<Response> create(Request request) throws Exception {
         Request createRequest = new Request(request, objectType);
         createRequest.setRequest(request.getRequest());
-        createRequest.getContext().put("keyspace",CONTENT_KEYSPACE_NAME);
-        createRequest.getContext().put("table",CONTENT_TABLE_NAME);
         Future<Response> result = NodeManager.createDataNode(createRequest, getContext().dispatcher());
         return result;
 //        Patterns.pipe(result, getContext().getDispatcher()).to(sender());
