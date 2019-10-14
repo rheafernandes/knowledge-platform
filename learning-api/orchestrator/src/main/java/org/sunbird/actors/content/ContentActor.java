@@ -5,7 +5,8 @@ import org.sunbird.actor.core.BaseActor;
 import org.sunbird.common.Platform;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
-import org.sunbird.graph.engine.NodeManager;
+import org.sunbird.common.dto.ResponseHandler;
+import org.sunbird.graph.nodes.DataNode;
 import scala.concurrent.Future;
 
 
@@ -38,7 +39,14 @@ public class ContentActor extends BaseActor {
         createRequest.setRequest(request.getRequest());
         createRequest.getContext().put("keyspace",CONTENT_KEYSPACE_NAME);
         createRequest.getContext().put("table",CONTENT_TABLE_NAME);
-        Future<Response> result = NodeManager.createDataNode(createRequest, getContext().dispatcher());
+        createRequest.getContext().put("graph_id", "domain");
+        createRequest.getContext().put("version", "1.0");
+        Future<Response> result = DataNode.create(request, getContext().dispatcher()).map(node -> {
+                Response response = ResponseHandler.OK();
+                response.put("node_id", node.getIdentifier());
+                response.put("versionKey", node.getMetadata().get("versionKey"));
+                return response;
+        }, getContext().dispatcher());
         return result;
     }
 
