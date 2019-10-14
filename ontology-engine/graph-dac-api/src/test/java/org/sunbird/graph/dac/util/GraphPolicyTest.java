@@ -36,9 +36,7 @@ public class GraphPolicyTest {
 	public ExpectedException exception = ExpectedException.none();
 	
 	@Test
-	public void init(){
-		Neo4JBoltGraphOperations.createGraph(graphId, null);
-	}
+	public void init(){}
 	
 	@Test
 	public void createUniqueConstraint(){	
