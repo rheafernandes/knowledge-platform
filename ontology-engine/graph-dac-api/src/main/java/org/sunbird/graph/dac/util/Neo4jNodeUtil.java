@@ -6,7 +6,7 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
 import org.sunbird.common.exception.ServerException;
 import org.sunbird.graph.common.enums.SystemProperties;
-import org.sunbird.graph.dac.exception.GraphDACErrorCodes;
+import org.sunbird.graph.dac.enums.GraphDACErrorCodes;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.dac.model.Relation;
 
