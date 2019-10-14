@@ -1,10 +1,9 @@
 package org.sunbird.graph.engine
 
-import org.apache.commons.collections4.MapUtils
 import org.apache.commons.lang3.StringUtils
-import org.sunbird.common.dto.{Request, Response, ResponseParams}
+import org.sunbird.common.dto.{Request, Response}
 import org.sunbird.common.exception.{ClientException, ResponseCode, ServerException}
-import org.sunbird.graph.model.IRelation
+import org.sunbird.graph.relations.IRelation
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -18,9 +17,9 @@ object RelationManager {
         relations.foreach(relation => {
             val req = new Request()
             req.setContext(request.getContext)
-            val errorMap =  relation.validateRelation(req)
-            if(MapUtils.isNotEmpty(errorMap)){
-                throw new ClientException(ResponseCode.CLIENT_ERROR.name, "Error while validating relations :: " + errorMap)
+            val errList =  relation.validate(req)
+            if( null!= errList && !errList.isEmpty){
+                throw new ClientException(ResponseCode.CLIENT_ERROR.name, "Error while validating relations :: " + errList)
             }
         })
         relations.foreach(relation => {
