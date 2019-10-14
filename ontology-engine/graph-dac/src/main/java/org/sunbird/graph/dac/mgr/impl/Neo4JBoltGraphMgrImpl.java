@@ -6,7 +6,7 @@ import org.sunbird.common.dto.Response;
 import org.sunbird.common.exception.ClientException;
 import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.common.enums.GraphHeaderParams;
-import org.sunbird.graph.dac.exception.GraphDACErrorCodes;
+import org.sunbird.graph.dac.enums.GraphDACErrorCodes;
 import org.sunbird.graph.dac.mgr.IGraphDACGraphMgr;
 import org.sunbird.graph.service.operation.Neo4JBoltGraphOperations;
 
