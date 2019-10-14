@@ -22,8 +22,7 @@ public abstract class BaseActor extends AbstractActor {
         try {
             return onReceive(request);
         } catch (Throwable e) {
-            String operation = request.getOperation();
-            return ERROR(operation, e);
+            return ERROR(request.getOperation(), e);
         }
     }
 
@@ -35,7 +34,7 @@ public abstract class BaseActor extends AbstractActor {
     }
 
     protected Future<Response> ERROR(String operation, Throwable exception) {
-        System.out.println("Exception in message processing for: " + operation + " :: message: " + exception.getMessage() + exception);
+//        System.out.println("Exception in message processing for: " + operation + " :: message: " + exception.getMessage() + exception);
         return Futures.successful(getErrorResponse(exception));
     }
 

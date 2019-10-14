@@ -15,19 +15,13 @@ public class ContentActor extends BaseActor {
     public static String objectType = "Content";
     public static String version = "1.0";
 
-    public Future<Response> onReceive(Request request) {
+    public Future<Response> onReceive(Request request) throws Throwable {
         String operation = request.getOperation();
-        try {
-            if ("createContent".equals(operation)) {
-                return create(request);
-            } else {
-                return ERROR(operation);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Futures.successful(new Response());
+        if ("createContent".equals(operation)) {
+            return create(request);
+        } else {
+            return ERROR(operation);
         }
-
     }
 
     private Future<Response> create(Request request) throws Exception {
