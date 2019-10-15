@@ -15,11 +15,7 @@ public interface IGraphDACNodeMgr {
 
 	Response updatePropertyValue(Request request);
 
-	Response updatePropertyValues(Request request);
-
 	Response removePropertyValue(Request request);
-
-	Response removePropertyValues(Request request);
 
 	Response deleteNode(Request request);
     

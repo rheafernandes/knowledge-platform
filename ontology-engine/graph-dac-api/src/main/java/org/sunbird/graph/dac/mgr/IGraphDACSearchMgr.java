@@ -5,8 +5,6 @@ import org.sunbird.common.dto.Response;
 
 public interface IGraphDACSearchMgr {
 
-	Response getNodeById(Request request);
-
 	Response getNodeByUniqueId(Request request);
 
 	Response getNodesByUniqueIds(Request request);
@@ -18,8 +16,6 @@ public interface IGraphDACSearchMgr {
 	Response getAllRelations(Request request);
 
 	Response getAllNodes(Request request);
-
-	Response getRelation(Request request);
 
 	Response getRelationProperty(Request request);
 

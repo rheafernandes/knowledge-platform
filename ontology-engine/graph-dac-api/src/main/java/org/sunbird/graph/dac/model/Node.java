@@ -143,7 +143,7 @@ public class Node implements Serializable {
 		if (null != inRels && null != inRels.iterator()) {
 			this.inRelations = new ArrayList<Relation>();
 			for (Relationship inRel : inRels) {
-				Relation rel = new Relation(graphId, inRel);
+				this.inRelations.add(new Relation(graphId, inRel));
 			}
 		}
 	}

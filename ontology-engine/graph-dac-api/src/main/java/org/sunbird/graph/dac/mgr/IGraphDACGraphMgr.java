@@ -17,10 +17,6 @@ public interface IGraphDACGraphMgr {
 
 	Response deleteRelation(Request request);
 
-	Response updateRelation(Request request);
-
-	Response removeRelationMetadata(Request request);
-
 	Response importGraph(Request request);
 
 	Response createCollection(Request request);

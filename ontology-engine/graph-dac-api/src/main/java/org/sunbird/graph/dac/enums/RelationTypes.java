@@ -26,7 +26,7 @@ public enum RelationTypes {
 
     private String relationName;
 
-    private RelationTypes(String relationName) {
+    RelationTypes(String relationName) {
         this.relationName = relationName;
     }
 

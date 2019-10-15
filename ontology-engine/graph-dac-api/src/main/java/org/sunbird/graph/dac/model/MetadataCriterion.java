@@ -45,10 +45,6 @@ public class MetadataCriterion implements Serializable {
         criterion.setOp(op);
         return criterion;
     }
-        
-    public static MetadataCriterion createWithNestedCriterion(List<MetadataCriterion> metadata) {
-        return createWithNestedCriterion(metadata,  defaultOp);
-    }
     
     public static MetadataCriterion createWithNestedCriterion(List<MetadataCriterion> metadata, String op) {
         if(null == metadata) throw new ServerException(GraphEngineErrorCodes.ERR_META_CRITERION_INVALID_DATA.name(), "Metadata criterion list is null.");
