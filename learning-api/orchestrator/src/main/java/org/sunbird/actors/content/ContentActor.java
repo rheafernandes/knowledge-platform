@@ -25,11 +25,7 @@ public class ContentActor extends BaseActor {
     }
 
     private Future<Response> create(Request request) throws Exception {
-        Request createRequest = new Request(request, objectType);
-        createRequest.setRequest(request.getRequest());
-        createRequest.getContext().put("graph_id", "domain");
-        createRequest.getContext().put("version", "1.0");
-        return DataNode.create(createRequest, getContext().dispatcher())
+        return DataNode.create(request, getContext().dispatcher())
                 .map(new Mapper<Node, Response>() {
                     @Override
                     public Response apply(Node node) {
@@ -42,7 +38,6 @@ public class ContentActor extends BaseActor {
     }
 
     private void update(Request request) {
-        Request updateRequest = new Request(request, objectType);
     }
 
 }
