@@ -10,7 +10,9 @@ import org.neo4j.driver.v1.exceptions.ClientException;
 import org.neo4j.graphdb.Direction;
 import org.sunbird.common.dto.Property;
 import org.sunbird.common.dto.Request;
+import org.sunbird.common.exception.MiddlewareException;
 import org.sunbird.common.exception.ResourceNotFoundException;
+import org.sunbird.common.exception.ServerException;
 import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.dac.model.Graph;
 import org.sunbird.graph.dac.model.Node;
@@ -26,6 +28,8 @@ import org.sunbird.graph.service.common.GraphOperation;
 import org.sunbird.graph.service.util.DriverUtil;
 import org.sunbird.graph.service.util.SearchQueryGenerationUtil;
 import org.sunbird.telemetry.logger.TelemetryManager;
+import scala.compat.java8.FutureConverters;
+import scala.concurrent.Future;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +37,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.CompletionStage;
 
 //import org.sunbird.graph.cache.mgr.impl.NodeCacheManager;
 
@@ -241,6 +246,61 @@ public class Neo4JBoltSearchOperations {
 	 *            the search criteria
 	 * @return the node by unique ids
 	 */
+	public static Future<List<Node>> getNodeByUniqueIdsAsync(String graphId, SearchCriteria searchCriteria) {
+
+		if (StringUtils.isBlank(graphId))
+			throw new ClientException(DACErrorCodeConstants.INVALID_GRAPH.name(),
+					DACErrorMessageConstants.INVALID_GRAPH_ID
+							+ " | ['Get Nodes By Search Criteria' Operation Failed.]");
+
+		if (null == searchCriteria)
+			throw new ClientException(DACErrorCodeConstants.INVALID_CRITERIA.name(),
+					DACErrorMessageConstants.INVALID_SEARCH_CRITERIA
+							+ " | ['Get Nodes By Search Criteria' Operation Failed.]");
+
+		List<Node> nodes = new ArrayList<Node>();
+		Driver driver = DriverUtil.getDriver(graphId, GraphOperation.READ);
+		TelemetryManager.log("Driver Initialised. | [Graph Id: " + graphId + "]");
+		try (Session session = driver.session()) {
+			Map<String, Object> parameterMap = new HashMap<String, Object>();
+			parameterMap.put(GraphDACParams.graphId.name(), graphId);
+			parameterMap.put(GraphDACParams.searchCriteria.name(), searchCriteria);
+			Map<Long, Object> nodeMap = new HashMap<Long, Object>();
+			Map<Long, Object> relationMap = new HashMap<Long, Object>();
+			Map<Long, Object> startNodeMap = new HashMap<Long, Object>();
+			Map<Long, Object> endNodeMap = new HashMap<Long, Object>();
+			String query = SearchQueryGenerationUtil.generateGetNodeByUniqueIdsCypherQuery(parameterMap);
+			Map<String, Object> params = searchCriteria.getParams();
+			CompletionStage<List<Node>> cs = session.runAsync(query, params)
+					.thenCompose(fn -> fn.listAsync()).thenApply(result -> {
+						if (null != result) {
+							for (Record record : result) {
+								TelemetryManager.log("'Get Nodes By Search Criteria' Operation Finished.", record.asMap());
+								if (null != record)
+									getRecordValues(record, nodeMap, relationMap, startNodeMap, endNodeMap);
+							}
+						}
+						if (!nodeMap.isEmpty()) {
+							for (Entry<Long, Object> entry : nodeMap.entrySet()) {
+								nodes.add(Neo4jNodeUtil.getNode(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+										startNodeMap, endNodeMap));
+							}
+						}
+						return nodes;
+					});
+
+			return FutureConverters.toScala(cs);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			if (!(e instanceof MiddlewareException)) {
+				throw new ServerException(DACErrorCodeConstants.CONNECTION_PROBLEM.name(),
+						DACErrorMessageConstants.CONNECTION_PROBLEM + " | " + e.getMessage(), e);
+			} else {
+				throw e;
+			}
+		}
+	}
+
 	public static List<Node> getNodeByUniqueIds(String graphId, SearchCriteria searchCriteria) {
 
 		if (StringUtils.isBlank(graphId))
@@ -260,14 +320,14 @@ public class Neo4JBoltSearchOperations {
 			Map<String, Object> parameterMap = new HashMap<String, Object>();
 			parameterMap.put(GraphDACParams.graphId.name(), graphId);
 			parameterMap.put(GraphDACParams.searchCriteria.name(), searchCriteria);
-
-			String query = SearchQueryGenerationUtil.generateGetNodeByUniqueIdsCypherQuery(parameterMap);
-			Map<String, Object> params = searchCriteria.getParams();
-			StatementResult result = session.run(query, params);
 			Map<Long, Object> nodeMap = new HashMap<Long, Object>();
 			Map<Long, Object> relationMap = new HashMap<Long, Object>();
 			Map<Long, Object> startNodeMap = new HashMap<Long, Object>();
 			Map<Long, Object> endNodeMap = new HashMap<Long, Object>();
+			String query = SearchQueryGenerationUtil.generateGetNodeByUniqueIdsCypherQuery(parameterMap);
+			Map<String, Object> params = searchCriteria.getParams();
+			StatementResult result = session.run(query, params);
+
 			if (null != result) {
 				for (Record record : result.list()) {
 					TelemetryManager.log("'Get Nodes By Search Criteria' Operation Finished.", record.asMap());
