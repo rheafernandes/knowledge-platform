@@ -50,4 +50,10 @@ abstract class BaseController(protected val cc: ControllerComponents)(implicit e
             }
         })
     }
+
+    def setRequestContext(request:org.sunbird.common.dto.Request, version: String, objectType: String): Unit = {
+        val contextMap: Map[String, AnyRef] = Map("graph_id" -> "domain", "version" -> version, "objectType" -> objectType);
+        request.setObjectType(objectType);
+        request.setContext(contextMap.asJava)
+    }
 }

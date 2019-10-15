@@ -176,6 +176,7 @@ public class Neo4JBoltGraphOperations {
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new ServerException(DACErrorCodeConstants.CONNECTION_PROBLEM.name(),
 					DACErrorMessageConstants.CONNECTION_PROBLEM + " | " + e.getMessage());
 		}
