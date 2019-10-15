@@ -61,24 +61,12 @@ public class SearchCriteria implements Serializable {
             this.op = SearchConditions.LOGICAL_AND;
     }
 
-    public boolean isCountQuery() {
-        return countQuery;
-    }
-
     public void setCountQuery(boolean countQuery) {
         this.countQuery = countQuery;
     }
 
-    public int getResultSize() {
-        return resultSize;
-    }
-
     public void setResultSize(int resultSize) {
         this.resultSize = resultSize;
-    }
-
-    public int getStartPosition() {
-        return startPosition;
     }
 
     public void setStartPosition(int startPosition) {
@@ -115,12 +103,6 @@ public class SearchCriteria implements Serializable {
 
     public void setRelations(List<RelationCriterion> relations) {
         this.relations = relations;
-    }
-
-    public void addRelationCriterion(RelationCriterion rc) {
-        if (null == relations)
-            relations = new ArrayList<RelationCriterion>();
-        relations.add(rc);
     }
 
     @JsonIgnore
@@ -225,10 +207,6 @@ public class SearchCriteria implements Serializable {
 
     public void setFields(List<String> fields) {
         this.fields = fields;
-    }
-
-    public List<Sort> getSortOrder() {
-        return sortOrder;
     }
 
     public void setSortOrder(List<Sort> sortOrder) {

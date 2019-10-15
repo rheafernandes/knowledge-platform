@@ -47,14 +47,6 @@ public class ImportData implements Serializable {
     }
 
     /**
-     * @param dataNodes
-     *            the dataNodes to set
-     */
-    public void setDataNodes(List<Node> dataNodes) {
-        this.dataNodes = dataNodes;
-    }
-
-    /**
      * @return the relations
      */
     public List<Relation> getRelations() {
@@ -68,20 +60,4 @@ public class ImportData implements Serializable {
     public void setRelations(List<Relation> relations) {
         this.relations = relations;
     }
-
-    /**
-     * @return the tagMembersMap
-     */
-    public Map<String, List<String>> getTagMembersMap() {
-        return tagMembersMap;
-    }
-
-    /**
-     * @param tagMembersMap
-     *            the tagMembersMap to set
-     */
-    public void setTagMembersMap(Map<String, List<String>> tagMembersMap) {
-        this.tagMembersMap = tagMembersMap;
-    }
-
 }

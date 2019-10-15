@@ -43,26 +43,9 @@ public class Traverser implements Serializable {
         }
     }
 	
-	public Traverser(String graphId) {
-        this.graphId = graphId;
-    }
-	
-	public Traverser(String graphId, List<String> startNodeIds) {
-        this.graphId = graphId;
-        for(String startNodeId: startNodeIds){
-        	this.startNodeIds.add(startNodeId);
-        }
-    }
-	
     public Traverser traversal(int traversal) {
         if (traversal == BREADTH_FIRST_TRAVERSAL || traversal == DEPTH_FIRST_TRAVERSAL)
             this.traversal = traversal;
-        return this;
-    }
-
-    public Traverser fromDepth(int fromDepth) {
-        if (fromDepth > 0)
-            this.fromDepth = fromDepth;
         return this;
     }
 
@@ -74,11 +57,6 @@ public class Traverser implements Serializable {
 
     public Traverser endNode(String nodeId) {
         this.endNodeIds.add(nodeId);
-        return this;
-    }
-
-    public Traverser endRelations(String relation) {
-        this.endRelations.add(relation);
         return this;
     }
 
@@ -179,33 +157,6 @@ public class Traverser implements Serializable {
     	}
     	return path;
     }
-
-	public List<String> getUniqueness() {
-		return uniqueness;
-	}
-
-	public Traverser addUniqueness(String uniqueness) {
-		this.uniqueness.add(uniqueness);
-		return this;
-	}
-	
-	public List<String> getWordIds() {
-		return wordIds;
-	}
-
-	public Traverser addWordId(String wordId) {
-		this.wordIds.add(wordId);
-		return this;
-	}
-	
-	public Map<String, Object> getPathExpander() {
-		return pathExpander;
-	}
-
-	public Traverser setPathExpander(Map<String, Object> pathExpander) {
-		this.pathExpander = pathExpander;
-		return this;
-	}
 	
 	public Map<String, String> getRelationMap() {
 		return relationMap;

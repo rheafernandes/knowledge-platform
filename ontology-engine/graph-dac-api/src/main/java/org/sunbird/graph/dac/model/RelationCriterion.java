@@ -24,7 +24,7 @@ public class RelationCriterion implements Serializable {
     private int toDepth = 1;
     private DIRECTION direction = DIRECTION.OUT;
     
-    public static enum DIRECTION {
+    public enum DIRECTION {
         IN, OUT, BOTH;
     }
     
@@ -34,11 +34,6 @@ public class RelationCriterion implements Serializable {
 
     public RelationCriterion(String name, String objectType) {
         this.name = name;
-        this.objectType = objectType;
-    }
-    
-    public RelationCriterion(List<RelationFilter> filters, String objectType) {
-        this.filters = filters;
         this.objectType = objectType;
     }
 
@@ -64,22 +59,6 @@ public class RelationCriterion implements Serializable {
 
     public void setDirection(DIRECTION direction) {
         this.direction = direction;
-    }
-    
-    public int getFromDepth() {
-        return fromDepth;
-    }
-
-    public void setFromDepth(int fromDepth) {
-        this.fromDepth = fromDepth;
-    }
-    
-    public int getToDepth() {
-        return toDepth;
-    }
-
-    public void setToDepth(int toDepth) {
-        this.toDepth = toDepth;
     }
 
     public String getObjectType() {
@@ -125,12 +104,6 @@ public class RelationCriterion implements Serializable {
         this.relations = relations;
     }
 
-    public void addRelationCriterion(RelationCriterion rc) {
-        if (null == relations)
-            relations = new ArrayList<RelationCriterion>();
-        relations.add(rc);
-    }
-
     public boolean isOptional() {
         return optional;
     }
@@ -145,14 +118,6 @@ public class RelationCriterion implements Serializable {
 
     public void setIdentifiers(List<String> identifiers) {
         this.identifiers = identifiers;
-    }
-
-    public void addIdentifier(String identifier) {
-        if (StringUtils.isNotBlank(identifier)) {
-            if (null == this.identifiers)
-                this.identifiers = new ArrayList<String>();
-            this.identifiers.add(identifier);
-        }
     }
 
     public String getCypher(SearchCriteria sc, String prevParam) {

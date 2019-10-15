@@ -27,10 +27,6 @@ public class Sort implements Serializable {
         return sortField;
     }
 
-    public void setSortField(String sortField) {
-        this.sortField = sortField;
-    }
-
     public String getSortOrder() {
         return sortOrder;
     }

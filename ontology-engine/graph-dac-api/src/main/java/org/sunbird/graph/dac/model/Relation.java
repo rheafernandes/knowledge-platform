@@ -258,32 +258,16 @@ public class Relation implements Serializable {
 		return startNodeName;
 	}
 
-	public void setStartNodeName(String startNodeName) {
-		this.startNodeName = startNodeName;
-	}
-
 	public String getEndNodeName() {
 		return endNodeName;
-	}
-
-	public void setEndNodeName(String endNodeName) {
-		this.endNodeName = endNodeName;
 	}
 
 	public String getStartNodeType() {
 		return startNodeType;
 	}
 
-	public void setStartNodeType(String startNodeType) {
-		this.startNodeType = startNodeType;
-	}
-
 	public String getEndNodeType() {
 		return endNodeType;
-	}
-
-	public void setEndNodeType(String endNodeType) {
-		this.endNodeType = endNodeType;
 	}
 
 	public String getStartNodeObjectType() {
@@ -308,17 +292,8 @@ public class Relation implements Serializable {
 	}
 
 	@JsonIgnore
-	public void setStartNodeMetadata(Map<String, Object> startNodeMetadata) {
-		this.startNodeMetadata = startNodeMetadata;
-	}
-
-	@JsonIgnore
 	public Map<String, Object> getEndNodeMetadata() {
 		return endNodeMetadata;
 	}
 
-	@JsonIgnore
-	public void setEndNodeMetadata(Map<String, Object> endNodeMetadata) {
-		this.endNodeMetadata = endNodeMetadata;
-	}
 }

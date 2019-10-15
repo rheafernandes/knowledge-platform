@@ -1,9 +1,5 @@
 package org.sunbird.graph.dac.model;
 
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.traversal.TraversalDescription;
-import org.sunbird.graph.dac.util.RelationType;
-
 import java.io.Serializable;
 
 public class RelationTraversal implements Serializable {
@@ -15,15 +11,6 @@ public class RelationTraversal implements Serializable {
 
     private String relationName;
     private int direction = DIRECTION_BOTH;
-
-    public RelationTraversal(String relationName) {
-        this.relationName = relationName;
-    }
-
-    public RelationTraversal(String relationName, int direction) {
-        this.relationName = relationName;
-        setDirection(direction);
-    }
 
     public String getRelationName() {
         return relationName;
@@ -42,15 +29,5 @@ public class RelationTraversal implements Serializable {
             this.direction = direction;
         else
             this.direction = DIRECTION_BOTH;
-    }
-
-    public TraversalDescription addToTraversalDescription(TraversalDescription td) {
-        if (this.direction == DIRECTION_IN)
-            td.relationships(new RelationType(relationName), Direction.INCOMING);
-        else if (this.direction == DIRECTION_OUT)
-            td.relationships(new RelationType(relationName), Direction.OUTGOING);
-        else
-            td.relationships(new RelationType(relationName));
-        return td;
     }
 }

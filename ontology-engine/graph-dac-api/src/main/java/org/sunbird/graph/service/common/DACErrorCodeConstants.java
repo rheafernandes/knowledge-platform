@@ -38,7 +38,7 @@ public enum DACErrorCodeConstants {
 	private final int code;
 	private final String description;
 
-	private DACErrorCodeConstants(int code, String description) {
+	DACErrorCodeConstants(int code, String description) {
 		    this.code = code;
 		    this.description = description;
 		  }

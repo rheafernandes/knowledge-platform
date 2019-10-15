@@ -12,22 +12,7 @@ public class RelationFilter implements Serializable {
     private int fromDepth = 1;
     private int toDepth = 1;
     private String direction = DIRECTION.OUT.name();
-    
-    public RelationFilter(String name) {
-        this.name = name;
-    }
-    
-    public RelationFilter(String name, int fromDepth) {
-        this.name = name;
-        this.fromDepth = fromDepth;
-    }
-    
-    public RelationFilter(String name, int fromDepth, int toDepth) {
-        this.name = name;
-        this.fromDepth = fromDepth;
-        this.toDepth = toDepth;
-    }
-    
+
     public String getName() {
         return name;
     }
@@ -37,14 +22,8 @@ public class RelationFilter implements Serializable {
     public int getFromDepth() {
         return fromDepth;
     }
-    public void setFromDepth(int fromDepth) {
-        this.fromDepth = fromDepth;
-    }
     public int getToDepth() {
         return toDepth;
-    }
-    public void setToDepth(int toDepth) {
-        this.toDepth = toDepth;
     }
     public String getDirection() {
         return direction;
