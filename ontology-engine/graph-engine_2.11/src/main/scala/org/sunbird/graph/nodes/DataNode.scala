@@ -6,7 +6,6 @@ import org.apache.commons.collections4.{CollectionUtils, MapUtils}
 import org.sunbird.common.dto.{Request, Response}
 import org.sunbird.graph.dac.model.{Node, Relation}
 import org.sunbird.graph.engine.RelationManager
-import org.sunbird.graph.engine.dto.ProcessingNode
 import org.sunbird.graph.external.ExternalPropsManager
 import org.sunbird.graph.relations.{IRelation, RelationHandler}
 import org.sunbird.graph.schema.{DefinitionFactory, DefinitionNode}
@@ -35,7 +34,7 @@ object DataNode {
     }
 
     @throws[Exception]
-    private def validate(input: util.Map[String, AnyRef], definition: DefinitionNode): ProcessingNode = {
+    private def validate(input: util.Map[String, AnyRef], definition: DefinitionNode): Node = {
         val node = definition.getNode(input)
         definition.validate(node)
         node
@@ -51,8 +50,8 @@ object DataNode {
         }
     }
     
-    private def updateRelations(graphId: String, node: ProcessingNode, context: util.Map[String, AnyRef])(implicit ec: ExecutionContext) : Future[Response] = {
-        val relations: util.List[Relation] = node.getNewRelations
+    private def updateRelations(graphId: String, node: Node, context: util.Map[String, AnyRef])(implicit ec: ExecutionContext) : Future[Response] = {
+        val relations: util.List[Relation] = node.getAddedRelations
         if (CollectionUtils.isNotEmpty(relations)) {
             val relationList: List[IRelation] = relations.toList.map(relation =>
                 RelationHandler.getRelation(graphId, node.getRelationNode(relation.getStartNodeId),
