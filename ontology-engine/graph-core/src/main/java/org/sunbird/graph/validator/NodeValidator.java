@@ -9,7 +9,7 @@ import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.dac.model.SearchConditions;
 import org.sunbird.graph.dac.model.SearchCriteria;
 import org.sunbird.graph.exception.GraphEngineErrorCodes;
-import org.sunbird.graph.service.operation.Neo4JBoltSearchOperations;
+import org.sunbird.graph.service.operation.SearchAsyncOperations;
 import scala.compat.java8.FutureConverters;
 import scala.concurrent.Future;
 
@@ -68,7 +68,7 @@ public class NodeValidator {
         searchCriteria.addMetadata(mc);
         searchCriteria.setCountQuery(false);
         try {
-            Future<List<Node>> nodes = Neo4JBoltSearchOperations.getNodeByUniqueIdsAsync(graphId, searchCriteria);
+            Future<List<Node>> nodes = SearchAsyncOperations.getNodeByUniqueIds(graphId, searchCriteria);
             return nodes;
         } catch (Exception e) {
             throw new ServerException(GraphEngineErrorCodes.ERR_GRAPH_PROCESSING_ERROR.name(), "Unable To Fetch Nodes From Graph. Exception is: " + e.getMessage());
