@@ -4,7 +4,7 @@ import java.util
 
 import org.sunbird.cache.impl.CategoryCache
 import org.sunbird.common.exception.ClientException
-import org.sunbird.graph.engine.dto.ProcessingNode
+import org.sunbird.graph.dac.model.Node
 import org.sunbird.graph.schema.IDefinitionNode
 
 import scala.collection.JavaConverters._
@@ -13,7 +13,7 @@ import scala.collection.Map
 trait FrameworkValidator extends IDefinitionNode {
   val categoryCache: CategoryCache = new CategoryCache()
   @throws[Exception]
-  abstract override def validate(node: ProcessingNode): ProcessingNode = {
+  abstract override def validate(node: Node): Node = {
     val fwCategories: List[String] = schemaValidator.getConfig.getStringList("frameworkCategories").asScala.toList
     val framework: String = node.getMetadata.getOrDefault("framework", "").asInstanceOf[String]
     if (null != fwCategories && fwCategories.nonEmpty && framework.nonEmpty) {
