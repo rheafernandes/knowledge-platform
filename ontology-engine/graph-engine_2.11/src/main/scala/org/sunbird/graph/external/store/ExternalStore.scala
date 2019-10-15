@@ -2,14 +2,14 @@ package org.sunbird.graph.external.store
 
 import java.sql.Timestamp
 import java.util
-import java.util.Date
-import java.util.concurrent.Executors
+import java.util.stream.Collectors
+import java.util.{Date, Map}
 
-import com.datastax.driver.core.{ResultSet, ResultSetFuture, Session}
+import com.datastax.driver.core.Session
 import com.datastax.driver.core.querybuilder.{Insert, QueryBuilder}
 import com.google.common.util.concurrent.{FutureCallback, Futures, ListenableFuture, MoreExecutors}
 import org.sunbird.cassandra.{CassandraConnector, CassandraStore}
-import org.sunbird.common.dto.{Response, ResponseHandler}
+import org.sunbird.common.dto.ResponseHandler
 import org.sunbird.common.exception.{ErrorCodes, ServerException}
 import org.sunbird.telemetry.logger.TelemetryManager
 
@@ -18,9 +18,9 @@ import scala.concurrent.{ExecutionContext, Future, Promise}
 
 class ExternalStore(keySpace: String , table: String , primaryKey: java.util.List[String]) extends CassandraStore(keySpace, table, primaryKey) {
 
-    def insert(request: util.Map[String, Any])(implicit ec: ExecutionContext): Future[Response] = {
+    def insert(request: util.Map[String, AnyRef])(implicit ec: ExecutionContext): Unit = {
         val insertQuery: Insert = QueryBuilder.insertInto(keySpace, table)
-        val identifier = request.get("identifier")
+        val identifier = request.get("identifier");
         insertQuery.value("identifier", identifier)
         request.remove("identifier")
         request.remove("last_updated_on")
@@ -51,6 +51,5 @@ class ExternalStore(keySpace: String , table: String , primaryKey: java.util.Lis
             p.future
         }
     }
+
 }
-
-
