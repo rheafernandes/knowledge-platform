@@ -35,17 +35,6 @@ public enum RelationTypes {
     }
     
     public static boolean isValidRelationType(String str) {
-//        RelationTypes val = null;
-//        try {
-//            RelationTypes[] types = RelationTypes.values();
-//            for (RelationTypes type : types) {
-//                if (StringUtils.equals(type.relationName, str))
-//                    val = type;
-//            }
-//        } catch (Exception e) {
-//        }
-//        if (null == val)
-//            return false;
         if (StringUtils.isBlank(str))
             return false;
         return true;
