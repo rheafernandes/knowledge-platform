@@ -11,8 +11,8 @@ object ExternalPropsManager {
         val keySpace = request.getContext.get("keyspace").asInstanceOf[String]
         val table = request.getContext.get("table").asInstanceOf[String]
         val store = ExternalStoreFactory.getExternalStore(keySpace, table)
-        store.insert(request.getRequest)
-        Future(new Response)
+        val response : Future[Response] = store.insert(request.getRequest)
+        response
     }
 
 }
