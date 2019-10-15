@@ -794,17 +794,6 @@ public class GraphPolicyTest {
 	public void traverseSubGraph(){
 		
 	}
-//	@Test
-	public void getSubGraph(){
-		Graph res = Neo4JBoltSearchOperations.getSubGraph(graphId, "JAVA001", relationType, 0, null);
-	}
-	
-//	@AfterClass
-//	public static void close() {
-//		Request request = new Request();
-//		request.setId(graphId);
-//			graphDb.deleteGraph(graphId, request);
-//	}
 	
 	public static Map<String, Object> setMetadata(){
 		Map<String, Object> javaMap = new HashMap<String,Object>();
