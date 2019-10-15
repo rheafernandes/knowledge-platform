@@ -8,7 +8,6 @@ import org.sunbird.common.dto.Request
 import org.sunbird.graph.common.Identifier
 import org.sunbird.graph.dac.enums.SystemNodeTypes
 import org.sunbird.graph.dac.model.{Node, Relation}
-import org.sunbird.graph.engine.dto.ProcessingNode
 import org.sunbird.graph.schema.IDefinitionNode
 import org.sunbird.graph.service.operation.Neo4JBoltSearchOperations
 
@@ -38,7 +37,7 @@ class BaseDefinitionNode(graphId: String, objectType: String, version: String = 
         }
     }
 
-    override def getNode(input: java.util.Map[String, Object]): ProcessingNode = {
+    override def getNode(input: java.util.Map[String, Object]): Node = {
         val result = schemaValidator.getStructuredData(input)
         val node = new Node(graphId, result.getMetadata)
         // TODO: set SYS_NODE_TYPE, FUNC_OBJECT_TYPE
@@ -46,11 +45,13 @@ class BaseDefinitionNode(graphId: String, objectType: String, version: String = 
         node.setObjectType(objectType)
         if (StringUtils.isBlank(node.getIdentifier)) node.setIdentifier(Identifier.getIdentifier(graphId, Identifier.getUniqueIdFromTimestamp))
         setRelations(node, result.getRelations)
-        new ProcessingNode(node, result.getExternalData)
+        //new ProcessingNode(node, result.getExternalData)
+        node.setExternalData(result.getExternalData)
+        node
     }
 
     @throws[Exception]
-    override def validate(node: ProcessingNode): ProcessingNode = {
+    override def validate(node: Node): Node = {
         node
     }
 

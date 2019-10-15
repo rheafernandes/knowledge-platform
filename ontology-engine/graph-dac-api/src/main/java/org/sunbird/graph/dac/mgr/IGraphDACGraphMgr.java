@@ -5,13 +5,9 @@ import org.sunbird.common.dto.Response;
 
 public interface IGraphDACGraphMgr {
 
-	Response createGraph(Request request);
-    
 	Response createUniqueConstraint(Request request);
     
 	Response createIndex(Request request);
-
-	Response deleteGraph(Request request);
 
 	Response addRelation(Request request);
 
@@ -20,8 +16,6 @@ public interface IGraphDACGraphMgr {
 	Response updateRelation(Request request);
 
 	Response removeRelationMetadata(Request request);
-
-	Response importGraph(Request request);
 
 	Response createCollection(Request request);
 
@@ -34,6 +28,4 @@ public interface IGraphDACGraphMgr {
 	Response deleteIncomingRelations(Request request);
     
 	Response deleteOutgoingRelations(Request request);
-    
-	Response bulkUpdateNodes(Request request);
 }

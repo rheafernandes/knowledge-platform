@@ -105,4 +105,37 @@ public class ResponseHandler {
         params.setErrmsg("Operation successful");
         return params;
     }
+
+    public static Response ERROR(ResponseCode responseCode, String errorCode, String errorMessage) {
+        Response response = new Response();
+        response.setParams(getErrorStatus(errorCode, errorMessage));
+        response.setResponseCode(responseCode);
+        return response;
+    }
+
+    private static ResponseParams getErrorStatus(String errorCode, String errorMessage) {
+        ResponseParams params = new ResponseParams();
+        params.setErr(errorCode);
+        params.setStatus(ResponseParams.StatusType.failed.name());
+        params.setErrmsg(errorMessage);
+        return params;
+    }
+
+    public static boolean checkError(Response response) {
+        ResponseParams params = response.getParams();
+        if (null != params) {
+            if (StringUtils.equals(ResponseParams.StatusType.failed.name(), params.getStatus())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static String getErrorMessage(Response response) {
+        ResponseParams params = response.getParams();
+        if (null != params) {
+            return params.getErrmsg();
+        }
+        return null;
+    }
 }
