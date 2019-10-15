@@ -9,7 +9,7 @@ import com.datastax.driver.core.{ResultSet, ResultSetFuture, Session}
 import com.datastax.driver.core.querybuilder.{Insert, QueryBuilder}
 import com.google.common.util.concurrent.{FutureCallback, Futures, ListenableFuture, MoreExecutors}
 import org.sunbird.cassandra.{CassandraConnector, CassandraStore}
-import org.sunbird.common.dto.Response
+import org.sunbird.common.dto.{Response, ResponseHandler}
 import org.sunbird.common.exception.{ErrorCodes, ServerException}
 import org.sunbird.telemetry.logger.TelemetryManager
 
@@ -30,8 +30,9 @@ class ExternalStore(keySpace: String , table: String , primaryKey: java.util.Lis
         }
         try {
             val session: Session = CassandraConnector.getSession
-            session.executeAsync(insertQuery).asScala
-            Future(new Response)
+            session.executeAsync(insertQuery).asScala.map( resultset => {
+                ResponseHandler.OK()
+            })
         } catch {
             case e: Exception =>
                 e.printStackTrace()
