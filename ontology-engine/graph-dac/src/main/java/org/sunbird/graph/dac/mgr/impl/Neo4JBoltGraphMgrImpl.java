@@ -100,6 +100,7 @@ public class Neo4JBoltGraphMgrImpl extends BaseDACManager implements IGraphDACGr
 			throw new ClientException(GraphDACErrorCodes.ERR_CREATE_RELATION_MISSING_REQ_PARAMS.name(),
 					"Required Parameters are missing");
 		} else {
+
 			try {
 				Neo4JBoltGraphOperations.createRelation(graphId, startNodeId, endNodeId, relationType, request);
 				return OK(GraphDACParams.graph_id.name(), graphId);

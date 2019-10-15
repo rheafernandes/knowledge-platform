@@ -8,7 +8,7 @@ import org.sunbird.common.exception.{ClientException, ResponseCode}
 import org.sunbird.common.{DateUtils, Platform}
 import org.sunbird.graph.common.enums.GraphDACParams
 import org.sunbird.graph.dac.enums.SystemNodeTypes
-import org.sunbird.graph.engine.dto.ProcessingNode
+import org.sunbird.graph.dac.model.Node
 import org.sunbird.graph.schema.IDefinitionNode
 import org.sunbird.graph.service.common.{DACConfigurationConstants, NodeUpdateMode}
 import org.sunbird.graph.service.operation.Neo4JBoltSearchOperations
@@ -18,19 +18,21 @@ trait VersionKeyValidator extends IDefinitionNode {
     private val graphPassportKey = Platform.config.getString(DACConfigurationConstants.PASSPORT_KEY_BASE_PROPERTY)
 
     @throws[Exception]
-    abstract override def validate(node: ProcessingNode): ProcessingNode = {
+    abstract override def validate(node: Node): Node = {
         if(!isValidVersionkey(node)) throw new ClientException(ResponseCode.CLIENT_ERROR.name, "Invalid version Key")
         super.validate(node)
     }
 
-    def isValidVersionkey(node: ProcessingNode): Boolean =  {
-        val versionCheckMode = null // RedisStoreUtil.getNodeProperty(graphId, nodeObjType, GraphDACParams.versionCheckMode.name());
+    def isValidVersionkey(node: Node): Boolean =  {
+        val versionCheckMode = {
+            if(schemaValidator.getConfig.hasPath("versionCheckMode")) schemaValidator.getConfig.getString("versionCheckMode")
+            else NodeUpdateMode.OFF.name
+        }
         if(StringUtils.equalsIgnoreCase(NodeUpdateMode.OFF.name, versionCheckMode)) {
             true
         }
         else{
             if (node.getNodeType.equalsIgnoreCase(SystemNodeTypes.DATA_NODE.name)) {
-                val versionCheckMode = null // RedisStoreUtil.getNodeProperty(graphId, nodeObjType, GraphDACParams.versionCheckMode.name());
                 if (StringUtils.isNotBlank(versionCheckMode)) { // from Local cache
                     val storedVersionKey: String = null //RedisStoreUtil.getNodeProperty(graphId, nodeId, GraphDACParams.versionKey.name());
                     validateUpdateOperation(node.getGraphId, node, storedVersionKey)
@@ -44,9 +46,9 @@ trait VersionKeyValidator extends IDefinitionNode {
         }
     }
 
-    def validateUpdateOperation(getGraphId: String, node: ProcessingNode, storedVersionKey: String): Boolean = {
+    def validateUpdateOperation(getGraphId: String, node: Node, storedVersionKey: String): Boolean = {
         val versionKey: String = node.getMetadata.get(GraphDACParams.versionKey.name).asInstanceOf[String]
-        if(StringUtils.isBlank(versionKey))
+        if(StringUtils.isBlank(versionKey) && StringUtils.isNotBlank(storedVersionKey))
             throw new ClientException("BLANK_VERSION", "Error! Version Key cannot be Blank. | [Node Id: " + node.getIdentifier + "]")
 
         if (StringUtils.equals(graphPassportKey, versionKey)) {
@@ -55,7 +57,7 @@ trait VersionKeyValidator extends IDefinitionNode {
         }
 
         val graphVersionKey: String = {
-            if(StringUtils.isNotBlank(storedVersionKey)){
+            if(StringUtils.isBlank(storedVersionKey)){
                 getVersionKeyFromDB(node.getIdentifier)
             }else{
                 storedVersionKey
