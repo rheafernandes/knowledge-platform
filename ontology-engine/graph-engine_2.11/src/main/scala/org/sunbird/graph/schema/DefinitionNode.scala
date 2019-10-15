@@ -1,10 +1,9 @@
 package org.sunbird.graph.schema
 
 import org.sunbird.graph.dac.model.Node
-import org.sunbird.graph.schema.validator.{BaseDefinitionNode, FrameworkValidator, RelationValidator, SchemaValidator, VersioningNode}
-import org.sunbird.graph.validator._
+import org.sunbird.graph.schema.validator._
 
-class DefinitionNode(graphId: String, objectType: String, version: String = "1.0") extends BaseDefinitionNode(graphId , objectType, version) with VersioningNode with RelationValidator with FrameworkValidator with SchemaValidator {
+class DefinitionNode(graphId: String, objectType: String, version: String = "1.0") extends BaseDefinitionNode(graphId , objectType, version) with VersionKeyValidator with VersioningNode with RelationValidator with FrameworkValidator with SchemaValidator {
 
     def getOutRelationObjectTypes: List[String] = outRelationObjectTypes
 

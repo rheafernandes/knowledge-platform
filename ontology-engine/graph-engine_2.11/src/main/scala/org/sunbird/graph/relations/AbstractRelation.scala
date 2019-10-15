@@ -9,7 +9,7 @@ import org.sunbird.graph.dac.model.Node
 import org.sunbird.graph.exception.GraphRelationErrorCodes
 import org.sunbird.graph.schema.DefinitionFactory
 
-abstract class AbstractRelation(graphId: String, startNode: Node, endNode: Node, metadata: Map[String, AnyRef]) extends IRelation {
+abstract class AbstractRelation(graphId: String, startNode: Node, endNode: Node, metadata: java.util.Map[String, AnyRef]) extends IRelation {
 
     protected val graphMgr = new Neo4JBoltGraphMgrImpl
     protected val searchMgr = new Neo4JBoltSearchMgrImpl
@@ -22,23 +22,26 @@ abstract class AbstractRelation(graphId: String, startNode: Node, endNode: Node,
         request.put(GraphDACParams.metadata.name, metadata)
 
         val res = graphMgr.addRelation(request)
-        if (ResponseHandler.checkError(res))
+        if (ResponseHandler.checkError(res)) {
             ResponseHandler.getErrorMessage(res)
-
-        null
+        }
+        else{
+            null
+        }
     }
 
     def validateNodeTypes(node: Node, nodeTypes: List[String]): String = {
         if(!nodeTypes.contains(startNode.getNodeType)) "Node " + node.getIdentifier + " is not a " + nodeTypes
-        null
+        else null
     }
 
     def validateObjectTypes(startNodeObjectType: String, endNodeObjectType: String): String = {
         if(StringUtils.isNotBlank(startNodeObjectType) && StringUtils.isNotBlank(endNodeObjectType)) {
             val objectTypes = DefinitionFactory.getDefinition("domain", startNodeObjectType, "1.0").getOutRelationObjectTypes
             if(!objectTypes.contains(getRelationType + ":" + endNodeObjectType)) getRelationType + " is not allowed between " + startNodeObjectType + " and " + endNodeObjectType
+            else null
         }
-        null
+        else null
     }
 
     def checkCycle(req: Request): String = try {

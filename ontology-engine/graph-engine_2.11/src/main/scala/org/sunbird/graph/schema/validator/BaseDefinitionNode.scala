@@ -2,7 +2,7 @@ package org.sunbird.graph.schema.validator
 
 import java.util
 
-import org.apache.commons.collections4.MapUtils
+import org.apache.commons.collections4.{CollectionUtils, MapUtils}
 import org.apache.commons.lang3.StringUtils
 import org.sunbird.common.dto.Request
 import org.sunbird.graph.common.Identifier
@@ -10,6 +10,7 @@ import org.sunbird.graph.dac.enums.SystemNodeTypes
 import org.sunbird.graph.dac.model.{Node, Relation}
 import org.sunbird.graph.schema.IDefinitionNode
 import org.sunbird.graph.service.operation.Neo4JBoltSearchOperations
+import org.apache.commons.collections4.CollectionUtils
 
 import scala.collection.JavaConverters._
 
@@ -46,6 +47,8 @@ class BaseDefinitionNode(graphId: String, objectType: String, version: String = 
         if (StringUtils.isBlank(node.getIdentifier)) node.setIdentifier(Identifier.getIdentifier(graphId, Identifier.getUniqueIdFromTimestamp))
         setRelations(node, result.getRelations)
         //new ProcessingNode(node, result.getExternalData)
+        if (CollectionUtils.isNotEmpty(node.getInRelations)) node.setAddedRelations(node.getInRelations)
+        if (CollectionUtils.isNotEmpty(node.getOutRelations)) node.setAddedRelations(node.getOutRelations)
         node.setExternalData(result.getExternalData)
         node
     }

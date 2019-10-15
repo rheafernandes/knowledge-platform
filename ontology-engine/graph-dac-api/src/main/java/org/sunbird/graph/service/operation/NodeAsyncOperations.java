@@ -14,7 +14,6 @@ import org.sunbird.graph.service.common.CypherQueryConfigurationConstants;
 import org.sunbird.graph.service.common.DACErrorCodeConstants;
 import org.sunbird.graph.service.common.DACErrorMessageConstants;
 import org.sunbird.graph.service.common.GraphOperation;
-import org.sunbird.graph.service.request.validator.Neo4jBoltValidator;
 import org.sunbird.graph.service.util.DriverUtil;
 import org.sunbird.graph.service.util.NodeQueryGenerationUtil;
 import org.sunbird.telemetry.logger.TelemetryManager;
@@ -28,7 +27,6 @@ import java.util.concurrent.CompletionStage;
 public class NodeAsyncOperations {
 
     private final static String DEFAULT_CYPHER_NODE_OBJECT = "ee";
-    private static Neo4jBoltValidator versionValidator = new Neo4jBoltValidator();
 
 
     public static Future<Node> addNode(String graphId, Node node) {
@@ -86,7 +84,6 @@ public class NodeAsyncOperations {
         TelemetryManager.log("Consumer is Authorized for Node Id: " + node.getIdentifier());
 
         TelemetryManager.log("Validating the Update Operation for Node Id: " + node.getIdentifier());
-        versionValidator.validateUpdateOperation(graphId, node);
         node.getMetadata().remove(GraphDACParams.versionKey.name());
         TelemetryManager.log("Node Update Operation has been Validated for Node Id: " + node.getIdentifier());
 
