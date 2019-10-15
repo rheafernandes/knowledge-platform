@@ -18,6 +18,7 @@ import org.sunbird.graph.dac.model.Relation;
 import org.sunbird.graph.dac.model.SearchCriteria;
 import org.sunbird.graph.dac.model.SubGraph;
 import org.sunbird.graph.dac.model.Traverser;
+import org.sunbird.graph.dac.util.Neo4jNodeUtil;
 import org.sunbird.graph.service.common.CypherQueryConfigurationConstants;
 import org.sunbird.graph.service.common.DACErrorCodeConstants;
 import org.sunbird.graph.service.common.DACErrorMessageConstants;
@@ -88,7 +89,9 @@ public class Neo4JBoltSearchOperations {
 
 			if (!nodeMap.isEmpty()) {
 				for (Entry<Long, Object> entry : nodeMap.entrySet())
-					node = new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+//					node = new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+//							startNodeMap, endNodeMap);
+					node= Neo4jNodeUtil.getNode(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
 							startNodeMap, endNodeMap);
 			}
 		}
@@ -153,8 +156,10 @@ public class Neo4JBoltSearchOperations {
 
 				if (!nodeMap.isEmpty()) {
 					for (Entry<Long, Object> entry : nodeMap.entrySet())
-						node = new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
-								startNodeMap, endNodeMap);
+//						node = new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+//								startNodeMap, endNodeMap);
+					node= Neo4jNodeUtil.getNode(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+							startNodeMap, endNodeMap);
 				}
 				if (StringUtils.equalsIgnoreCase("Concept", node.getObjectType())) {
 					TelemetryManager.info("Saving concept to in-memory cache: "+node.getIdentifier());
@@ -214,9 +219,13 @@ public class Neo4JBoltSearchOperations {
 			}
 
 			if (!nodeMap.isEmpty()) {
-				for (Entry<Long, Object> entry : nodeMap.entrySet())
-					nodes.add(new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+				for (Entry<Long, Object> entry : nodeMap.entrySet()) {
+//					nodes.add(new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+//							startNodeMap, endNodeMap));
+					nodes.add(Neo4jNodeUtil.getNode(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
 							startNodeMap, endNodeMap));
+				}
+
 			}
 		}
 		TelemetryManager.log("Returning Node By Property: " + nodes.size());
@@ -268,9 +277,12 @@ public class Neo4JBoltSearchOperations {
 			}
 
 			if (!nodeMap.isEmpty()) {
-				for (Entry<Long, Object> entry : nodeMap.entrySet())
-					nodes.add(new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+				for (Entry<Long, Object> entry : nodeMap.entrySet()) {
+//					nodes.add(new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+//							startNodeMap, endNodeMap));
+					nodes.add(Neo4jNodeUtil.getNode(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
 							startNodeMap, endNodeMap));
+				}
 			}
 		}
 		TelemetryManager.log("Returning Node By Search Criteria: " + nodes.size());
@@ -397,9 +409,12 @@ public class Neo4JBoltSearchOperations {
 			}
 			
 			if (!nodeMap.isEmpty()) {
-				for (Entry<Long, Object> entry : nodeMap.entrySet())
-					nodes.add(new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+				for (Entry<Long, Object> entry : nodeMap.entrySet()) {
+//					nodes.add(new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+//							startNodeMap, endNodeMap));
+					nodes.add(Neo4jNodeUtil.getNode(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
 							startNodeMap, endNodeMap));
+				}
 			}
 		}
 		TelemetryManager.log("Returning All Nodes: " + nodes.size());
@@ -820,9 +835,12 @@ public class Neo4JBoltSearchOperations {
 					+ startNodeMap + "\nEnd Node Map: " + endNodeMap);
 
 			if (!nodeMap.isEmpty()) {
-				for (Entry<Long, Object> entry : nodeMap.entrySet())
-					nodes.add(new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+				for (Entry<Long, Object> entry : nodeMap.entrySet()) {
+//					nodes.add(new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+//							startNodeMap, endNodeMap));
+					nodes.add(Neo4jNodeUtil.getNode(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
 							startNodeMap, endNodeMap));
+				}
 			}
 		}
 		TelemetryManager.log("Returning Search Nodes: " + nodes);

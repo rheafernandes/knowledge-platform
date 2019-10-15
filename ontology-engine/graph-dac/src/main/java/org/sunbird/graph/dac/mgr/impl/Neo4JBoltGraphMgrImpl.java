@@ -6,10 +6,8 @@ import org.sunbird.common.dto.Response;
 import org.sunbird.common.exception.ClientException;
 import org.sunbird.graph.common.enums.GraphDACParams;
 import org.sunbird.graph.common.enums.GraphHeaderParams;
-import org.sunbird.graph.common.exception.GraphEngineErrorCodes;
-import org.sunbird.graph.dac.exception.GraphDACErrorCodes;
+import org.sunbird.graph.dac.enums.GraphDACErrorCodes;
 import org.sunbird.graph.dac.mgr.IGraphDACGraphMgr;
-import org.sunbird.graph.importer.ImportData;
 import org.sunbird.graph.service.operation.Neo4JBoltGraphOperations;
 
 import java.util.List;
@@ -17,21 +15,6 @@ import java.util.Map;
 
 public class Neo4JBoltGraphMgrImpl extends BaseDACManager implements IGraphDACGraphMgr {
 
-	@Override
-	public Response createGraph(Request request) {
-		String graphId = (String) request.getContext().get(GraphHeaderParams.graph_id.name());
-		if (StringUtils.isBlank(graphId)) {
-			throw new ClientException(GraphEngineErrorCodes.ERR_INVALID_GRAPH_ID.name(), "Graph Id cannot be blank");
-		} else {
-			try {
-				return OK(GraphDACParams.graph_id.name(), graphId);
-			} catch (Exception e) {
-				return ERROR(e);
-			}
-		}
-	}
-
-	@SuppressWarnings("unchecked")
 	@Override
 	public Response createUniqueConstraint(Request request) {
 		String graphId = (String) request.getContext().get(GraphHeaderParams.graph_id.name());
@@ -60,21 +43,6 @@ public class Neo4JBoltGraphMgrImpl extends BaseDACManager implements IGraphDACGr
 		} else {
 			try {
 				Neo4JBoltGraphOperations.createIndex(graphId, indexProperties, request);
-				return OK(GraphDACParams.graph_id.name(), graphId);
-			} catch (Exception e) {
-				return ERROR(e);
-			}
-		}
-	}
-
-	@Override
-	public Response deleteGraph(Request request) {
-		String graphId = (String) request.getContext().get(GraphHeaderParams.graph_id.name());
-		if (StringUtils.isBlank(graphId)) {
-			throw new ClientException(GraphEngineErrorCodes.ERR_INVALID_GRAPH_ID.name(), "Graph Id cannot be blank");
-		} else {
-			try {
-				Neo4JBoltGraphOperations.deleteGraph(graphId, request);
 				return OK(GraphDACParams.graph_id.name(), graphId);
 			} catch (Exception e) {
 				return ERROR(e);
@@ -281,48 +249,6 @@ public class Neo4JBoltGraphMgrImpl extends BaseDACManager implements IGraphDACGr
 		} else {
 			try {
 				Neo4JBoltGraphOperations.deleteCollection(graphId, collectionId, request);
-				return OK();
-			} catch (Exception e) {
-				return ERROR(e);
-			}
-		}
-	}
-
-	@Override
-	public Response importGraph(Request request) {
-		String graphId = (String) request.getContext().get(GraphHeaderParams.graph_id.name());
-		String taskId = request.get(GraphDACParams.task_id.name()) == null ? null
-				: (String) request.get(GraphDACParams.task_id.name());
-		ImportData input = (ImportData) request.get(GraphDACParams.import_input_object.name());
-		if (StringUtils.isBlank(graphId)) {
-			throw new ClientException(GraphEngineErrorCodes.ERR_INVALID_GRAPH_ID.name(), "Graph Id cannot be blank");
-		} else {
-			try {
-				Map<String, List<String>> messages = Neo4JBoltGraphOperations.importGraph(graphId, taskId, input,
-						request);
-				return OK(GraphDACParams.messages.name(), messages);
-			} catch (Exception e) {
-				return ERROR(e);
-			}
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Response bulkUpdateNodes(Request request) {
-		String graphId = (String) request.getContext().get(GraphHeaderParams.graph_id.name());
-		List<Map<String, Object>> newNodes = (List<Map<String, Object>>) request.get(GraphDACParams.newNodes.name());
-		List<Map<String, Object>> modifiedNodes = (List<Map<String, Object>>) request.get(GraphDACParams.modifiedNodes.name());
-		List<Map<String, Object>> addOutRelations = (List<Map<String, Object>>) request.get(GraphDACParams.addedOutRelations.name());
-		List<Map<String, Object>> removeOutRelations = (List<Map<String, Object>>) request.get(GraphDACParams.removedOutRelations.name());
-		List<Map<String, Object>> addInRelations = (List<Map<String, Object>>) request.get(GraphDACParams.addedInRelations.name());
-		List<Map<String, Object>> removeInRelations = (List<Map<String, Object>>) request.get(GraphDACParams.removedInRelations.name());
-		if (StringUtils.isBlank(graphId)) {
-			throw new ClientException(GraphEngineErrorCodes.ERR_INVALID_GRAPH_ID.name(), "Graph Id cannot be blank");
-		} else {
-			try {
-				Neo4JBoltGraphOperations.bulkUpdateNodes(graphId, newNodes, modifiedNodes, addOutRelations,
-						removeOutRelations, addInRelations, removeInRelations);
 				return OK();
 			} catch (Exception e) {
 				return ERROR(e);

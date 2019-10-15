@@ -1,6 +1,7 @@
 package org.sunbird.graph.dac.model;
 
 import org.neo4j.graphdb.Relationship;
+import org.sunbird.graph.dac.util.Neo4jNodeUtil;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -21,13 +22,16 @@ public class Path implements Serializable {
 
     public Path(String graphId, org.neo4j.graphdb.Path dbPath) {
         if (null != dbPath) {
-            this.startNode = new Node(graphId, dbPath.startNode());
-            this.endNode = new Node(graphId, dbPath.endNode());
+            //this.startNode = new Node(graphId, dbPath.startNode());
+            this.startNode = Neo4jNodeUtil.getNode(graphId, dbPath.startNode());
+            //this.endNode = new Node(graphId, dbPath.endNode());
+            this.endNode = Neo4jNodeUtil.getNode(graphId, dbPath.endNode());
             this.nodes = new LinkedList<Node>();
             Iterable<org.neo4j.graphdb.Node> pathNodes = dbPath.nodes();
             if (null != pathNodes) {
                 for (org.neo4j.graphdb.Node pathNode : pathNodes) {
-                    this.nodes.add(new Node(graphId, pathNode));
+                    //this.nodes.add(new Node(graphId, pathNode));
+                    this.nodes.add(Neo4jNodeUtil.getNode(graphId, pathNode));
                 }
             }
 

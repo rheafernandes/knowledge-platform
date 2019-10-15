@@ -1,4 +1,4 @@
-package org.sunbird.graph.dac.exception;
+package org.sunbird.graph.dac.enums;
 
 public enum GraphDACErrorCodes {
     
@@ -64,5 +64,7 @@ public enum GraphDACErrorCodes {
     
     ERR_GRAPH_QUERY_NOT_FOUND,
     
-    ERR_GRAPH_QUERY_KEY_NOT_FOUND;
+    ERR_GRAPH_QUERY_KEY_NOT_FOUND,
+
+    CONSTRAINT_VALIDATION_FAILED;
 }
