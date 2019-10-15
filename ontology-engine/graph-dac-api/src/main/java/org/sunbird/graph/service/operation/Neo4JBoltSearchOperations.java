@@ -227,15 +227,6 @@ public class Neo4JBoltSearchOperations {
 		return nodes;
 	}
 
-	/**
-	 * Gets the node by unique ids.
-	 *
-	 * @param graphId
-	 *            the graph id
-	 * @param searchCriteria
-	 *            the search criteria
-	 * @return the node by unique ids
-	 */
 	public static List<Node> getNodeByUniqueIds(String graphId, SearchCriteria searchCriteria) {
 
 		if (StringUtils.isBlank(graphId))
@@ -255,14 +246,14 @@ public class Neo4JBoltSearchOperations {
 			Map<String, Object> parameterMap = new HashMap<String, Object>();
 			parameterMap.put(GraphDACParams.graphId.name(), graphId);
 			parameterMap.put(GraphDACParams.searchCriteria.name(), searchCriteria);
-
-			String query = SearchQueryGenerationUtil.generateGetNodeByUniqueIdsCypherQuery(parameterMap);
-			Map<String, Object> params = searchCriteria.getParams();
-			StatementResult result = session.run(query, params);
 			Map<Long, Object> nodeMap = new HashMap<Long, Object>();
 			Map<Long, Object> relationMap = new HashMap<Long, Object>();
 			Map<Long, Object> startNodeMap = new HashMap<Long, Object>();
 			Map<Long, Object> endNodeMap = new HashMap<Long, Object>();
+			String query = SearchQueryGenerationUtil.generateGetNodeByUniqueIdsCypherQuery(parameterMap);
+			Map<String, Object> params = searchCriteria.getParams();
+			StatementResult result = session.run(query, params);
+
 			if (null != result) {
 				for (Record record : result.list()) {
 					TelemetryManager.log("'Get Nodes By Search Criteria' Operation Finished.", record.asMap());
