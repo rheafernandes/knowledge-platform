@@ -3,6 +3,7 @@ package org.sunbird.graph.nodes
 import java.util
 
 import org.apache.commons.collections4.{CollectionUtils, MapUtils}
+import org.sunbird.common.JsonUtils
 import org.sunbird.common.dto.{Request, Response}
 import org.sunbird.graph.dac.model.{Node, Relation}
 import org.sunbird.graph.engine.RelationManager
@@ -55,7 +56,7 @@ object DataNode {
         if (CollectionUtils.isNotEmpty(relations)) {
             val relationList: List[IRelation] = relations.toList.map(relation =>
                 RelationHandler.getRelation(graphId, node.getRelationNode(relation.getStartNodeId),
-                    relation.getRelationType, node.getRelationNode(relation.getEndNodeId), Map()))
+                    relation.getRelationType, node.getRelationNode(relation.getEndNodeId), new util.HashMap()))
             val request: Request = new Request
             request.setContext(context)
             request.put("relations", relationList)

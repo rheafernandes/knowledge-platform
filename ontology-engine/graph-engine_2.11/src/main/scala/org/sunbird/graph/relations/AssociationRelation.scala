@@ -6,7 +6,7 @@ import org.sunbird.graph.common.enums.GraphDACParams
 import org.sunbird.graph.dac.enums.{RelationTypes, SystemNodeTypes}
 import org.sunbird.graph.dac.model.Node
 
-class AssociationRelation(graphId: String, startNode: Node, endNode: Node, metadata: Map[String, AnyRef]) extends AbstractRelation(graphId, startNode, endNode, metadata) {
+class AssociationRelation(graphId: String, startNode: Node, endNode: Node, metadata: java.util.Map[String, AnyRef]) extends AbstractRelation(graphId, startNode, endNode, metadata) {
 
     override def getRelationType(): String = {
         RelationTypes.ASSOCIATED_TO.relationName()
