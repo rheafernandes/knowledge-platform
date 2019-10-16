@@ -20,9 +20,10 @@ trait VersionKeyValidator extends IDefinitionNode {
     private val graphPassportKey = Platform.config.getString(DACConfigurationConstants.PASSPORT_KEY_BASE_PROPERTY)
 
     @throws[Exception]
-    abstract override def validate(node: Node)(implicit ec: ExecutionContext): Future[Node] = {
-        if(!isValidVersionkey(node)) throw new ClientException(ResponseCode.CLIENT_ERROR.name, "Invalid version Key")
-        super.validate(node)
+    abstract override def validate(node: Node, operation: String)(implicit ec: ExecutionContext): Future[Node] = {
+        if(!(operation.equalsIgnoreCase("create")))
+            if(!isValidVersionkey(node)) throw new ClientException(ResponseCode.CLIENT_ERROR.name, "Invalid version Key")
+        super.validate(node, operation)
     }
 
     def isValidVersionkey(node: Node): Boolean =  {
