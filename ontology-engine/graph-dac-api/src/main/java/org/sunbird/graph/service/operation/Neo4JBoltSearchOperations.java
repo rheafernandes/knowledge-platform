@@ -7,17 +7,14 @@ import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Value;
 import org.neo4j.driver.v1.exceptions.ClientException;
-import org.neo4j.graphdb.Direction;
 import org.sunbird.common.dto.Property;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.exception.ResourceNotFoundException;
 import org.sunbird.graph.common.enums.GraphDACParams;
-import org.sunbird.graph.dac.model.Graph;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.dac.model.Relation;
 import org.sunbird.graph.dac.model.SearchCriteria;
-import org.sunbird.graph.dac.model.SubGraph;
-import org.sunbird.graph.dac.model.Traverser;
+import org.sunbird.graph.dac.util.Neo4jNodeUtil;
 import org.sunbird.graph.service.common.CypherQueryConfigurationConstants;
 import org.sunbird.graph.service.common.DACErrorCodeConstants;
 import org.sunbird.graph.service.common.DACErrorMessageConstants;
@@ -33,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-//import org.sunbird.graph.cache.mgr.impl.NodeCacheManager;
 
 public class Neo4JBoltSearchOperations {
 
@@ -88,7 +84,9 @@ public class Neo4JBoltSearchOperations {
 
 			if (!nodeMap.isEmpty()) {
 				for (Entry<Long, Object> entry : nodeMap.entrySet())
-					node = new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+//					node = new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+//							startNodeMap, endNodeMap);
+					node= Neo4jNodeUtil.getNode(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
 							startNodeMap, endNodeMap);
 			}
 		}
@@ -153,8 +151,10 @@ public class Neo4JBoltSearchOperations {
 
 				if (!nodeMap.isEmpty()) {
 					for (Entry<Long, Object> entry : nodeMap.entrySet())
-						node = new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
-								startNodeMap, endNodeMap);
+//						node = new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+//								startNodeMap, endNodeMap);
+					node= Neo4jNodeUtil.getNode(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+							startNodeMap, endNodeMap);
 				}
 				if (StringUtils.equalsIgnoreCase("Concept", node.getObjectType())) {
 					TelemetryManager.info("Saving concept to in-memory cache: "+node.getIdentifier());
@@ -214,24 +214,19 @@ public class Neo4JBoltSearchOperations {
 			}
 
 			if (!nodeMap.isEmpty()) {
-				for (Entry<Long, Object> entry : nodeMap.entrySet())
-					nodes.add(new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+				for (Entry<Long, Object> entry : nodeMap.entrySet()) {
+//					nodes.add(new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+//							startNodeMap, endNodeMap));
+					nodes.add(Neo4jNodeUtil.getNode(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
 							startNodeMap, endNodeMap));
+				}
+
 			}
 		}
 		TelemetryManager.log("Returning Node By Property: " + nodes.size());
 		return nodes;
 	}
 
-	/**
-	 * Gets the node by unique ids.
-	 *
-	 * @param graphId
-	 *            the graph id
-	 * @param searchCriteria
-	 *            the search criteria
-	 * @return the node by unique ids
-	 */
 	public static List<Node> getNodeByUniqueIds(String graphId, SearchCriteria searchCriteria) {
 
 		if (StringUtils.isBlank(graphId))
@@ -251,14 +246,14 @@ public class Neo4JBoltSearchOperations {
 			Map<String, Object> parameterMap = new HashMap<String, Object>();
 			parameterMap.put(GraphDACParams.graphId.name(), graphId);
 			parameterMap.put(GraphDACParams.searchCriteria.name(), searchCriteria);
-
-			String query = SearchQueryGenerationUtil.generateGetNodeByUniqueIdsCypherQuery(parameterMap);
-			Map<String, Object> params = searchCriteria.getParams();
-			StatementResult result = session.run(query, params);
 			Map<Long, Object> nodeMap = new HashMap<Long, Object>();
 			Map<Long, Object> relationMap = new HashMap<Long, Object>();
 			Map<Long, Object> startNodeMap = new HashMap<Long, Object>();
 			Map<Long, Object> endNodeMap = new HashMap<Long, Object>();
+			String query = SearchQueryGenerationUtil.generateGetNodeByUniqueIdsCypherQuery(parameterMap);
+			Map<String, Object> params = searchCriteria.getParams();
+			StatementResult result = session.run(query, params);
+
 			if (null != result) {
 				for (Record record : result.list()) {
 					TelemetryManager.log("'Get Nodes By Search Criteria' Operation Finished.", record.asMap());
@@ -268,9 +263,12 @@ public class Neo4JBoltSearchOperations {
 			}
 
 			if (!nodeMap.isEmpty()) {
-				for (Entry<Long, Object> entry : nodeMap.entrySet())
-					nodes.add(new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+				for (Entry<Long, Object> entry : nodeMap.entrySet()) {
+//					nodes.add(new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+//							startNodeMap, endNodeMap));
+					nodes.add(Neo4jNodeUtil.getNode(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
 							startNodeMap, endNodeMap));
+				}
 			}
 		}
 		TelemetryManager.log("Returning Node By Search Criteria: " + nodes.size());
@@ -397,9 +395,12 @@ public class Neo4JBoltSearchOperations {
 			}
 			
 			if (!nodeMap.isEmpty()) {
-				for (Entry<Long, Object> entry : nodeMap.entrySet())
-					nodes.add(new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+				for (Entry<Long, Object> entry : nodeMap.entrySet()) {
+//					nodes.add(new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+//							startNodeMap, endNodeMap));
+					nodes.add(Neo4jNodeUtil.getNode(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
 							startNodeMap, endNodeMap));
+				}
 			}
 		}
 		TelemetryManager.log("Returning All Nodes: " + nodes.size());
@@ -820,9 +821,12 @@ public class Neo4JBoltSearchOperations {
 					+ startNodeMap + "\nEnd Node Map: " + endNodeMap);
 
 			if (!nodeMap.isEmpty()) {
-				for (Entry<Long, Object> entry : nodeMap.entrySet())
-					nodes.add(new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+				for (Entry<Long, Object> entry : nodeMap.entrySet()) {
+//					nodes.add(new Node(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
+//							startNodeMap, endNodeMap));
+					nodes.add(Neo4jNodeUtil.getNode(graphId, (org.neo4j.driver.v1.types.Node) entry.getValue(), relationMap,
 							startNodeMap, endNodeMap));
+				}
 			}
 		}
 		TelemetryManager.log("Returning Search Nodes: " + nodes);
@@ -877,90 +881,6 @@ public class Neo4JBoltSearchOperations {
 		return count;
 	}
 
-	/**
-	 * Traverse.
-	 *
-	 * @param graphId
-	 *            the graph id
-	 * @param traverser
-	 *            the traverser
-	 * @param request
-	 *            the request
-	 * @return the sub graph
-	 */
-	public static SubGraph traverse(String graphId, Traverser traverser, Request request) {
-		
-		if (StringUtils.isBlank(graphId))
-			throw new ClientException(DACErrorCodeConstants.INVALID_GRAPH.name(),
-					DACErrorMessageConstants.INVALID_GRAPH_ID + " | ['Traverse' Operation Failed.]");
-
-		if (null == traverser)
-			throw new ClientException(DACErrorCodeConstants.INVALID_TRAVERSER.name(),
-					DACErrorMessageConstants.INVALID_TRAVERSER + " | ['Traverse' Operation Failed.]");
-
-		SubGraph subGraph = traverser.traverse();
-		return subGraph;
-	}
-
-	/**
-	 * Traverse sub graph.
-	 *
-	 * @param graphId
-	 *            the graph id
-	 * @param traverser
-	 *            the traverser
-	 * @param request
-	 *            the request
-	 * @return the graph
-	 */
-	public static Graph traverseSubGraph(String graphId, Traverser traverser, Request request) {
-		
-		if (StringUtils.isBlank(graphId))
-			throw new ClientException(DACErrorCodeConstants.INVALID_GRAPH.name(),
-					DACErrorMessageConstants.INVALID_GRAPH_ID + " | ['Traverse Sub Graph' Operation Failed.]");
-
-		if (null == traverser)
-			throw new ClientException(DACErrorCodeConstants.INVALID_TRAVERSER.name(),
-					DACErrorMessageConstants.INVALID_TRAVERSER + " | ['Traverse Sub Graph' Operation Failed.]");
-
-		Graph subGraph = traverser.getSubGraph();
-		return subGraph;
-	}
-
-	/**
-	 * Gets the sub graph.
-	 *
-	 * @param graphId
-	 *            the graph id
-	 * @param startNodeId
-	 *            the start node id
-	 * @param relationType
-	 *            the relation type
-	 * @param depth
-	 *            the depth
-	 * @param request
-	 *            the request
-	 * @return the sub graph
-	 */
-	public static Graph getSubGraph(String graphId, String startNodeId, String relationType, Integer depth,
-			Request request) {
-
-		if (StringUtils.isBlank(graphId))
-			throw new ClientException(DACErrorCodeConstants.INVALID_GRAPH.name(),
-					DACErrorMessageConstants.INVALID_GRAPH_ID + " | ['Get Sub Graph' Operation Failed.]");
-
-		if (StringUtils.isBlank(startNodeId))
-			throw new ClientException(DACErrorCodeConstants.INVALID_IDENTIFIER.name(),
-					DACErrorMessageConstants.INVALID_START_NODE_ID + " | ['Get Sub Graph' Operation Failed.]");
-
-		Traverser traverser = new Traverser(graphId, startNodeId);
-		traverser = traverser.addRelationMap(relationType, Direction.OUTGOING.name());
-		if (null != depth && depth.intValue() > 0) {
-			traverser.toDepth(depth);
-		}
-		Graph subGraph = traverser.getSubGraph();
-		return subGraph;
-	}
 
 	private static void getRecordValues(Record record, Map<Long, Object> nodeMap, Map<Long, Object> relationMap,
 			Map<Long, Object> startNodeMap, Map<Long, Object> endNodeMap) {

@@ -1,6 +1,7 @@
 package controllers
 
-import org.sunbird.actor.service.SunbirdMWService
+import akka.actor.ActorRef
+import akka.pattern.Patterns
 import org.sunbird.common.dto.Response
 import org.sunbird.common.exception.ResponseCode
 import play.api.mvc._
@@ -11,6 +12,8 @@ import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class BaseController(protected val cc: ControllerComponents)(implicit exec: ExecutionContext) extends AbstractController(cc) {
+
+
 
     def requestBody()(implicit request: Request[AnyContent]) = {
         val body = request.body.asJson.getOrElse("{}").toString
@@ -33,8 +36,8 @@ abstract class BaseController(protected val cc: ControllerComponents)(implicit e
         new org.sunbird.common.dto.Request(context, input, operation, null);
     }
 
-    def getResult(apiId: String, request: org.sunbird.common.dto.Request) : Future[Result] = {
-        val future = SunbirdMWService.execute(request)
+    def getResult(apiId: String, actor: ActorRef, request: org.sunbird.common.dto.Request) : Future[Result] = {
+        val future = Patterns.ask(actor, request, 30000)
         future.map(f => {
             val result = f.asInstanceOf[Response]
             result.setId(apiId)
@@ -46,5 +49,11 @@ abstract class BaseController(protected val cc: ControllerComponents)(implicit e
                 case _ => play.api.mvc.Results.InternalServerError(response).as("application/json")
             }
         })
+    }
+
+    def setRequestContext(request:org.sunbird.common.dto.Request, version: String, objectType: String): Unit = {
+        val contextMap: Map[String, AnyRef] = Map("graph_id" -> "domain", "version" -> version, "objectType" -> objectType);
+        request.setObjectType(objectType);
+        request.setContext(contextMap.asJava)
     }
 }
