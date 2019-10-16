@@ -1,5 +1,9 @@
 package org.sunbird.graph.schema
 
+import org.apache.commons.collections4.CollectionUtils
+import org.apache.commons.lang3.StringUtils
+import org.sunbird.graph.common.Identifier
+import org.sunbird.graph.dac.enums.SystemNodeTypes
 import org.sunbird.graph.dac.model.Node
 import org.sunbird.graph.schema.validator._
 
@@ -7,7 +11,18 @@ class DefinitionNode(graphId: String, objectType: String, version: String = "1.0
 
     def getOutRelationObjectTypes: List[String] = outRelationObjectTypes
 
-    def getNode(identifier: String, input: java.util.Map[String, AnyRef]): Node = { // TODO: used for update operations.
-        null
+    def getNode(identifier: String, input: java.util.Map[String, AnyRef], nodeType: String): Node = { // TODO: used for update operations.
+        val result = schemaValidator.getStructuredData(input)
+        val node = new Node(identifier, objectType, nodeType)
+        // TODO: set SYS_NODE_TYPE, FUNC_OBJECT_TYPE
+        node.setNodeType(SystemNodeTypes.DATA_NODE.name)
+        node.setObjectType(objectType)
+        if (StringUtils.isBlank(node.getIdentifier)) node.setIdentifier(Identifier.getIdentifier(graphId, Identifier.getUniqueIdFromTimestamp))
+        setRelations(node, result.getRelations)
+        //new ProcessingNode(node, result.getExternalData)
+        if (CollectionUtils.isNotEmpty(node.getInRelations)) node.setAddedRelations(node.getInRelations)
+        if (CollectionUtils.isNotEmpty(node.getOutRelations)) node.setAddedRelations(node.getOutRelations)
+        node.setExternalData(result.getExternalData)
+        node
     }
 }

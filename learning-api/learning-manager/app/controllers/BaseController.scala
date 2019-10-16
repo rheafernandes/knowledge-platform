@@ -9,6 +9,7 @@ import utils.JavaJsonUtils
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
+import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class BaseController(protected val cc: ControllerComponents)(implicit exec: ExecutionContext) extends AbstractController(cc) {
@@ -52,8 +53,12 @@ abstract class BaseController(protected val cc: ControllerComponents)(implicit e
     }
 
     def setRequestContext(request:org.sunbird.common.dto.Request, version: String, objectType: String): Unit = {
-        val contextMap: Map[String, AnyRef] = Map("graph_id" -> "domain", "version" -> version, "objectType" -> objectType);
+        var contextMap: java.util.Map[String, AnyRef] = new mutable.HashMap[String, AnyRef](){{
+            put("graph_id", "domain")
+            put("version" , version)
+            put("objectType" , objectType)
+        }};
         request.setObjectType(objectType);
-        request.setContext(contextMap.asJava)
+        request.setContext(contextMap)
     }
 }

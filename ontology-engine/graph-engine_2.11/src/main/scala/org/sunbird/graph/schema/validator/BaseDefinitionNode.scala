@@ -65,7 +65,7 @@ class BaseDefinitionNode(graphId: String, objectType: String, version: String = 
     }
 
 
-    private def setRelations(node: Node, relations: java.util.Map[String, AnyRef]): Unit = {
+    protected def setRelations(node: Node, relations: java.util.Map[String, AnyRef]): Unit = {
         if (MapUtils.isNotEmpty(relations)) {
             def getRelations(schema: Map[String, AnyRef]): List[Relation] = {
                 relations.asScala.filterKeys(key => schema.keySet.contains(key))
