@@ -12,7 +12,7 @@ import org.sunbird.graph.schema.DefinitionFactory
 
 abstract class AbstractRelation(graphId: String, startNode: Node, endNode: Node, metadata: java.util.Map[String, AnyRef]) extends IRelation {
 
-//    protected val graphMgr = new Neo4JBoltGraphMgrImpl
+    protected val graphMgr = new Neo4JBoltGraphMgrImpl
     protected val searchMgr = new Neo4JBoltSearchMgrImpl
 
     override def createRelation(req: Request):String = {
