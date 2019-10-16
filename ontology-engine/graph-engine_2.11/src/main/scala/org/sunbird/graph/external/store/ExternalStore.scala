@@ -7,12 +7,14 @@ import java.util.{Date, Map}
 
 import com.datastax.driver.core.Session
 import com.datastax.driver.core.querybuilder.{Insert, QueryBuilder}
+import com.google.common.util.concurrent.{FutureCallback, Futures, ListenableFuture, MoreExecutors}
 import org.sunbird.cassandra.{CassandraConnector, CassandraStore}
+import org.sunbird.common.dto.ResponseHandler
 import org.sunbird.common.exception.{ErrorCodes, ServerException}
 import org.sunbird.telemetry.logger.TelemetryManager
 
 import scala.collection.JavaConverters._
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future, Promise}
 
 class ExternalStore(keySpace: String , table: String , primaryKey: java.util.List[String]) extends CassandraStore(keySpace, table, primaryKey) {
 
@@ -28,7 +30,9 @@ class ExternalStore(keySpace: String , table: String , primaryKey: java.util.Lis
         }
         try {
             val session: Session = CassandraConnector.getSession
-            session.execute(insertQuery)
+            session.executeAsync(insertQuery).asScala.map( resultset => {
+                ResponseHandler.OK()
+            })
         } catch {
             case e: Exception =>
                 e.printStackTrace()
@@ -36,4 +40,16 @@ class ExternalStore(keySpace: String , table: String , primaryKey: java.util.Lis
                 throw new ServerException(ErrorCodes.ERR_SYSTEM_EXCEPTION.name, "Exception Occurred While Saving The Record. Exception is : " + e.getMessage)
         }
     }
+
+    implicit class RichListenableFuture[T](lf: ListenableFuture[T]) {
+        def asScala : Future[T] = {
+            val p = Promise[T]()
+            Futures.addCallback(lf, new FutureCallback[T] {
+                def onFailure(t: Throwable): Unit = p failure t
+                def onSuccess(result: T): Unit    = p success result
+            }, MoreExecutors.directExecutor())
+            p.future
+        }
+    }
+
 }

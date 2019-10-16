@@ -2,17 +2,17 @@ package org.sunbird.graph.schema.validator
 
 import java.util
 
-import org.apache.commons.collections4.MapUtils
+import org.apache.commons.collections4.{CollectionUtils, MapUtils}
 import org.apache.commons.lang3.StringUtils
 import org.sunbird.common.dto.Request
 import org.sunbird.graph.common.Identifier
 import org.sunbird.graph.dac.enums.SystemNodeTypes
 import org.sunbird.graph.dac.model.{Node, Relation}
-import org.sunbird.graph.engine.dto.ProcessingNode
 import org.sunbird.graph.schema.IDefinitionNode
-import org.sunbird.graph.service.operation.Neo4JBoltSearchOperations
+import org.sunbird.graph.service.operation.SearchAsyncOperations
 
 import scala.collection.JavaConverters._
+import scala.concurrent.{ExecutionContext, Future}
 
 class BaseDefinitionNode(graphId: String, objectType: String, version: String = "1.0") extends IDefinitionNode(graphId, objectType, version) {
 
@@ -38,7 +38,7 @@ class BaseDefinitionNode(graphId: String, objectType: String, version: String = 
         }
     }
 
-    override def getNode(input: java.util.Map[String, Object]): ProcessingNode = {
+    override def getNode(input: java.util.Map[String, Object]): Node = {
         val result = schemaValidator.getStructuredData(input)
         val node = new Node(graphId, result.getMetadata)
         // TODO: set SYS_NODE_TYPE, FUNC_OBJECT_TYPE
@@ -46,17 +46,21 @@ class BaseDefinitionNode(graphId: String, objectType: String, version: String = 
         node.setObjectType(objectType)
         if (StringUtils.isBlank(node.getIdentifier)) node.setIdentifier(Identifier.getIdentifier(graphId, Identifier.getUniqueIdFromTimestamp))
         setRelations(node, result.getRelations)
-        new ProcessingNode(node, result.getExternalData)
-    }
-
-    @throws[Exception]
-    override def validate(node: ProcessingNode): ProcessingNode = {
+        //new ProcessingNode(node, result.getExternalData)
+        if (CollectionUtils.isNotEmpty(node.getInRelations)) node.setAddedRelations(node.getInRelations)
+        if (CollectionUtils.isNotEmpty(node.getOutRelations)) node.setAddedRelations(node.getOutRelations)
+        node.setExternalData(result.getExternalData)
         node
     }
 
-    override def getNode(identifier: String, operation: String, mode: String): Node = {
+    @throws[Exception]
+    override def validate(node: Node)(implicit ec: ExecutionContext): Future[Node] = {
+        Future{node}
+    }
+
+    override def getNode(identifier: String, operation: String, mode: String)(implicit ec: ExecutionContext): Future[Node] = {
         val request: Request = new Request()
-        val node: Node =Neo4JBoltSearchOperations.getNodeByUniqueId(graphId, identifier, false, request)
+        val node: Future[Node] = SearchAsyncOperations.getNodeByUniqueId(graphId, identifier, false, request)
         node
     }
 
