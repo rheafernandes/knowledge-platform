@@ -45,13 +45,13 @@ object DataNode {
         val dbNodeFuture = definition.getNode(identifier, "update", null)
         val validationResult: Future[Node] = dbNodeFuture.map(dbNode => {
             val inputNode: Node = definition.getNode(dbNode.getIdentifier, request.getRequest, dbNode.getNodeType)
-            val validatedNode = definition.validate(inputNode, "update")
+            val validatedNode = definition.validate(inputNode,"update")
             validatedNode.map(dataNode => {
                 dbNode.getMetadata.putAll(dataNode.getMetadata)
-                dbNode.getInRelations.addAll(dataNode.getInRelations)
-                dbNode.getOutRelations.addAll(dataNode.getOutRelations)
-                dbNode.getAddedRelations.addAll(dataNode.getAddedRelations)
-                dbNode.getDeletedRelations.addAll(dataNode.getDeletedRelations)
+                dbNode.setInRelations(dataNode.getInRelations)
+                dbNode.setOutRelations(dataNode.getOutRelations)
+                dbNode.setAddedRelations(dataNode.getAddedRelations)
+                dbNode.setDeletedRelations(dataNode.getDeletedRelations)
                 dbNode.setRelationNodes(dataNode.getRelationNodes)
                 dbNode.setExternalData(dataNode.getExternalData)
                 dbNode
