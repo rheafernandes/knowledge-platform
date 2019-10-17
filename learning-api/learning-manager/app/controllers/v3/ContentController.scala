@@ -25,4 +25,14 @@ class ContentController @Inject()(@Named(ActorNames.CONTENT_ACTOR) contentActor:
         setRequestContext(contentRequest, version, objectType)
         getResult("org.sunbird.content.create", contentActor, contentRequest)
     }
+
+    def read(identifier: String, mode: Option[String], fields: Option[String]) = Action.async { implicit request =>
+        val headers = commonHeaders()
+        val content = new java.util.HashMap().asInstanceOf[java.util.Map[String, Object]]
+        content.putAll(headers)
+        content.putAll(Map("identifier"->identifier, "mode" -> mode.getOrElse("read"), "fields" -> fields.getOrElse("")).asInstanceOf[Map[String, Object]])
+        val readRequest = getRequest(content, headers, "readContent")
+        setRequestContext(readRequest, version, objectType)
+        getResult("org.sunbird.content.read", contentActor, readRequest)
+    }
 }

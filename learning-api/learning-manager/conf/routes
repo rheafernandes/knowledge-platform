@@ -4,3 +4,5 @@
 GET		/health						controllers.HealthController.health
 
 POST /content/v3/create             controllers.v3.ContentController.create
+
+GET  /content/v3/read/:identifier   controllers.v3.ContentController.read(identifier:String, mode:Option[String], fields:Option[String])

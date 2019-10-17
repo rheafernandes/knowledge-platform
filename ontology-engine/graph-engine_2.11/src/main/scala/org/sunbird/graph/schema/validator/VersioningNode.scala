@@ -61,7 +61,6 @@ trait VersioningNode extends IDefinitionNode {
         node
     }
 
-
     private def getEditableNode(identifier: String, node: Node)(implicit ec: ExecutionContext): Future[Node] = {
         val status = node.getMetadata.get("status").asInstanceOf[String]
         if(statusList.contains(status)) {

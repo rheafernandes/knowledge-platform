@@ -19,7 +19,9 @@ public class ContentActor extends BaseActor {
         String operation = request.getOperation();
         if ("createContent".equals(operation)) {
             return create(request);
-        } else {
+        }else if("readContent".equals(operation)) {
+            return read(request);
+        }else {
             return ERROR(operation);
         }
     }
@@ -38,6 +40,18 @@ public class ContentActor extends BaseActor {
     }
 
     private void update(Request request) {
+    }
+
+    private Future<Response> read(Request request) throws Exception {
+        return DataNode.read(request, getContext().dispatcher())
+                .map(new Mapper<Node, Response>() {
+                    @Override
+                    public Response apply(Node node) {
+                        Response response = ResponseHandler.OK();
+                        response.put("content", node.getMetadata());
+                        return response;
+                    }
+                }, getContext().dispatcher());
     }
 
 }

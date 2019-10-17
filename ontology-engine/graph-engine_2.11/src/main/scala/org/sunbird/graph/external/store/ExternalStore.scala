@@ -2,15 +2,14 @@ package org.sunbird.graph.external.store
 
 import java.sql.Timestamp
 import java.util
-import java.util.stream.Collectors
 import java.util.{Date, Map}
 
 import com.datastax.driver.core.Session
-import com.datastax.driver.core.querybuilder.{Insert, QueryBuilder}
+import com.datastax.driver.core.querybuilder.{Clause, Insert, QueryBuilder}
 import com.google.common.util.concurrent.{FutureCallback, Futures, ListenableFuture, MoreExecutors}
 import org.sunbird.cassandra.{CassandraConnector, CassandraStore}
-import org.sunbird.common.dto.ResponseHandler
-import org.sunbird.common.exception.{ErrorCodes, ServerException}
+import org.sunbird.common.dto.{Response, ResponseHandler}
+import org.sunbird.common.exception.{ErrorCodes, ResponseCode, ServerException}
 import org.sunbird.telemetry.logger.TelemetryManager
 
 import scala.collection.JavaConverters._
@@ -20,13 +19,13 @@ class ExternalStore(keySpace: String , table: String , primaryKey: java.util.Lis
 
     def insert(request: util.Map[String, AnyRef])(implicit ec: ExecutionContext): Unit = {
         val insertQuery: Insert = QueryBuilder.insertInto(keySpace, table)
-        val identifier = request.get("identifier");
+        val identifier = request.get("identifier")
         insertQuery.value("identifier", identifier)
         request.remove("identifier")
         request.remove("last_updated_on")
         insertQuery.value("last_updated_on", new Timestamp(new Date().getTime))
         for ((key, value) <- request.asScala) {
-            insertQuery.value(key, "textAsBlob(" + value + ")")
+            insertQuery.value(key, QueryBuilder.fcall("textAsBlob", value))
         }
         try {
             val session: Session = CassandraConnector.getSession
@@ -38,6 +37,33 @@ class ExternalStore(keySpace: String , table: String , primaryKey: java.util.Lis
                 e.printStackTrace()
                 TelemetryManager.error("Exception Occurred While Saving The Record. | Exception is : " + e.getMessage, e)
                 throw new ServerException(ErrorCodes.ERR_SYSTEM_EXCEPTION.name, "Exception Occurred While Saving The Record. Exception is : " + e.getMessage)
+        }
+    }
+
+    def read(identifier: String, extProps: List[String])(implicit ec: ExecutionContext): Future[Response] = {
+        val select = QueryBuilder.select()
+        extProps.foreach(prop => select.fcall("blobAsText", QueryBuilder.column(prop)).as(prop))
+        val selectQuery = select.from(keySpace, table)
+        val selectWhere = selectQuery.where
+        val clause: Clause = QueryBuilder.eq("identifier", identifier)
+        selectWhere.and(clause)
+        try {
+            val session: Session = CassandraConnector.getSession
+            session.executeAsync(selectQuery).asScala.map(resultset => {
+                if (resultset.iterator().hasNext) {
+                    val row = resultset.one()
+                    val externalMetadataMap = extProps.map(prop => prop -> row.getObject(prop)).toMap
+                    val response = ResponseHandler.OK()
+                    response.putAll(externalMetadataMap.asJava)
+                    response
+                } else
+                    ResponseHandler.ERROR(ResponseCode.RESOURCE_NOT_FOUND, "404", "Entry not found in Cassandra")
+            })
+        } catch {
+            case e: Exception =>
+                e.printStackTrace()
+                TelemetryManager.error("Exception Occurred While Reading The Record. | Exception is : " + e.getMessage, e)
+                throw new ServerException(ErrorCodes.ERR_SYSTEM_EXCEPTION.name, "Exception Occurred While Reading The Record. Exception is : " + e.getMessage)
         }
     }
 
