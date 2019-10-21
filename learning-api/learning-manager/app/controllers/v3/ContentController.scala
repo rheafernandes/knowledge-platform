@@ -36,4 +36,6 @@ class ContentController @Inject()(@Named(ActorNames.CONTENT_ACTOR) contentActor:
         contentRequest.getContext.put("identifier",identifier);
         getResult(ApiIds.UPDATE_CONTENT, contentActor, contentRequest)
     }
+
+
 }
