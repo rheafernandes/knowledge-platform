@@ -100,9 +100,9 @@ public class ResponseHandler {
 
     private static ResponseParams getSucessStatus() {
         ResponseParams params = new ResponseParams();
-        params.setErr("0");
+        //params.setErr("0");
         params.setStatus(ResponseParams.StatusType.successful.name());
-        params.setErrmsg("Operation successful");
+        //params.setErrmsg("Operation successful");
         return params;
     }
 
