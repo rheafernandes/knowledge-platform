@@ -43,7 +43,7 @@ public abstract class BaseActor extends AbstractActor {
         return Futures.successful(response);
     }
 
-    private Response getErrorResponse(Throwable e) {
+    protected Response getErrorResponse(Throwable e) {
         e.printStackTrace();
         Response response = new Response();
         ResponseParams params = new ResponseParams();
