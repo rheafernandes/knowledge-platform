@@ -7,6 +7,7 @@ import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.Value;
 import org.neo4j.driver.v1.exceptions.ClientException;
+import org.neo4j.driver.v1.exceptions.NoSuchRecordException;
 import org.sunbird.common.dto.Property;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.exception.MiddlewareException;
@@ -196,6 +197,12 @@ public class SearchAsyncOperations {
                                 TelemetryManager.info("Saving concept to in-memory cache: "+node.getIdentifier());
                             }
                             return node;
+                        }).exceptionally(error -> {
+                            if(error instanceof NoSuchRecordException)
+                                throw new ResourceNotFoundException(DACErrorCodeConstants.NOT_FOUND.name(),
+                                        DACErrorMessageConstants.NODE_NOT_FOUND + " | [Invalid Node Id.]: " + nodeId, nodeId);
+
+                            return null;
                         });
 
                 return FutureConverters.toScala(cs);
