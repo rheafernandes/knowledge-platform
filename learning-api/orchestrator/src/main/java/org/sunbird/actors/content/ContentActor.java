@@ -42,21 +42,15 @@ public class ContentActor extends BaseActor {
     }
 
     private Future<Response> update(Request request) throws Exception {
-        Promise<Response> response = new scala.concurrent.impl.Promise.DefaultPromise<>();
-        DataNode.update(request, getContext().dispatcher()).onComplete(new OnComplete<Node>() {
-            @Override
-            public void onComplete(Throwable failure, Node node) throws Throwable {
-                if(null != failure) {
-                    response.success(getErrorResponse(failure));
-                } else {
-                    Response res = ResponseHandler.OK();
-                    res.put("node_id", node.getIdentifier());
-                    res.put("versionKey", node.getMetadata().get("versionKey"));
-                    response.success(res);
-                }
-            }
-        }, getContext().dispatcher());
-
-        return response.future();
+        return DataNode.update(request, getContext().dispatcher())
+                .map(new Mapper<Node, Response>() {
+                    @Override
+                    public Response apply(Node node) {
+                        Response response = ResponseHandler.OK();
+                        response.put("node_id", node.getIdentifier());
+                        response.put("versionKey", node.getMetadata().get("versionKey"));
+                        return response;
+                    }
+                }, getContext().dispatcher());
     }
 }
