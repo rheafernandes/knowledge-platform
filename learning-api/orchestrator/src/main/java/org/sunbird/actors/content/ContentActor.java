@@ -62,7 +62,7 @@ public class ContentActor extends BaseActor {
 
     private Future<Response> read(Request request) throws Exception {
         List<String> fields = Arrays.stream(((String) request.get("fields")).split(","))
-                .filter(field -> StringUtils.isNotBlank(field) && StringUtils.equalsIgnoreCase(field, "null")).collect(Collectors.toList());
+                .filter(field -> StringUtils.isNotBlank(field) && !StringUtils.equalsIgnoreCase(field, "null")).collect(Collectors.toList());
         request.getRequest().put("fields", fields);
         return DataNode.read(request, getContext().dispatcher())
                 .map(new Mapper<Node, Response>() {

@@ -1,6 +1,5 @@
 package org.sunbird.graph.schema
 
-import org.apache.commons.lang3.StringUtils
 import org.sunbird.graph.dac.model.{Node, Relation}
 import java.util
 import org.apache.commons.collections4.{CollectionUtils, MapUtils}
@@ -80,7 +79,7 @@ class DefinitionNode(graphId: String, objectType: String, version: String = "1.0
   private def generateRelationKey(relation: (String, Object)): Map[String, AnyRef] = {
     val relationMetadata = relation._2.asInstanceOf[java.util.HashMap[String, Object]]
     val objects = relationMetadata.get("objects").asInstanceOf[java.util.List[String]].asScala
-    objects.map(objectType => Map((relationMetadata.get("type").asInstanceOf[String] + "_" + relationMetadata.get("direction") + "_" + objectType) -> relation._1)).flatten.toMap
+    objects.flatMap(objectType => Map((relationMetadata.get("type").asInstanceOf[String] + "_" + relationMetadata.get("direction") + "_" + objectType) -> relation._1)).toMap
   }
 
 }
