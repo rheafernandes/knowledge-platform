@@ -26,6 +26,16 @@ class ContentController @Inject()(@Named(ActorNames.CONTENT_ACTOR) contentActor:
         getResult(ApiIds.CREATE_CONTENT, contentActor, contentRequest)
     }
 
+    def read(identifier: String, mode: Option[String], fields: Option[String]) = Action.async { implicit request =>
+        val headers = commonHeaders()
+        val content = new java.util.HashMap().asInstanceOf[java.util.Map[String, Object]]
+        content.putAll(headers)
+        content.putAll(Map("identifier"->identifier, "mode" -> mode.getOrElse("read"), "fields" -> fields.getOrElse("")).asInstanceOf[Map[String, Object]])
+        val readRequest = getRequest(content, headers, "readContent")
+        setRequestContext(readRequest, version, objectType)
+        getResult("org.sunbird.content.read", contentActor, readRequest)
+    }
+  
     def update(identifier:String) = Action.async { implicit request =>
         val headers = commonHeaders()
         val body = requestBody()
@@ -36,6 +46,5 @@ class ContentController @Inject()(@Named(ActorNames.CONTENT_ACTOR) contentActor:
         contentRequest.getContext.put("identifier",identifier);
         getResult(ApiIds.UPDATE_CONTENT, contentActor, contentRequest)
     }
-
 
 }
