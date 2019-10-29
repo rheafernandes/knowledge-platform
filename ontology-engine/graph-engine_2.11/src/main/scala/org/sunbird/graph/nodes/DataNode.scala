@@ -52,6 +52,39 @@ object DataNode {
         }).flatMap(f => f)
     }
 
+    @throws[Exception]
+    def update(request: Request)(implicit ec: ExecutionContext): Future[Node] = {
+        val graphId: String = request.getContext.get("graph_id").asInstanceOf[String]
+        val version: String = request.getContext.get("version").asInstanceOf[String]
+        val identifier: String = request.getContext.get("identifier").asInstanceOf[String]
+        val definition = DefinitionFactory.getDefinition(graphId, request.getObjectType, version)
+        val dbNodeFuture = definition.getNode(identifier, "update", null)
+        val validationResult: Future[Node] = dbNodeFuture.map(dbNode => {
+            val inputNode: Node = definition.getNode(dbNode.getIdentifier, request.getRequest, dbNode.getNodeType)
+            val validatedNode = definition.validate(inputNode,"update")
+            validatedNode.map(dataNode => {
+                dbNode.getMetadata.putAll(dataNode.getMetadata)
+                dbNode.setInRelations(dataNode.getInRelations)
+                dbNode.setOutRelations(dataNode.getOutRelations)
+                dbNode.setAddedRelations(dataNode.getAddedRelations)
+                dbNode.setDeletedRelations(dataNode.getDeletedRelations)
+                dbNode.setRelationNodes(dataNode.getRelationNodes)
+                dbNode.setExternalData(dataNode.getExternalData)
+                dbNode
+            })
+        }).flatMap(f => f)
+
+        validationResult.map(dbNode => {
+            val response = NodeAsyncOperations.upsertNode(graphId, dbNode, request)
+            response.map(result => {
+                val futureList = Task.parallel[Response](
+                    saveExternalProperties(dbNode.getIdentifier, dbNode.getExternalData, request.getContext, request.getObjectType),
+                    updateRelations(graphId, dbNode, request.getContext))
+                futureList.map(list => result)
+            }).flatMap(f => f)
+        }).flatMap(f => f)
+    }
+
     private def saveExternalProperties(identifier: String, externalProps: util.Map[String, AnyRef], context: util.Map[String, AnyRef], objectType: String)(implicit ec: ExecutionContext): Future[Response] = {
         if (MapUtils.isNotEmpty(externalProps)) {
             externalProps.put("identifier", identifier)

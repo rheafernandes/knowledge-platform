@@ -2,6 +2,7 @@ package org.sunbird.actors.content;
 
 import akka.dispatch.Mapper;
 import org.apache.commons.lang3.StringUtils;
+import akka.dispatch.OnComplete;
 import org.sunbird.actor.core.BaseActor;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
@@ -10,14 +11,15 @@ import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.nodes.DataNode;
 import org.sunbird.graph.utils.NodeUtils;
 import scala.concurrent.Future;
+import scala.concurrent.Promise;
+
+import java.util.concurrent.CompletionStage;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ContentActor extends BaseActor {
-    public static String objectType = "Content";
-    public static String version = "1.0";
 
     public Future<Response> onReceive(Request request) throws Throwable {
         String operation = request.getOperation();
@@ -25,6 +27,8 @@ public class ContentActor extends BaseActor {
             return create(request);
         }else if("readContent".equals(operation)) {
             return read(request);
+        } else if("updateContent".equals(operation)){
+            return update(request);
         }else {
             return ERROR(operation);
         }
@@ -43,7 +47,17 @@ public class ContentActor extends BaseActor {
                 }, getContext().dispatcher());
     }
 
-    private void update(Request request) {
+    private Future<Response> update(Request request) throws Exception {
+        return DataNode.update(request, getContext().dispatcher())
+                .map(new Mapper<Node, Response>() {
+                    @Override
+                    public Response apply(Node node) {
+                        Response response = ResponseHandler.OK();
+                        response.put("node_id", node.getIdentifier());
+                        response.put("versionKey", node.getMetadata().get("versionKey"));
+                        return response;
+                    }
+                }, getContext().dispatcher());
     }
 
     private Future<Response> read(Request request) throws Exception {

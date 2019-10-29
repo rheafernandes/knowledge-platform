@@ -1,7 +1,11 @@
 package org.sunbird.common.dto;
 
 import org.apache.commons.lang3.StringUtils;
+import org.sunbird.common.exception.ClientException;
+import org.sunbird.common.exception.MiddlewareException;
+import org.sunbird.common.exception.ResourceNotFoundException;
 import org.sunbird.common.exception.ResponseCode;
+import org.sunbird.common.exception.ServerException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -100,9 +104,9 @@ public class ResponseHandler {
 
     private static ResponseParams getSucessStatus() {
         ResponseParams params = new ResponseParams();
-        params.setErr("0");
+        //params.setErr("0");
         params.setStatus(ResponseParams.StatusType.successful.name());
-        params.setErrmsg("Operation successful");
+        //params.setErrmsg("Operation successful");
         return params;
     }
 
@@ -137,5 +141,44 @@ public class ResponseHandler {
             return params.getErrmsg();
         }
         return null;
+    }
+
+    public static Response getErrorResponse(Throwable e) {
+        e.printStackTrace();
+        Response response = new Response();
+        ResponseParams params = new ResponseParams();
+        params.setStatus(ResponseParams.StatusType.failed.name());
+        if (e instanceof MiddlewareException) {
+            MiddlewareException mwException = (MiddlewareException) e;
+            params.setErr(mwException.getErrCode());
+            response.put("messages", mwException.getMessages());
+        } else {
+            params.setErr("ERR_SYSTEM_EXCEPTION");
+        }
+        System.out.println("Exception occurred in class :" + e.getClass().getName() + " with message :" + e.getMessage());
+        params.setErrmsg(setErrMessage(e));
+        response.setParams(params);
+        setResponseCode(response, e);
+        return response;
+    }
+
+    private static String setErrMessage(Throwable e) {
+        if (e instanceof MiddlewareException) {
+            return e.getMessage();
+        } else {
+            return "Something went wrong in server while processing the request";
+        }
+    }
+
+    private static void setResponseCode(Response res, Throwable e) {
+        if (e instanceof ClientException) {
+            res.setResponseCode(ResponseCode.CLIENT_ERROR);
+        } else if (e instanceof ServerException) {
+            res.setResponseCode(ResponseCode.SERVER_ERROR);
+        } else if (e instanceof ResourceNotFoundException) {
+            res.setResponseCode(ResponseCode.RESOURCE_NOT_FOUND);
+        } else {
+            res.setResponseCode(ResponseCode.SERVER_ERROR);
+        }
     }
 }
