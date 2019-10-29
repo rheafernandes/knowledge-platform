@@ -70,13 +70,6 @@ public abstract class BaseSchemaValidator implements ISchemaValidator {
             e.printStackTrace();
         }
         return new ArrayList<>();
-
-//        List<String> value = ((BasicJsonSchema) schema).get("properties")
-//                .getValueAsJson().asJsonObject().entrySet().stream()
-//                .filter(entry -> StringUtils.equalsIgnoreCase((String) ((Map<String, Object>) entry.getValue()).get("type"), "object"))
-//                .map(entry -> entry.getKey())
-//                .collect(Collectors.toList());
-//        return value;
     }
 
     /**
