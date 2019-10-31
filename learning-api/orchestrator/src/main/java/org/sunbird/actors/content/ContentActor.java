@@ -2,21 +2,17 @@ package org.sunbird.actors.content;
 
 import akka.dispatch.Mapper;
 import org.apache.commons.lang3.StringUtils;
-import akka.dispatch.OnComplete;
 import org.sunbird.actor.core.BaseActor;
 import org.sunbird.common.dto.Request;
 import org.sunbird.common.dto.Response;
 import org.sunbird.common.dto.ResponseHandler;
 import org.sunbird.graph.dac.model.Node;
 import org.sunbird.graph.nodes.DataNode;
-import org.sunbird.graph.utils.NodeUtils;
 import scala.concurrent.Future;
-import scala.concurrent.Promise;
-
-import java.util.concurrent.CompletionStage;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ContentActor extends BaseActor {
@@ -68,9 +64,9 @@ public class ContentActor extends BaseActor {
                 .map(new Mapper<Node, Response>() {
                     @Override
                     public Response apply(Node node) {
-                        Node serializedNode = NodeUtils.getSerializedNode(node,fields);
+                        Map<String, Object> metadata = NodeUtils.getSerializedMap(node, fields);
                         Response response = ResponseHandler.OK();
-                        response.put("content", serializedNode.getMetadata());
+                        response.put("content", metadata);
                         return response;
                     }
                 }, getContext().dispatcher());

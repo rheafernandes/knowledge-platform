@@ -20,7 +20,7 @@ object NodeUtils {
     val scalaMetadataMap = updatedNode.getMetadata.asScala
     val updatedKeyAndJsonMap = scalaMetadataMap.map(entry => handleKeyNames(entry, fields).getOrElse(entry._1) -> convertJsonString(entry, definitionNode)).toMap
     updatedNode.getMetadata.putAll(updatedKeyAndJsonMap.asJava)
-    if(CollectionUtils.isEmpty(fields) || definitionMap.keySet.filter(key => fields.contains(key)).nonEmpty) {
+    if (CollectionUtils.isEmpty(fields) || definitionMap.keySet.filter(key => fields.contains(key)).nonEmpty) {
       getRelationMap(definitionMap, node)
     } else
       updatedNode
