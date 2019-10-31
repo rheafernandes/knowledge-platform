@@ -55,10 +55,10 @@ object NodeUtils {
   private def getRelationMap(definitionMap: Map[String, AnyRef], node: Node): Node = {
     val inRelationList: java.util.List[Relation] = node.getInRelations
     val outRelationList: java.util.List[Relation] = node.getOutRelations
-    val inRelationMetadataList: List[(String, Map[String, AnyRef])] = inRelationList.asScala.toList.map(inRelation => definitionMap.get(inRelation.getRelationType + "_in_" + inRelation.getStartNodeObjectType).getOrElse("in").asInstanceOf[String] -> populationRelationMaps(inRelation, "in"))
-    val inValue: Map[String, List[Map[String, AnyRef]]] = inRelationMetadataList.groupBy(_._1).map { case (k, v) => k -> v.map(_._2) }
-    val outRelationMetadataList: List[(String, Map[String, AnyRef])] = outRelationList.asScala.toList.map(outRelation => definitionMap.get(outRelation.getRelationType + "_out_" + outRelation.getEndNodeObjectType).getOrElse("out").asInstanceOf[String] -> populationRelationMaps(outRelation, "out"))
-    val outValue: Map[String, List[Map[String, AnyRef]]] = outRelationMetadataList.groupBy(_._1).map { case (k, v) => k -> v.map(_._2) }
+    val inRelationMetadataList: List[Map[String, Map[String, AnyRef]]] = inRelationList.asScala.toList.map(inRelation => Map(definitionMap.get(inRelation.getRelationType + "_in_" + inRelation.getStartNodeObjectType).getOrElse("in").asInstanceOf[String] -> populationRelationMaps(inRelation, "in")))
+    val inValue: Map[String, List[java.util.Map[String, AnyRef]]] = inRelationMetadataList.flatten.groupBy(_._1).mapValues(_.map(_._2.asJava))
+    val outRelationMetadataList: List[Map[String,Map[String, AnyRef]]] = outRelationList.asScala.toList.map(outRelation => Map(definitionMap.get(outRelation.getRelationType + "_out_" + outRelation.getEndNodeObjectType).getOrElse("out").asInstanceOf[String] -> populationRelationMaps(outRelation, "out")))
+    val outValue: Map[String, List[java.util.Map[String, AnyRef]]] = outRelationMetadataList.flatten.groupBy(_._1).flatMap{case (k,v) => Map(k-> v.map(_._2.asJava))}
     val mapRelationType = mapper.getTypeFactory.constructMapType(classOf[java.util.Map[_, _]], classOf[String], classOf[java.util.List[java.util.Map[String, AnyRef]]])
     if (inValue.nonEmpty)
       node.getMetadata.putAll(mapper.convertValue(inValue, mapRelationType))
